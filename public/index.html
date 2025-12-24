@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="GhostPay fintech premium com Pix, cartoes e console operacional" />
+    <title>GhostPay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="grid-overlay"></div>
+      <div class="scanline"></div>
+    </div>
+
+    <header class="topbar" data-topbar>
+      <div class="container">
+        <a class="brand" href="/">
+          <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
+          <span class="brand-text">
+            <span class="brand-name">GhostPay</span>
+            <span class="brand-tag">Fintech premium</span>
+          </span>
+        </a>
+
+        <nav class="nav" data-nav>
+          <a class="nav-link" href="/">Inicio</a>
+          <a class="nav-link" href="/platform">Plataforma</a>
+          <a class="nav-link" href="/security">Seguranca</a>
+          <a class="nav-link" href="/developers">Desenvolvedores</a>
+          <a class="nav-link" href="/pricing">Planos</a>
+          <a class="nav-link" href="/support">Suporte</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
+          <a class="btn btn-primary" href="/console">Console</a>
+          <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero" data-reveal>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">GhostPay banco digital</p>
+            <h1>Conta digital premium para Pix e cartoes com controle total.</h1>
+            <p class="lead">
+              Operacao segura com ledger auditavel, webhooks e sandbox para validar fluxos antes da producao.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="/console">Entrar no console</a>
+              <a class="btn btn-ghost" href="/platform">Explorar plataforma</a>
+            </div>
+            <div class="hero-metrics">
+              <div class="metric-card">
+                <span class="metric-label">Pix</span>
+                <strong>Recebimentos e pagamentos</strong>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">Cartoes</span>
+                <strong>Virtual, fisico e limite</strong>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">Infra</span>
+                <strong>Postgres + nuvem</strong>
+              </div>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="glass-card">
+              <div class="card-head">
+                <h3>Painel operacional</h3>
+                <span class="tag">Hoje</span>
+              </div>
+              <div class="signal-list">
+                <div class="signal-row">
+                  <span>Saldo consolidado</span>
+                  <strong>R$ 218.400</strong>
+                </div>
+                <div class="signal-row">
+                  <span>Pix liquidados</span>
+                  <strong>72 hoje</strong>
+                </div>
+                <div class="signal-row">
+                  <span>Cartoes ativos</span>
+                  <strong>145</strong>
+                </div>
+              </div>
+            </div>
+            <div class="glass-card">
+              <div class="card-head">
+                <h3>Sandbox e validacao</h3>
+                <span class="tag">Seguro</span>
+              </div>
+              <p class="muted">
+                Teste cobrancas, pagamentos e webhooks em ambiente isolado antes de ativar a producao.
+              </p>
+              <div class="pill-row">
+                <span class="pill">LGPD</span>
+                <span class="pill">Webhooks</span>
+                <span class="pill">Auditoria</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="section-head">
+          <h2>Modulos essenciais</h2>
+          <p class="lead">Componentes prontos para operar o core financeiro.</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="icon">PX</div>
+            <h3>Pix instantaneo</h3>
+            <p class="muted">Cobrancas, transferencias e conciliacao em tempo real.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">CR</div>
+            <h3>Cartoes com controle</h3>
+            <p class="muted">Emissao, limites e controle por canal.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">LD</div>
+            <h3>Ledger auditavel</h3>
+            <p class="muted">Motor de lancamentos double-entry para consistencia total.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">WH</div>
+            <h3>Webhooks seguros</h3>
+            <p class="muted">Eventos assinados com HMAC e rastreabilidade.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Modulos em foco</h3>
+              <span class="tag">Modulos</span>
+            </div>
+            <div class="module-tabs" data-module-tabs>
+              <button class="tab-pill active" type="button" data-module-target="pix">Pix</button>
+              <button class="tab-pill" type="button" data-module-target="cards">Cartoes</button>
+              <button class="tab-pill" type="button" data-module-target="ledger">Ledger</button>
+            </div>
+            <div class="module-panel" data-module-panel="pix">
+              <strong>Pix em tempo real</strong>
+              <p class="muted">Recebimentos e pagamentos com validacao de chaves.</p>
+              <div class="pill-row">
+                <span class="pill">Cobranca</span>
+                <span class="pill">Transferencia</span>
+                <span class="pill">Conciliacao</span>
+              </div>
+            </div>
+            <div class="module-panel hidden" data-module-panel="cards">
+              <strong>Cartoes com controle</strong>
+              <p class="muted">Virtual, fisico e limites por perfil.</p>
+              <div class="pill-row">
+                <span class="pill">Virtual</span>
+                <span class="pill">Fisico</span>
+                <span class="pill">Limites</span>
+              </div>
+            </div>
+            <div class="module-panel hidden" data-module-panel="ledger">
+              <strong>Ledger confiavel</strong>
+              <p class="muted">Consolidacao de saldos e trilha auditavel.</p>
+              <div class="pill-row">
+                <span class="pill">Auditavel</span>
+                <span class="pill">Conciliacao</span>
+                <span class="pill">Escala</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>Jornada operacional</h3>
+              <span class="tag">Inicio</span>
+            </div>
+            <div class="timeline">
+              <div class="timeline-step">
+                <span>01</span>
+                <strong>Cadastro e contas</strong>
+                <p class="muted">Crie usuario, conta BRL e perfil da operacao.</p>
+              </div>
+              <div class="timeline-step">
+                <span>02</span>
+                <strong>Ative Pix e cartoes</strong>
+                <p class="muted">Cadastre chaves, emita cartoes e teste compras.</p>
+              </div>
+              <div class="timeline-step">
+                <span>03</span>
+                <strong>Monitore a operacao</strong>
+                <p class="muted">Webhooks e painel com eventos em tempo real.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="grid-3">
+          <div class="glass-card">
+            <h3>Interface premium</h3>
+            <p class="muted">Glassmorphism com tipografia precisa.</p>
+            <div class="pill-row">
+              <span class="pill">Escuro</span>
+              <span class="pill">Claro</span>
+              <span class="pill">Animacao</span>
+            </div>
+          </div>
+          <div class="glass-card">
+            <h3>Multi-dispositivo</h3>
+            <p class="muted">Experiencia consistente em web e mobile.</p>
+            <div class="pill-row">
+              <span class="pill">Web</span>
+              <span class="pill">Mobile</span>
+              <span class="pill">Desktop</span>
+            </div>
+          </div>
+          <div class="glass-card">
+            <h3>Operacao visivel</h3>
+            <p class="muted">Saldos, transacoes e eventos em um unico painel.</p>
+            <div class="pill-row">
+              <span class="pill">Dashboards</span>
+              <span class="pill">Eventos</span>
+              <span class="pill">Confianca</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta" data-reveal>
+        <div class="cta-card">
+          <div>
+            <h2>Pronto para operar o GhostPay?</h2>
+            <p class="lead">Acesse o console e valide fluxos reais de Pix e cartoes.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-primary" href="/console">Abrir console</a>
+            <a class="btn btn-ghost" href="/support">Falar com suporte</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand-name">GhostPay</div>
+          <small>Banco digital para equipes fintech.</small>
+        </div>
+        <div class="footer-col">
+          <strong>Produto</strong>
+          <a href="/platform">Plataforma</a>
+          <a href="/security">Seguranca</a>
+          <a href="/pricing">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Console</strong>
+          <a href="/console">Acessar</a>
+          <a href="/developers">Desenvolvedores</a>
+          <a href="/support">Suporte</a>
+        </div>
+        <div class="footer-col">
+          <strong>Infra</strong>
+          <span class="muted">AWS + Postgres</span>
+          <span class="muted">Pronto para Cloudflare</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="site.js"></script>
+  </body>
+</html>

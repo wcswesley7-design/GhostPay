@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="GhostPay console" />
+    <title>GhostPay | Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="grid-overlay"></div>
+      <div class="scanline"></div>
+    </div>
+
+    <header class="topbar" data-topbar>
+      <div class="container">
+        <a class="brand" href="/">
+          <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
+          <span class="brand-text">
+            <span class="brand-name">GhostPay</span>
+            <span class="brand-tag">Console</span>
+          </span>
+        </a>
+
+        <nav class="nav" data-nav>
+          <a class="nav-link" href="/">Inicio</a>
+          <a class="nav-link" href="/platform">Plataforma</a>
+          <a class="nav-link" href="/security">Seguranca</a>
+          <a class="nav-link" href="/developers">Desenvolvedores</a>
+          <a class="nav-link" href="/pricing">Planos</a>
+          <a class="nav-link" href="/support">Suporte</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
+          <button class="btn btn-ghost hidden" type="button" id="logoutBtn">Sair</button>
+          <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page console-page" id="consoleShell">
+      <section class="hero" data-reveal>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Console GhostPay</p>
+            <h1 id="welcomeTitle">Controle total da sua operacao.</h1>
+            <p class="lead">Acompanhe contas, Pix, cartoes, webhooks e integracoes em tempo real.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" type="button" id="demoBtn">Carregar demo</button>
+              <a class="btn btn-ghost" href="/support">Falar com suporte</a>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="glass-card">
+              <div class="card-head">
+                <h3>Resumo rapido</h3>
+                <span class="tag">Ao vivo</span>
+              </div>
+              <div class="signal-list">
+                <div class="signal-row">
+                  <span>Saldo total</span>
+                  <strong id="metricBalance">--</strong>
+                </div>
+                <div class="signal-row">
+                  <span>Entradas 30d</span>
+                  <strong id="metricIncome">--</strong>
+                </div>
+                <div class="signal-row">
+                  <span>Saidas 30d</span>
+                  <strong id="metricSpend">--</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="banner hidden" id="errorBanner"></div>
+
+      <section class="section" id="authPanel" data-reveal>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Acesso ao console</h3>
+              <span class="tag">Conta</span>
+            </div>
+            <div class="tab-group">
+              <button class="tab active" data-tab="login" type="button">Entrar</button>
+              <button class="tab" data-tab="register" type="button">Criar conta</button>
+            </div>
+            <form class="form" id="loginForm">
+              <label>
+                Email
+                <input type="email" name="email" placeholder="seu@email.com" required />
+              </label>
+              <label>
+                Senha
+                <input type="password" name="password" placeholder="********" required />
+              </label>
+              <button class="btn btn-primary" type="submit">Entrar</button>
+            </form>
+            <form class="form hidden" id="registerForm">
+              <label>
+                Nome completo
+                <input type="text" name="name" placeholder="Joao Silva" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" placeholder="seu@email.com" required />
+              </label>
+              <label>
+                Senha
+                <input type="password" name="password" placeholder="Minimo 8 caracteres" required />
+              </label>
+              <button class="btn btn-primary" type="submit">Criar conta</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Credenciais demo</h3>
+              <span class="tag">Demo</span>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <strong>Email</strong>
+                <div class="list-meta">
+                  <span>demo@ghostpay.local</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <strong>Senha</strong>
+                <div class="list-meta">
+                  <span>ghostpay-demo</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-ghost" type="button" id="demoHelper">Carregar demo</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section hidden" id="dashboardPanel">
+        <nav class="console-nav" data-reveal>
+          <a class="pill" href="#overview">Visao geral</a>
+          <a class="pill" href="#accounts">Contas</a>
+          <a class="pill" href="#pix">Pix</a>
+          <a class="pill" href="#cards">Cartoes</a>
+          <a class="pill" href="#webhooks">Webhooks</a>
+          <a class="pill" href="#integrations">Integracoes</a>
+        </nav>
+
+        <section class="section" id="overview" data-reveal>
+          <div class="section-head">
+            <h2>Visao geral</h2>
+            <p class="lead">Saldos e atividade consolidada das ultimas semanas.</p>
+          </div>
+          <div class="metric-grid">
+            <div class="metric">
+              <span class="muted">Saldo total</span>
+              <strong id="metricBalanceFull">--</strong>
+            </div>
+            <div class="metric">
+              <span class="muted">Entradas 30d</span>
+              <strong id="metricIncomeFull">--</strong>
+            </div>
+            <div class="metric">
+              <span class="muted">Saidas 30d</span>
+              <strong id="metricSpendFull">--</strong>
+            </div>
+            <div class="metric">
+              <span class="muted">Atividade</span>
+              <strong id="metricCount">--</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="accounts" data-reveal>
+          <div class="section-head">
+            <h2>Contas e transacoes</h2>
+            <p class="lead">Cadastre contas e registre movimentacoes.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h3>Contas</h3>
+                <button class="btn btn-ghost" type="button" id="refreshAccounts">Atualizar</button>
+              </div>
+              <div class="chip-row" id="accountChips"></div>
+              <div class="list" id="accountsList"></div>
+              <form class="form" id="accountForm">
+                <label>
+                  Nova conta
+                  <input type="text" name="name" placeholder="Vault" required />
+                </label>
+                <label>
+                  Moeda
+                  <input type="text" name="currency" placeholder="BRL" maxlength="3" />
+                </label>
+                <button class="btn btn-primary" type="submit">Adicionar</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Transacoes</h3>
+                <button class="btn btn-ghost" type="button" id="refreshOverview">Atualizar resumo</button>
+              </div>
+              <form class="form" id="transactionForm">
+                <label>
+                  Tipo
+                  <select name="type" required>
+                    <option value="deposit">Deposito</option>
+                    <option value="withdrawal">Saque</option>
+                    <option value="transfer">Transferencia</option>
+                    <option value="payment">Pagamento</option>
+                  </select>
+                </label>
+                <label>
+                  Valor
+                  <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                </label>
+                <label>
+                  Conta de origem
+                  <select name="fromAccountId"></select>
+                </label>
+                <label>
+                  Conta de destino
+                  <select name="toAccountId"></select>
+                </label>
+                <label>
+                  Contraparte
+                  <input type="text" name="counterparty" placeholder="Fornecedor" />
+                </label>
+                <label>
+                  Nota
+                  <input type="text" name="note" placeholder="Opcional" />
+                </label>
+                <button class="btn btn-primary" type="submit">Enviar</button>
+              </form>
+              <div class="card-subhead card-head">
+                <h4>Ultimas transacoes</h4>
+                <button class="btn btn-ghost" type="button" id="refreshTransactions">Atualizar lista</button>
+              </div>
+              <div class="list" id="transactionsList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="pix" data-reveal>
+          <div class="section-head">
+            <h2>Pix</h2>
+            <p class="lead">Chaves, transferencias e cobrancas em ambiente de teste.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h3>Chaves e transferencias</h3>
+                <button class="btn btn-ghost" type="button" id="refreshPix">Atualizar</button>
+              </div>
+              <p class="muted">Ambiente de teste para operacao Pix.</p>
+              <div class="pill-row" id="pixKeysList"></div>
+              <form class="form" id="pixKeyForm">
+                <label>
+                  Tipo de chave
+                  <select name="type">
+                    <option value="random">Aleatoria</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Telefone</option>
+                    <option value="cpf">CPF</option>
+                  </select>
+                </label>
+                <label>
+                  Valor da chave
+                  <input type="text" name="value" placeholder="Somente email/telefone/cpf" />
+                </label>
+                <button class="btn btn-primary" type="submit">Criar chave</button>
+              </form>
+
+              <div class="card-subhead">
+                <h4>Transferencia Pix</h4>
+              </div>
+              <form class="form" id="pixTransferForm">
+                <label>
+                  Conta de origem
+                  <select name="accountId" required></select>
+                </label>
+                <label>
+                  Tipo da chave
+                  <select name="keyType">
+                    <option value="email">Email</option>
+                    <option value="phone">Telefone</option>
+                    <option value="cpf">CPF</option>
+                    <option value="random">Aleatoria</option>
+                  </select>
+                </label>
+                <label>
+                  Chave destino
+                  <input type="text" name="keyValue" placeholder="Chave Pix" required />
+                </label>
+                <label>
+                  Valor
+                  <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                </label>
+                <label>
+                  Descricao
+                  <input type="text" name="description" placeholder="Opcional" />
+                </label>
+                <button class="btn btn-primary" type="submit">Enviar Pix</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Cobrancas Pix</h3>
+                <button class="btn btn-ghost" type="button" id="refreshCharges">Atualizar</button>
+              </div>
+              <form class="form" id="pixChargeForm">
+                <label>
+                  Conta
+                  <select name="accountId" required></select>
+                </label>
+                <label>
+                  Chave Pix
+                  <select name="keyId" required></select>
+                </label>
+                <label>
+                  Valor
+                  <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                </label>
+                <label>
+                  Descricao
+                  <input type="text" name="description" placeholder="Opcional" />
+                </label>
+                <button class="btn btn-primary" type="submit">Criar cobranca</button>
+              </form>
+              <div class="list" id="pixChargesList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="cards" data-reveal>
+          <div class="section-head">
+            <h2>Cartoes</h2>
+            <p class="lead">Emissao de cartoes e simulacao de compras.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h3>Cartoes</h3>
+                <button class="btn btn-ghost" type="button" id="refreshCards">Atualizar</button>
+              </div>
+              <div class="list" id="cardsList"></div>
+              <form class="form" id="cardForm">
+                <label>
+                  Conta de debito
+                  <select name="accountId" required></select>
+                </label>
+                <label>
+                  Tipo de cartao
+                  <select name="type">
+                    <option value="virtual">Virtual</option>
+                    <option value="physical">Fisico</option>
+                  </select>
+                </label>
+                <label>
+                  Limite
+                  <input type="number" name="limit" placeholder="5000.00" min="0" step="0.01" />
+                </label>
+                <button class="btn btn-primary" type="submit">Emitir cartao</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Compras do cartao</h3>
+                <button class="btn btn-ghost" type="button" id="refreshCardTx">Atualizar</button>
+              </div>
+              <form class="form" id="cardTxnForm">
+                <label>
+                  Cartao
+                  <select name="cardId" required></select>
+                </label>
+                <label>
+                  Valor
+                  <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                </label>
+                <label>
+                  Loja
+                  <input type="text" name="merchant" placeholder="Nome do estabelecimento" required />
+                </label>
+                <button class="btn btn-primary" type="submit">Simular compra</button>
+              </form>
+              <div class="list" id="cardTransactionsList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="webhooks" data-reveal>
+          <div class="section-head">
+            <h2>Webhooks e integracoes</h2>
+            <p class="lead">Eventos assinados e conexoes com parceiros.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h3>Webhooks</h3>
+                <button class="btn btn-ghost" type="button" id="refreshWebhooks">Atualizar</button>
+              </div>
+              <form class="form" id="webhookForm">
+                <label>
+                  URL
+                  <input type="url" name="url" placeholder="https://webhook.site/ghostpay" required />
+                </label>
+                <label>
+                  Segredo (opcional)
+                  <input type="text" name="secret" placeholder="Minimo 8 caracteres" />
+                </label>
+                <button class="btn btn-primary" type="submit">Criar webhook</button>
+              </form>
+              <div class="list" id="webhookList"></div>
+            </div>
+
+            <div class="card" id="integrations">
+              <div class="card-head">
+                <h3>Integracoes</h3>
+                <button class="btn btn-ghost" type="button" id="refreshIntegrations">Verificar</button>
+              </div>
+              <div class="list" id="integrationList"></div>
+              <div class="card-subhead">
+                <h4>Eventos recentes</h4>
+              </div>
+              <div class="list" id="webhookEvents"></div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand-name">GhostPay</div>
+          <small>Banco digital para equipes fintech.</small>
+        </div>
+        <div class="footer-col">
+          <strong>Produto</strong>
+          <a href="/platform">Plataforma</a>
+          <a href="/security">Seguranca</a>
+          <a href="/pricing">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Console</strong>
+          <a href="/console">Acessar</a>
+          <a href="/developers">Desenvolvedores</a>
+          <a href="/support">Suporte</a>
+        </div>
+        <div class="footer-col">
+          <strong>Infra</strong>
+          <span class="muted">AWS + Postgres</span>
+          <span class="muted">Pronto para Cloudflare</span>
+        </div>
+      </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="site.js"></script>
+    <script src="console.js"></script>
+  </body>
+</html>

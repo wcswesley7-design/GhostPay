@@ -1,0 +1,983 @@
+(() => {
+  const shell = document.getElementById('consoleShell');
+  if (!shell) {
+    return;
+  }
+
+  const state = {
+    token: localStorage.getItem('ghostpay_token'),
+    user: null,
+    accounts: [],
+    transactions: [],
+    pixKeys: [],
+    pixCharges: [],
+    cards: [],
+    integrations: null,
+    webhooks: [],
+    webhookEvents: []
+  };
+
+  const elements = {
+    authPanel: document.getElementById('authPanel'),
+    dashboardPanel: document.getElementById('dashboardPanel'),
+    loginForm: document.getElementById('loginForm'),
+    registerForm: document.getElementById('registerForm'),
+    tabs: document.querySelectorAll('.tab'),
+    demoBtn: document.getElementById('demoBtn'),
+    demoHelper: document.getElementById('demoHelper'),
+    logoutBtn: document.getElementById('logoutBtn'),
+    toast: document.getElementById('toast'),
+    errorBanner: document.getElementById('errorBanner'),
+    welcomeTitle: document.getElementById('welcomeTitle'),
+    metricBalance: document.getElementById('metricBalance'),
+    metricIncome: document.getElementById('metricIncome'),
+    metricSpend: document.getElementById('metricSpend'),
+    metricBalanceFull: document.getElementById('metricBalanceFull'),
+    metricIncomeFull: document.getElementById('metricIncomeFull'),
+    metricSpendFull: document.getElementById('metricSpendFull'),
+    metricCount: document.getElementById('metricCount'),
+    accountChips: document.getElementById('accountChips'),
+    accountsList: document.getElementById('accountsList'),
+    accountForm: document.getElementById('accountForm'),
+    transactionForm: document.getElementById('transactionForm'),
+    transactionsList: document.getElementById('transactionsList'),
+    pixKeysList: document.getElementById('pixKeysList'),
+    pixChargesList: document.getElementById('pixChargesList'),
+    pixKeyForm: document.getElementById('pixKeyForm'),
+    pixTransferForm: document.getElementById('pixTransferForm'),
+    pixChargeForm: document.getElementById('pixChargeForm'),
+    cardsList: document.getElementById('cardsList'),
+    cardForm: document.getElementById('cardForm'),
+    cardTxnForm: document.getElementById('cardTxnForm'),
+    cardTransactionsList: document.getElementById('cardTransactionsList'),
+    integrationList: document.getElementById('integrationList'),
+    webhookList: document.getElementById('webhookList'),
+    webhookForm: document.getElementById('webhookForm'),
+    webhookEvents: document.getElementById('webhookEvents'),
+    refreshAccounts: document.getElementById('refreshAccounts'),
+    refreshOverview: document.getElementById('refreshOverview'),
+    refreshTransactions: document.getElementById('refreshTransactions'),
+    refreshPix: document.getElementById('refreshPix'),
+    refreshCharges: document.getElementById('refreshCharges'),
+    refreshCards: document.getElementById('refreshCards'),
+    refreshCardTx: document.getElementById('refreshCardTx'),
+    refreshIntegrations: document.getElementById('refreshIntegrations'),
+    refreshWebhooks: document.getElementById('refreshWebhooks')
+  };
+
+  const labels = {
+    deposit: 'Deposito',
+    withdrawal: 'Saque',
+    transfer: 'Transferencia',
+    payment: 'Pagamento'
+  };
+
+  const pixStatusLabels = {
+    pending: 'pendente',
+    paid: 'pago',
+    failed: 'falhou'
+  };
+
+  const cardStatusLabels = {
+    active: 'ativo',
+    inactive: 'inativo',
+    blocked: 'bloqueado'
+  };
+
+  function showToast(message, mode = 'info') {
+    if (!elements.toast) {
+      return;
+    }
+    elements.toast.textContent = message;
+    elements.toast.classList.add('show');
+    elements.toast.classList.toggle('error', mode === 'error');
+    setTimeout(() => elements.toast.classList.remove('show'), 2600);
+  }
+
+  function setError(message) {
+    if (!elements.errorBanner) {
+      return;
+    }
+    if (!message) {
+      elements.errorBanner.textContent = '';
+      elements.errorBanner.classList.add('hidden');
+      return;
+    }
+    elements.errorBanner.textContent = message;
+    elements.errorBanner.classList.remove('hidden');
+  }
+
+  function formatCents(cents, currency = 'BRL') {
+    const value = Number(cents || 0) / 100;
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 2
+    }).format(value);
+  }
+
+  function formatDate(value) {
+    return new Date(value).toLocaleString('pt-BR');
+  }
+
+  function decodeToken(token) {
+    try {
+      const payload = token.split('.')[1];
+      const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(normalized));
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async function apiRequest(path, options = {}) {
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    };
+    if (state.token) {
+      headers.Authorization = `Bearer ${state.token}`;
+    }
+
+    const response = await fetch(path, { ...options, headers });
+    if (response.status === 401) {
+      setToken(null);
+      state.user = null;
+      setAuthUI(false);
+    }
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.error || 'Falha na solicitacao');
+    }
+    return data;
+  }
+
+  function setToken(token) {
+    state.token = token;
+    if (token) {
+      localStorage.setItem('ghostpay_token', token);
+    } else {
+      localStorage.removeItem('ghostpay_token');
+    }
+  }
+
+  function setAuthUI(isAuthed) {
+    elements.authPanel.classList.toggle('hidden', isAuthed);
+    elements.dashboardPanel.classList.toggle('hidden', !isAuthed);
+    if (elements.logoutBtn) {
+      elements.logoutBtn.classList.toggle('hidden', !isAuthed);
+    }
+    if (elements.demoBtn) {
+      elements.demoBtn.classList.toggle('hidden', isAuthed);
+    }
+    if (elements.demoHelper) {
+      elements.demoHelper.classList.toggle('hidden', isAuthed);
+    }
+  }
+
+  function renderSkeleton(container, count) {
+    if (!container) {
+      return;
+    }
+    container.innerHTML = Array.from({ length: count })
+      .map(() => '<div class="skeleton skeleton-card"></div>')
+      .join('');
+  }
+
+  function renderEmpty(container, message) {
+    if (!container) {
+      return;
+    }
+    container.innerHTML = `<div class="list-item">${message}</div>`;
+  }
+
+  function fillAccountSelect(select, placeholder) {
+    if (!select) {
+      return;
+    }
+    select.innerHTML = placeholder || '';
+    state.accounts.forEach((account) => {
+      const option = document.createElement('option');
+      option.value = account.id;
+      option.textContent = `${account.name} (${account.currency})`;
+      select.appendChild(option);
+    });
+  }
+
+  function updateAccountSelects() {
+    fillAccountSelect(elements.transactionForm.elements.fromAccountId, '<option value="">Selecionar conta</option>');
+    fillAccountSelect(elements.transactionForm.elements.toAccountId, '<option value="">Selecionar conta</option>');
+    fillAccountSelect(elements.pixTransferForm.elements.accountId, '<option value="">Selecionar conta</option>');
+    fillAccountSelect(elements.pixChargeForm.elements.accountId, '<option value="">Selecionar conta</option>');
+    fillAccountSelect(elements.cardForm.elements.accountId, '<option value="">Selecionar conta</option>');
+  }
+
+  function renderMetrics(metrics) {
+    const balance = formatCents(metrics.totalBalanceCents, 'BRL');
+    const income = formatCents(metrics.incomeCents, 'BRL');
+    const spend = formatCents(metrics.spendCents, 'BRL');
+    if (elements.metricBalance) {
+      elements.metricBalance.textContent = balance;
+    }
+    if (elements.metricIncome) {
+      elements.metricIncome.textContent = income;
+    }
+    if (elements.metricSpend) {
+      elements.metricSpend.textContent = spend;
+    }
+    if (elements.metricBalanceFull) {
+      elements.metricBalanceFull.textContent = balance;
+    }
+    if (elements.metricIncomeFull) {
+      elements.metricIncomeFull.textContent = income;
+    }
+    if (elements.metricSpendFull) {
+      elements.metricSpendFull.textContent = spend;
+    }
+    if (elements.metricCount) {
+      elements.metricCount.textContent = metrics.transactionCount || 0;
+    }
+  }
+
+  function renderAccounts(accounts) {
+    if (!accounts.length) {
+      elements.accountsList.innerHTML = '<div class="list-item">Nenhuma conta criada ainda.</div>';
+      elements.accountChips.innerHTML = '';
+      return;
+    }
+
+    elements.accountsList.innerHTML = accounts
+      .map(
+        (account) => `
+          <div class="list-item">
+            <strong>${account.name}</strong>
+            <div class="list-meta">
+              <span>${account.currency} - ${account.accountNumber}</span>
+              <strong>${formatCents(account.balanceCents, account.currency)}</strong>
+            </div>
+          </div>
+        `
+      )
+      .join('');
+
+    elements.accountChips.innerHTML = accounts
+      .map((account) => `<span class="chip">${account.name}: ${formatCents(account.balanceCents, account.currency)}</span>`)
+      .join('');
+  }
+
+  function renderTransactions(transactions) {
+    if (!transactions.length) {
+      elements.transactionsList.innerHTML = '<div class="list-item">Nenhuma transacao recente.</div>';
+      return;
+    }
+
+    elements.transactionsList.innerHTML = transactions
+      .map((transaction) => {
+        const label = labels[transaction.type] || transaction.type;
+        const amount = formatCents(transaction.amountCents, 'BRL');
+        const counterparty = transaction.counterparty ? ` - ${transaction.counterparty}` : '';
+        const note = transaction.note ? ` - ${transaction.note}` : '';
+
+        return `
+          <div class="list-item">
+            <strong>${label}</strong>
+            <div class="list-meta">
+              <span>${formatDate(transaction.createdAt)}</span>
+              <span>${amount}</span>
+            </div>
+            <div class="list-meta">
+              <span>${transaction.status}${counterparty}${note}</span>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+  }
+
+  function renderPixKeys(keys) {
+    if (!keys.length) {
+      elements.pixKeysList.innerHTML = '<span class="pill">Sem chaves Pix</span>';
+    } else {
+      elements.pixKeysList.innerHTML = keys
+        .map((key) => `<span class="pill">${key.type.toUpperCase()}: ${key.value}</span>`)
+        .join('');
+    }
+
+    const keySelect = elements.pixChargeForm.elements.keyId;
+    keySelect.innerHTML = '';
+    if (!keys.length) {
+      keySelect.disabled = true;
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = 'Crie uma chave Pix primeiro';
+      keySelect.appendChild(option);
+    } else {
+      keySelect.disabled = false;
+      keys.forEach((key) => {
+        const option = document.createElement('option');
+        option.value = key.id;
+        option.textContent = `${key.type.toUpperCase()} - ${key.value}`;
+        keySelect.appendChild(option);
+      });
+    }
+  }
+
+  function renderPixCharges(charges) {
+    if (!charges.length) {
+      elements.pixChargesList.innerHTML = '<div class="list-item">Nenhuma cobranca Pix criada.</div>';
+      return;
+    }
+
+    elements.pixChargesList.innerHTML = charges
+      .map((charge) => {
+        const statusLabel = pixStatusLabels[charge.status] || charge.status;
+        const statusClass = charge.status === 'pending' ? 'pending' : charge.status;
+        const action =
+          charge.status === 'pending'
+            ? `<button class="btn btn-ghost" data-action="pay" data-id="${charge.id}" type="button">Simular pagamento</button>`
+            : '';
+        return `
+          <div class="list-item">
+            <strong>${formatCents(charge.amountCents, 'BRL')}</strong>
+            <div class="list-meta">
+              <span>${charge.txid}</span>
+              <span>${formatDate(charge.createdAt)}</span>
+            </div>
+            <div class="list-meta">
+              <span class="status-pill ${statusClass}">${statusLabel}</span>
+              ${action}
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+  }
+
+  function renderCards(cards) {
+    if (!cards.length) {
+      elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartao emitido.</div>';
+      elements.cardTxnForm.elements.cardId.innerHTML = '';
+      elements.cardTxnForm.elements.cardId.disabled = true;
+      return;
+    }
+
+    elements.cardsList.innerHTML = cards
+      .map((card) => {
+        const statusLabel = cardStatusLabels[card.status] || card.status;
+        return `
+          <div class="list-item">
+            <strong>${card.brand} **** ${card.last4}</strong>
+            <div class="list-meta">
+              <span>${card.type} - ${statusLabel}</span>
+              <span>${formatCents(card.availableCents, 'BRL')} disponivel</span>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+
+    const cardSelect = elements.cardTxnForm.elements.cardId;
+    cardSelect.disabled = false;
+    cardSelect.innerHTML = '';
+    cards.forEach((card) => {
+      const option = document.createElement('option');
+      option.value = card.id;
+      option.textContent = `${card.brand} **** ${card.last4}`;
+      cardSelect.appendChild(option);
+    });
+  }
+
+  function renderCardTransactions(transactions) {
+    if (!transactions.length) {
+      elements.cardTransactionsList.innerHTML = '<div class="list-item">Sem movimentacao do cartao.</div>';
+      return;
+    }
+
+    elements.cardTransactionsList.innerHTML = transactions
+      .map(
+        (txn) => `
+          <div class="list-item">
+            <strong>${txn.merchant}</strong>
+            <div class="list-meta">
+              <span>${formatDate(txn.createdAt)}</span>
+              <span>${formatCents(txn.amountCents, 'BRL')}</span>
+            </div>
+          </div>
+        `
+      )
+      .join('');
+  }
+
+  function renderIntegrations(data) {
+    if (!data) {
+      elements.integrationList.innerHTML = '<div class="list-item">Integracoes indisponiveis.</div>';
+      return;
+    }
+
+    const items = [
+      { label: 'Dock configurado', ok: data.ready },
+      { label: 'Modo Dock', value: data.mode || 'n/a', ok: true },
+      { label: 'Base URL', ok: data.baseUrl },
+      { label: 'Token URL', ok: data.tokenUrl },
+      { label: 'Client ID', ok: data.clientId },
+      { label: 'Client Secret', ok: data.clientSecret },
+      { label: 'Webhook secret', ok: data.webhookSecret }
+    ];
+
+    elements.integrationList.innerHTML = items
+      .map(
+        (item) => `
+          <div class="list-item">
+            <strong>${item.label}</strong>
+            <div class="list-meta">
+              <span>${item.value || (item.ok ? 'ok' : 'pendente')}</span>
+              <span class="status-pill ${item.ok ? 'ok' : 'pending'}">${item.ok ? 'ok' : 'pendente'}</span>
+            </div>
+          </div>
+        `
+      )
+      .join('');
+  }
+
+  function renderWebhooks(webhooks) {
+    if (!webhooks.length) {
+      elements.webhookList.innerHTML = '<div class="list-item">Nenhum webhook cadastrado.</div>';
+      return;
+    }
+
+    elements.webhookList.innerHTML = webhooks
+      .map(
+        (webhook) => `
+          <div class="list-item">
+            <strong>${webhook.url}</strong>
+            <div class="list-meta">
+              <span class="status-pill ${webhook.status}">${webhook.status}</span>
+              <span>${formatDate(webhook.createdAt)}</span>
+            </div>
+            <div class="list-meta">
+              <button class="btn btn-ghost" type="button" data-action="test" data-id="${webhook.id}">Testar</button>
+              <button class="btn btn-ghost" type="button" data-action="disable" data-id="${webhook.id}">Desativar</button>
+            </div>
+          </div>
+        `
+      )
+      .join('');
+  }
+
+  function renderWebhookEvents(events) {
+    if (!events.length) {
+      elements.webhookEvents.innerHTML = '<div class="list-item">Sem eventos recentes.</div>';
+      return;
+    }
+
+    elements.webhookEvents.innerHTML = events
+      .map(
+        (event) => `
+          <div class="list-item">
+            <strong>${event.type}</strong>
+            <div class="list-meta">
+              <span>${formatDate(event.createdAt)}</span>
+              <span>${event.id}</span>
+            </div>
+          </div>
+        `
+      )
+      .join('');
+  }
+
+  async function loadOverview() {
+    renderSkeleton(elements.accountsList, 2);
+    renderSkeleton(elements.transactionsList, 3);
+    try {
+      const data = await apiRequest('/api/overview');
+      state.accounts = data.accounts || [];
+      state.transactions = data.recentTransactions || [];
+      updateAccountSelects();
+      renderAccounts(state.accounts);
+      renderTransactions(state.transactions);
+      renderMetrics(data.metrics || {});
+      if (state.user) {
+        elements.welcomeTitle.textContent = `Bem-vindo, ${state.user.name}`;
+      }
+      setError('');
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  }
+
+  async function loadPix() {
+    renderSkeleton(elements.pixChargesList, 2);
+    try {
+      const [keys, charges] = await Promise.all([
+        apiRequest('/api/pix/keys'),
+        apiRequest('/api/pix/charges')
+      ]);
+      state.pixKeys = keys.keys || [];
+      state.pixCharges = charges.charges || [];
+      renderPixKeys(state.pixKeys);
+      renderPixCharges(state.pixCharges.slice(0, 5));
+    } catch (err) {
+      elements.pixKeysList.innerHTML = '<span class="pill">Falha ao carregar Pix</span>';
+      elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar cobrancas Pix.</div>';
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function loadCards() {
+    renderSkeleton(elements.cardsList, 2);
+    renderSkeleton(elements.cardTransactionsList, 2);
+    try {
+      const data = await apiRequest('/api/cards');
+      state.cards = data.cards || [];
+      renderCards(state.cards);
+      const selected = elements.cardTxnForm.elements.cardId.value || (state.cards[0] && state.cards[0].id);
+      if (selected) {
+        elements.cardTxnForm.elements.cardId.value = selected;
+        await loadCardTransactions(selected);
+      } else {
+        renderCardTransactions([]);
+      }
+    } catch (err) {
+      elements.cardsList.innerHTML = '<div class="list-item">Falha ao carregar cartoes.</div>';
+      elements.cardTransactionsList.innerHTML = '<div class="list-item">Falha ao carregar transacoes.</div>';
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function loadCardTransactions(cardId) {
+    if (!cardId) {
+      renderCardTransactions([]);
+      return;
+    }
+    const data = await apiRequest(`/api/cards/${cardId}/transactions`);
+    renderCardTransactions(data.transactions || []);
+  }
+
+  async function loadIntegrations() {
+    renderSkeleton(elements.integrationList, 2);
+    try {
+      const data = await apiRequest('/api/integrations/dock');
+      state.integrations = data;
+      renderIntegrations(data);
+    } catch (err) {
+      renderIntegrations(null);
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function loadWebhooks() {
+    renderSkeleton(elements.webhookList, 2);
+    try {
+      const data = await apiRequest('/api/webhooks');
+      state.webhooks = data.webhooks || [];
+      renderWebhooks(state.webhooks);
+      const events = await apiRequest('/api/webhooks/events');
+      state.webhookEvents = events.events || [];
+      renderWebhookEvents(state.webhookEvents.slice(0, 6));
+    } catch (err) {
+      renderWebhooks([]);
+      renderWebhookEvents([]);
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function loadExtensions() {
+    await Promise.allSettled([loadPix(), loadCards(), loadIntegrations(), loadWebhooks()]);
+  }
+
+  function setActiveTab(target) {
+    elements.tabs.forEach((tab) => {
+      tab.classList.toggle('active', tab.dataset.tab === target);
+    });
+    elements.loginForm.classList.toggle('hidden', target !== 'login');
+    elements.registerForm.classList.toggle('hidden', target !== 'register');
+  }
+
+  function updateTransactionFields() {
+    const type = elements.transactionForm.elements.type.value;
+    const fromLabel = elements.transactionForm.elements.fromAccountId.closest('label');
+    const toLabel = elements.transactionForm.elements.toAccountId.closest('label');
+    const counterpartyLabel = elements.transactionForm.elements.counterparty.closest('label');
+
+    const needsFrom = type === 'withdrawal' || type === 'transfer' || type === 'payment';
+    const needsTo = type === 'deposit' || type === 'transfer';
+    const needsCounterparty = type === 'payment';
+
+    elements.transactionForm.elements.fromAccountId.disabled = !needsFrom;
+    elements.transactionForm.elements.toAccountId.disabled = !needsTo;
+    elements.transactionForm.elements.counterparty.disabled = !needsCounterparty;
+
+    fromLabel.classList.toggle('is-disabled', !needsFrom);
+    toLabel.classList.toggle('is-disabled', !needsTo);
+    counterpartyLabel.classList.toggle('is-disabled', !needsCounterparty);
+  }
+
+  function updatePixKeyField() {
+    const type = elements.pixKeyForm.elements.type.value;
+    const valueInput = elements.pixKeyForm.elements.value;
+    const isRandom = type === 'random';
+    valueInput.disabled = isRandom;
+    valueInput.placeholder = isRandom ? 'Gerada automaticamente' : 'Somente email/telefone/cpf';
+    if (isRandom) {
+      valueInput.value = '';
+    }
+  }
+
+  async function handleLogin(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.loginForm).entries());
+
+    try {
+      const data = await apiRequest('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      setToken(data.token);
+      state.user = data.user;
+      setAuthUI(true);
+      await loadOverview();
+      await loadExtensions();
+      showToast('Login realizado');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handleRegister(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.registerForm).entries());
+
+    try {
+      const data = await apiRequest('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      setToken(data.token);
+      state.user = data.user;
+      setAuthUI(true);
+      await loadOverview();
+      await loadExtensions();
+      showToast('Conta criada');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handleDemo() {
+    try {
+      const data = await apiRequest('/api/auth/demo', {
+        method: 'POST'
+      });
+      setToken(data.token);
+      state.user = data.user;
+      setAuthUI(true);
+      await loadOverview();
+      await loadExtensions();
+      showToast('Demo carregada');
+    } catch (err) {
+      showToast('Rode npm run seed e tente novamente.', 'error');
+    }
+  }
+
+  async function handleAccountCreate(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.accountForm).entries());
+    if (!payload.currency) {
+      delete payload.currency;
+    }
+
+    try {
+      await apiRequest('/api/accounts', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      elements.accountForm.reset();
+      await loadOverview();
+      showToast('Conta adicionada');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handleTransaction(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.transactionForm).entries());
+
+    if (!payload.fromAccountId) {
+      delete payload.fromAccountId;
+    }
+    if (!payload.toAccountId) {
+      delete payload.toAccountId;
+    }
+    if (!payload.counterparty) {
+      delete payload.counterparty;
+    }
+    if (!payload.note) {
+      delete payload.note;
+    }
+
+    try {
+      await apiRequest('/api/transactions', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      elements.transactionForm.reset();
+      updateTransactionFields();
+      await loadOverview();
+      showToast('Transacao enviada');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handlePixKeyCreate(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.pixKeyForm).entries());
+    if (!payload.value) {
+      delete payload.value;
+    }
+
+    try {
+      await apiRequest('/api/pix/keys', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      elements.pixKeyForm.reset();
+      updatePixKeyField();
+      await loadPix();
+      showToast('Chave Pix criada');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handlePixTransfer(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.pixTransferForm).entries());
+    if (!payload.description) {
+      delete payload.description;
+    }
+
+    try {
+      await apiRequest('/api/pix/transfers', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      elements.pixTransferForm.reset();
+      await loadOverview();
+      await loadPix();
+      showToast('Pix enviado');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handlePixChargeCreate(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.pixChargeForm).entries());
+    if (!payload.description) {
+      delete payload.description;
+    }
+    if (!payload.keyId) {
+      showToast('Crie uma chave Pix antes.', 'error');
+      return;
+    }
+
+    try {
+      await apiRequest('/api/pix/charges', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      elements.pixChargeForm.reset();
+      await loadPix();
+      showToast('Cobranca Pix criada');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handlePixChargeAction(event) {
+    const button = event.target.closest('button');
+    if (!button || button.dataset.action !== 'pay') {
+      return;
+    }
+    const chargeId = button.dataset.id;
+    if (!chargeId) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/api/pix/charges/${chargeId}/simulate-pay`, {
+        method: 'POST'
+      });
+      await loadOverview();
+      await loadPix();
+      showToast('Pix pago');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handleCardCreate(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.cardForm).entries());
+    if (!payload.limit) {
+      delete payload.limit;
+    }
+
+    try {
+      await apiRequest('/api/cards', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      elements.cardForm.reset();
+      await loadCards();
+      showToast('Cartao emitido');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handleCardTransaction(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.cardTxnForm).entries());
+    const cardId = payload.cardId;
+    delete payload.cardId;
+    if (!cardId) {
+      showToast('Selecione um cartao.', 'error');
+      return;
+    }
+
+    try {
+      await apiRequest(`/api/cards/${cardId}/transactions`, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      elements.cardTxnForm.reset();
+      await loadOverview();
+      await loadCards();
+      await loadCardTransactions(cardId);
+      showToast('Transacao do cartao registrada');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handleWebhookCreate(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.webhookForm).entries());
+    if (!payload.secret) {
+      delete payload.secret;
+    }
+
+    try {
+      await apiRequest('/api/webhooks', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      elements.webhookForm.reset();
+      await loadWebhooks();
+      showToast('Webhook criado');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handleWebhookAction(event) {
+    const button = event.target.closest('button');
+    if (!button) {
+      return;
+    }
+    const action = button.dataset.action;
+    const id = button.dataset.id;
+    if (!action || !id) {
+      return;
+    }
+
+    try {
+      if (action === 'test') {
+        await apiRequest(`/api/webhooks/${id}/test`, { method: 'POST' });
+        showToast('Webhook em fila');
+      }
+      if (action === 'disable') {
+        await apiRequest(`/api/webhooks/${id}`, { method: 'DELETE' });
+        showToast('Webhook desativado');
+      }
+      await loadWebhooks();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function initialize() {
+    elements.tabs.forEach((tab) => {
+      tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
+    });
+
+    elements.loginForm.addEventListener('submit', handleLogin);
+    elements.registerForm.addEventListener('submit', handleRegister);
+    elements.accountForm.addEventListener('submit', handleAccountCreate);
+    elements.transactionForm.addEventListener('submit', handleTransaction);
+    elements.transactionForm.elements.type.addEventListener('change', updateTransactionFields);
+    elements.pixKeyForm.addEventListener('submit', handlePixKeyCreate);
+    elements.pixKeyForm.elements.type.addEventListener('change', updatePixKeyField);
+    elements.pixTransferForm.addEventListener('submit', handlePixTransfer);
+    elements.pixChargeForm.addEventListener('submit', handlePixChargeCreate);
+    elements.pixChargesList.addEventListener('click', handlePixChargeAction);
+    elements.cardForm.addEventListener('submit', handleCardCreate);
+    elements.cardTxnForm.addEventListener('submit', handleCardTransaction);
+    elements.cardTxnForm.elements.cardId.addEventListener('change', async (event) => {
+      await loadCardTransactions(event.target.value);
+    });
+    elements.webhookForm.addEventListener('submit', handleWebhookCreate);
+    elements.webhookList.addEventListener('click', handleWebhookAction);
+
+    elements.refreshAccounts.addEventListener('click', loadOverview);
+    elements.refreshOverview.addEventListener('click', loadOverview);
+    elements.refreshTransactions.addEventListener('click', loadOverview);
+    elements.refreshPix.addEventListener('click', loadPix);
+    elements.refreshCharges.addEventListener('click', loadPix);
+    elements.refreshCards.addEventListener('click', loadCards);
+    elements.refreshCardTx.addEventListener('click', loadCards);
+    elements.refreshIntegrations.addEventListener('click', loadIntegrations);
+    elements.refreshWebhooks.addEventListener('click', loadWebhooks);
+
+    if (elements.demoBtn) {
+      elements.demoBtn.addEventListener('click', handleDemo);
+    }
+    if (elements.demoHelper) {
+      elements.demoHelper.addEventListener('click', handleDemo);
+    }
+    if (elements.logoutBtn) {
+      elements.logoutBtn.addEventListener('click', () => {
+        setToken(null);
+        state.user = null;
+        setAuthUI(false);
+        showToast('Sessao encerrada');
+      });
+    }
+
+    updateTransactionFields();
+    updatePixKeyField();
+
+    if (state.token) {
+      const decoded = decodeToken(state.token);
+      if (decoded && decoded.name) {
+        state.user = { name: decoded.name };
+      }
+      try {
+        await loadOverview();
+        await loadExtensions();
+        setAuthUI(true);
+      } catch (err) {
+        setToken(null);
+        setAuthUI(false);
+      }
+    } else {
+      setAuthUI(false);
+    }
+  }
+
+  initialize();
+})();
