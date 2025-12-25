@@ -3,6 +3,7 @@ const { z } = require('zod');
 
 const { pool } = require('../db');
 const { randomId, accountNumber } = require('../lib/ids');
+const { idempotencyGuard } = require('../middleware/idempotency');
 const { validateBody } = require('../middleware/validate');
 
 const router = express.Router();
@@ -35,7 +36,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', validateBody(createAccountSchema), async (req, res) => {
+router.post('/', idempotencyGuard('accounts.create'), validateBody(createAccountSchema), async (req, res) => {
   const name = req.body.name.trim();
   const currency = req.body.currency.trim().toUpperCase();
   const accountId = randomId('acc');

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="GhostPay APIs e webhooks" />
+    <title>GhostPay | Desenvolvedores</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="grid-overlay"></div>
+      <div class="scanline"></div>
+    </div>
+
+    <header class="topbar" data-topbar>
+      <div class="container">
+        <a class="brand" href="index.html">
+          <span class="brand-mark"><img src="assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
+          <span class="brand-text">
+            <span class="brand-name">GhostPay</span>
+            <span class="brand-tag">Desenvolvedores</span>
+          </span>
+        </a>
+
+        <nav class="nav" data-nav>
+          <a class="nav-link" href="index.html">Inicio</a>
+          <a class="nav-link" href="platform.html">Plataforma</a>
+          <a class="nav-link" href="security.html">Seguranca</a>
+          <a class="nav-link" href="developers.html">Desenvolvedores</a>
+          <a class="nav-link" href="pricing.html">Planos</a>
+          <a class="nav-link" href="support.html">Suporte</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
+          <a class="btn btn-primary" href="https://app.seudominio.com">Console</a>
+          <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero" data-reveal>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">API GhostPay</p>
+            <h1>APIs REST para Pix, cartoes e ledger com sandbox.</h1>
+            <p class="lead">
+              Endpoints claros para contas, transacoes, cobrancas e webhooks.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="https://app.seudominio.com">Gerar token no console</a>
+              <a class="btn btn-ghost" href="support.html">Falar com suporte</a>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="glass-card">
+              <div class="card-head">
+                <h3>Exemplo</h3>
+                <span class="tag">Pix charge</span>
+              </div>
+              <pre class="code-block">curl -X POST http://localhost:3000/api/pix/charges \
+  -H "Authorization: Bearer &lt;token&gt;" \
+  -H "Content-Type: application/json" \
+  -d '{"accountId":"acc_123","keyId":"pix_456","amount":2490,"description":"Cobranca"}'</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="section-head">
+          <h2>Eventos e webhooks</h2>
+          <p class="lead">Eventos assinados com HMAC e entregas registradas.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Eventos principais</h3>
+              <span class="tag">Eventos</span>
+            </div>
+            <div class="pill-row">
+              <span class="pill">pix.charge.created</span>
+              <span class="pill">pix.charge.paid</span>
+              <span class="pill">pix.transfer.completed</span>
+              <span class="pill">card.transaction.settled</span>
+              <span class="pill">webhook.test</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Sandbox e testes</h3>
+              <span class="tag">QA</span>
+            </div>
+            <p class="muted">Simule Pix e acione webhooks sem tocar em producao.</p>
+            <div class="pill-row">
+              <span class="pill">Simular Pix</span>
+              <span class="pill">Criar cobranca</span>
+              <span class="pill">Testar webhook</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="grid-3">
+          <div class="feature-card">
+            <div class="icon">JWT</div>
+            <h3>Auth segura</h3>
+            <p class="muted">JWT, bcrypt e rate limiting.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">POST</div>
+            <h3>Postman e exemplos</h3>
+            <p class="muted">Teste rapidamente contas, Pix e cartoes.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">HMAC</div>
+            <h3>Webhooks assinados</h3>
+            <p class="muted">HMAC e rastreio de entregas.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta" data-reveal>
+        <div class="cta-card">
+          <div>
+            <h2>Pronto para integrar?</h2>
+            <p class="lead">Gere o token no console e comece agora.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-primary" href="https://app.seudominio.com">Acessar console</a>
+            <a class="btn btn-ghost" href="support.html">Falar com time</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand-name">GhostPay</div>
+          <small>Banco digital para equipes fintech.</small>
+        </div>
+        <div class="footer-col">
+          <strong>Produto</strong>
+          <a href="platform.html">Plataforma</a>
+          <a href="security.html">Seguranca</a>
+          <a href="pricing.html">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Console</strong>
+          <a href="https://app.seudominio.com">Acessar</a>
+          <a href="developers.html">Desenvolvedores</a>
+          <a href="support.html">Suporte</a>
+        </div>
+        <div class="footer-col">
+          <strong>Infra</strong>
+          <span class="muted">AWS + Postgres</span>
+          <span class="muted">Pronto para Cloudflare</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="site.js"></script>
+  </body>
+</html>

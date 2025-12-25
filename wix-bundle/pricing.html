@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="GhostPay planos" />
+    <title>GhostPay | Planos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="grid-overlay"></div>
+      <div class="scanline"></div>
+    </div>
+
+    <header class="topbar" data-topbar>
+      <div class="container">
+        <a class="brand" href="index.html">
+          <span class="brand-mark"><img src="assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
+          <span class="brand-text">
+            <span class="brand-name">GhostPay</span>
+            <span class="brand-tag">Planos</span>
+          </span>
+        </a>
+
+        <nav class="nav" data-nav>
+          <a class="nav-link" href="index.html">Inicio</a>
+          <a class="nav-link" href="platform.html">Plataforma</a>
+          <a class="nav-link" href="security.html">Seguranca</a>
+          <a class="nav-link" href="developers.html">Desenvolvedores</a>
+          <a class="nav-link" href="pricing.html">Planos</a>
+          <a class="nav-link" href="support.html">Suporte</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
+          <a class="btn btn-primary" href="https://app.seudominio.com">Console</a>
+          <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero" data-reveal>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Planos GhostPay</p>
+            <h1>Planos para validar, operar e escalar.</h1>
+            <p class="lead">Valores por volume e servicos conforme sua necessidade.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="support.html">Falar com time</a>
+              <a class="btn btn-ghost" href="https://app.seudominio.com">Ver demo</a>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="glass-card">
+              <div class="card-head">
+                <h3>Modelo sob medida</h3>
+                <span class="tag">Flex</span>
+              </div>
+              <p class="muted">Precisa de algo especifico? Ajustamos a plataforma para voce.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-head">
+              <strong>Sandbox</strong>
+              <span class="tag">Teste</span>
+            </div>
+            <div class="price">R$ 0</div>
+            <p class="muted">Ideal para validar seu produto e fluxo.</p>
+            <div class="list">
+              <span class="muted">Pix e cartoes em sandbox</span>
+              <span class="muted">1 usuario</span>
+              <span class="muted">Console completo</span>
+            </div>
+            <button class="btn btn-ghost" type="button">Comecar</button>
+          </div>
+
+          <div class="price-card highlight">
+            <div class="price-head">
+              <strong>Operacao</strong>
+              <span class="tag">Popular</span>
+            </div>
+            <div class="price">A partir de R$ 499/mes</div>
+            <p class="muted">Para operar em producao com suporte.</p>
+            <div class="list">
+              <span class="muted">Pix e cartoes em producao</span>
+              <span class="muted">Webhooks e conciliacao</span>
+              <span class="muted">SLA comercial</span>
+            </div>
+            <button class="btn btn-primary" type="button">Falar com time</button>
+          </div>
+
+          <div class="price-card">
+            <div class="price-head">
+              <strong>Enterprise</strong>
+              <span class="tag">Sob medida</span>
+            </div>
+            <div class="price">Sob consulta</div>
+            <p class="muted">Operacao completa com SLA dedicado.</p>
+            <div class="list">
+              <span class="muted">SLA dedicado</span>
+              <span class="muted">Suporte especializado</span>
+              <span class="muted">Integracoes sob medida</span>
+            </div>
+            <button class="btn btn-ghost" type="button">Falar com time</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta" data-reveal>
+        <div class="cta-card">
+          <div>
+            <h2>Precisa de algo sob medida?</h2>
+            <p class="lead">Nos conte sua operacao e montamos o plano ideal.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-primary" href="support.html">Agendar conversa</a>
+            <a class="btn btn-ghost" href="https://app.seudominio.com">Ver console</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand-name">GhostPay</div>
+          <small>Banco digital para equipes fintech.</small>
+        </div>
+        <div class="footer-col">
+          <strong>Produto</strong>
+          <a href="platform.html">Plataforma</a>
+          <a href="security.html">Seguranca</a>
+          <a href="pricing.html">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Console</strong>
+          <a href="https://app.seudominio.com">Acessar</a>
+          <a href="developers.html">Desenvolvedores</a>
+          <a href="support.html">Suporte</a>
+        </div>
+        <div class="footer-col">
+          <strong>Infra</strong>
+          <span class="muted">AWS + Postgres</span>
+          <span class="muted">Pronto para Cloudflare</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="site.js"></script>
+  </body>
+</html>

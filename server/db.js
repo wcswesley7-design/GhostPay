@@ -177,6 +177,36 @@ async function initDb() {
       );
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS idempotency_keys (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        idem_key TEXT NOT NULL,
+        operation TEXT NOT NULL,
+        method TEXT NOT NULL,
+        request_hash TEXT NOT NULL,
+        response_status INTEGER,
+        response_body JSONB,
+        created_at TIMESTAMPTZ NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL,
+        UNIQUE (user_id, idem_key, operation, method)
+      );
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS dock_webhook_events (
+        id TEXT PRIMARY KEY,
+        event_id TEXT,
+        event_type TEXT,
+        payload JSONB NOT NULL,
+        payload_hash TEXT NOT NULL,
+        status TEXT NOT NULL,
+        received_at TIMESTAMPTZ NOT NULL,
+        processed_at TIMESTAMPTZ,
+        error TEXT
+      );
+    `);
+
     await client.query(
       'CREATE INDEX IF NOT EXISTS idx_accounts_user_id ON accounts(user_id);'
     );
@@ -212,6 +242,15 @@ async function initDb() {
     );
     await client.query(
       'CREATE INDEX IF NOT EXISTS idx_webhooks_user ON webhooks(user_id);'
+    );
+    await client.query(
+      'CREATE INDEX IF NOT EXISTS idx_idempotency_user ON idempotency_keys(user_id);'
+    );
+    await client.query(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_dock_webhook_hash ON dock_webhook_events(payload_hash);'
+    );
+    await client.query(
+      "CREATE UNIQUE INDEX IF NOT EXISTS idx_dock_webhook_event ON dock_webhook_events(event_id) WHERE event_id IS NOT NULL;"
     );
     await client.query('COMMIT');
   } catch (err) {

@@ -4,6 +4,7 @@ const { z } = require('zod');
 const { pool } = require('../db');
 const { parseAmountToCents } = require('../lib/money');
 const { recordTransaction } = require('../services/ledger');
+const { idempotencyGuard } = require('../middleware/idempotency');
 const { validateBody, validateQuery } = require('../middleware/validate');
 
 const router = express.Router();
@@ -77,7 +78,7 @@ router.get('/', validateQuery(querySchema), async (req, res) => {
   }
 });
 
-router.post('/', validateBody(transactionSchema), async (req, res) => {
+router.post('/', idempotencyGuard('transactions.create'), validateBody(transactionSchema), async (req, res) => {
   const amountCents = parseAmountToCents(req.body.amount);
   if (!amountCents || amountCents <= 0) {
     return res.status(400).json({ error: 'Invalid amount' });

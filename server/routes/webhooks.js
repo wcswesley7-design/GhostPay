@@ -4,6 +4,7 @@ const { z } = require('zod');
 
 const { pool } = require('../db');
 const { randomId } = require('../lib/ids');
+const { idempotencyGuard } = require('../middleware/idempotency');
 const { validateBody } = require('../middleware/validate');
 const { emitWebhook } = require('../services/webhooks');
 
@@ -37,7 +38,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', validateBody(createWebhookSchema), async (req, res) => {
+router.post('/', idempotencyGuard('webhooks.create'), validateBody(createWebhookSchema), async (req, res) => {
   const webhookId = randomId('wh');
   const now = new Date().toISOString();
   const secret = req.body.secret || generateSecret();

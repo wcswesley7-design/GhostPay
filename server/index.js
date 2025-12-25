@@ -12,9 +12,11 @@ const overviewRoutes = require('./routes/overview');
 const pixRoutes = require('./routes/pix');
 const cardsRoutes = require('./routes/cards');
 const webhooksRoutes = require('./routes/webhooks');
+const dockWebhooksRoutes = require('./routes/dockWebhooks');
 const integrationsRoutes = require('./routes/integrations');
 const { authRequired } = require('./middleware/auth');
 const { initDb } = require('./db');
+const { startWebhookWorker } = require('./services/webhooks');
 
 const app = express();
 const publicDir = path.join(__dirname, '..', 'public');
@@ -27,7 +29,12 @@ if (!process.env.JWT_SECRET) {
 app.use(helmet({
   contentSecurityPolicy: false
 }));
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({
+  limit: '1mb',
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(express.static(publicDir));
 
 const authLimiter = rateLimit({
@@ -47,6 +54,7 @@ app.use('/api/transactions', authRequired, transactionsRoutes);
 app.use('/api/overview', authRequired, overviewRoutes);
 app.use('/api/pix', authRequired, pixRoutes);
 app.use('/api/cards', authRequired, cardsRoutes);
+app.use('/api/webhooks/dock', dockWebhooksRoutes);
 app.use('/api/webhooks', authRequired, webhooksRoutes);
 app.use('/api/integrations', authRequired, integrationsRoutes);
 
@@ -85,6 +93,7 @@ async function start() {
     app.listen(port, () => {
       console.log(`GhostPay running on http://localhost:${port}`);
     });
+    startWebhookWorker();
   } catch (err) {
     console.error('[ghostpay] Failed to initialize database.', err);
     process.exit(1);

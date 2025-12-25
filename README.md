@@ -76,6 +76,7 @@ You can also click **Load demo** on the landing screen. The demo endpoint is dis
 - `DELETE /api/webhooks/:id`
 - `POST /api/webhooks/:id/test`
 - `GET /api/webhooks/events`
+- `POST /api/webhooks/dock` (public, for Dock callbacks)
 - `GET /api/integrations/dock`
 - `POST /api/integrations/dock/test`
 
@@ -84,6 +85,7 @@ You can also click **Load demo** on the landing screen. The demo endpoint is dis
 - Use `JWT_SECRET` in `.env` for production.
 - Pix and card flows are simulated locally; to go live you must integrate a regulated BaaS/PSP provider and complete compliance.
 - Webhooks are signed with `X-GhostPay-Signature: sha256=<hmac>` using the webhook secret.
+- For write operations, you can send `Idempotency-Key` to avoid duplicate processing.
 
 ### Webhook events
 - `pix.charge.created`
