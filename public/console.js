@@ -55,9 +55,9 @@
   };
 
   const labels = {
-    deposit: 'Deposito',
+    deposit: 'Depósito',
     withdrawal: 'Saque',
-    transfer: 'Transferencia',
+    transfer: 'Transferência',
     payment: 'Pagamento'
   };
 
@@ -250,7 +250,7 @@
 
   function renderTransactions(transactions) {
     if (!transactions.length) {
-      elements.transactionsList.innerHTML = '<div class="list-item">Nenhuma movimentacao recente.</div>';
+      elements.transactionsList.innerHTML = '<div class="list-item">Nenhuma movimentação recente.</div>';
       return;
     }
 
@@ -307,7 +307,7 @@
 
   function renderPixCharges(charges) {
     if (!charges.length) {
-      elements.pixChargesList.innerHTML = '<div class="list-item">Nenhuma cobranca Pix criada.</div>';
+      elements.pixChargesList.innerHTML = '<div class="list-item">Nenhuma cobrança Pix criada.</div>';
       return;
     }
 
@@ -317,7 +317,7 @@
         const statusClass = charge.status === 'pending' ? 'pending' : charge.status;
         const action =
           charge.status === 'pending'
-            ? `<button class="btn btn-ghost" data-action="pay" data-id="${charge.id}" type="button">Pagar cobranca</button>`
+            ? `<button class="btn btn-ghost" data-action="pay" data-id="${charge.id}" type="button">Pagar cobrança</button>`
             : '';
         return `
           <div class="list-item">
@@ -338,7 +338,7 @@
 
   function renderCards(cards) {
     if (!cards.length) {
-      elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartao emitido.</div>';
+      elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartão emitido.</div>';
       elements.cardTxnForm.elements.cardId.innerHTML = '';
       elements.cardTxnForm.elements.cardId.disabled = true;
       return;
@@ -352,7 +352,7 @@
             <strong>${card.brand} **** ${card.last4}</strong>
             <div class="list-meta">
               <span>${card.type} - ${statusLabel}</span>
-              <span>${formatCents(card.availableCents, 'BRL')} disponivel</span>
+              <span>${formatCents(card.availableCents, 'BRL')} disponível</span>
             </div>
           </div>
         `;
@@ -426,7 +426,7 @@
       renderPixCharges(state.pixCharges.slice(0, 5));
     } catch (err) {
       elements.pixKeysList.innerHTML = '<span class="pill">Falha ao carregar Pix</span>';
-      elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar cobrancas Pix.</div>';
+      elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar cobranças Pix.</div>';
       showToast(err.message, 'error');
     }
   }
@@ -446,8 +446,8 @@
         renderCardTransactions([]);
       }
     } catch (err) {
-      elements.cardsList.innerHTML = '<div class="list-item">Falha ao carregar cartoes.</div>';
-      elements.cardTransactionsList.innerHTML = '<div class="list-item">Falha ao carregar transacoes.</div>';
+      elements.cardsList.innerHTML = '<div class="list-item">Falha ao carregar cartões.</div>';
+      elements.cardTransactionsList.innerHTML = '<div class="list-item">Falha ao carregar transações.</div>';
       showToast(err.message, 'error');
     }
   }
@@ -588,7 +588,7 @@
       elements.transactionForm.reset();
       updateTransactionFields();
       await loadOverview();
-      showToast('Movimentacao registrada');
+      showToast('Movimentação registrada');
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -654,7 +654,7 @@
       });
       elements.pixChargeForm.reset();
       await loadPix();
-      showToast('Cobranca Pix criada');
+      showToast('Cobrança Pix criada');
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -696,7 +696,7 @@
       });
       elements.cardForm.reset();
       await loadCards();
-      showToast('Cartao emitido');
+      showToast('Cartão emitido');
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -708,7 +708,7 @@
     const cardId = payload.cardId;
     delete payload.cardId;
     if (!cardId) {
-      showToast('Selecione um cartao.', 'error');
+      showToast('Selecione um cartão.', 'error');
       return;
     }
 
@@ -760,7 +760,7 @@
         setToken(null);
         state.user = null;
         setAuthUI(false);
-        showToast('Sessao encerrada');
+        showToast('Sessão encerrada');
       });
     }
 
