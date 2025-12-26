@@ -51,7 +51,7 @@
     </header>
 
     <main class="page console-page" id="consoleShell">
-      <section class="hero" data-reveal>
+      <section class="hero" id="consoleHero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Conta GhostPay</p>
@@ -93,7 +93,7 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-head">
-              <h3>Acesso a conta</h3>
+              <h3>Acesso à conta</h3>
               <span class="tag">Cliente</span>
             </div>
             <div class="tab-group">
@@ -114,7 +114,7 @@
             <form class="form hidden" id="registerForm">
               <label>
                 Nome completo
-                <input type="text" name="name" placeholder="Joao Silva" required />
+                <input type="text" name="name" placeholder="João Silva" required />
               </label>
               <label>
                 Email
@@ -158,271 +158,360 @@
       </section>
 
       <section class="section hidden" id="dashboardPanel">
-        <nav class="console-nav" data-reveal>
-          <a class="pill" href="#overview">Visao geral</a>
-          <a class="pill" href="#accounts">Contas</a>
-          <a class="pill" href="#pix">Pix</a>
-          <a class="pill" href="#cards">Cartões</a>
-        </nav>
-
-        <section class="section" id="overview" data-reveal>
-          <div class="section-head">
-            <h2>Visao geral</h2>
-            <p class="lead">Saldos e atividade consolidada das Últimas semanas.</p>
-          </div>
-          <div class="metric-grid">
-            <div class="metric">
-              <span class="muted">Saldo total</span>
-              <strong id="metricBalanceFull">--</strong>
-            </div>
-            <div class="metric">
-              <span class="muted">Entradas 30d</span>
-              <strong id="metricIncomeFull">--</strong>
-            </div>
-            <div class="metric">
-              <span class="muted">Saídas 30d</span>
-              <strong id="metricSpendFull">--</strong>
-            </div>
-            <div class="metric">
-              <span class="muted">Atividade</span>
-              <strong id="metricCount">--</strong>
-            </div>
-          </div>
-        </section>
-
-        <section class="section" id="accounts" data-reveal>
-          <div class="section-head">
-            <h2>Contas e movimentações</h2>
-            <p class="lead">Gerencie suas contas e registre movimentações.</p>
-          </div>
-          <div class="grid-2">
+        <div class="console-layout">
+          <aside class="console-sidebar" data-reveal>
             <div class="card">
               <div class="card-head">
-                <h3>Contas</h3>
+                <h3>Console GhostPay</h3>
+                <span class="tag">Sandbox</span>
+              </div>
+              <p class="muted">Ambiente de simulação para testar fluxos bancários.</p>
+              <div class="list">
+                <div class="list-item">
+                  <strong>Usuário</strong>
+                  <div class="list-meta">
+                    <span id="sidebarName">--</span>
+                  </div>
+                </div>
+                <div class="list-item">
+                  <strong>Status</strong>
+                  <div class="list-meta">
+                    <span>Operações simuladas</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Atalhos</h3>
+                <span class="tag">Navegação</span>
+              </div>
+              <nav class="console-nav console-nav--stacked">
+                <a class="pill" href="#overview">Visão geral</a>
+                <a class="pill" href="#accounts">Contas</a>
+                <a class="pill" href="#movements">Movimentações</a>
+                <a class="pill" href="#pix">Pix</a>
+                <a class="pill" href="#cards">Cartões</a>
+              </nav>
+              <a class="btn btn-ghost" href="/support">Falar com suporte</a>
+            </div>
+          </aside>
+
+          <div class="console-main">
+            <section class="section" id="overview" data-reveal>
+              <div class="section-head section-head--inline">
+                <div>
+                  <h2>Visão geral</h2>
+                  <p class="lead">Saldos e atividade das últimas semanas.</p>
+                </div>
+                <button class="btn btn-ghost" type="button" id="refreshOverview">Atualizar</button>
+              </div>
+              <div class="metric-grid">
+                <div class="metric">
+                  <span class="muted">Saldo total</span>
+                  <strong id="metricBalanceFull">--</strong>
+                </div>
+                <div class="metric">
+                  <span class="muted">Entradas 30d</span>
+                  <strong id="metricIncomeFull">--</strong>
+                </div>
+                <div class="metric">
+                  <span class="muted">Saídas 30d</span>
+                  <strong id="metricSpendFull">--</strong>
+                </div>
+                <div class="metric">
+                  <span class="muted">Atividade</span>
+                  <strong id="metricCount">--</strong>
+                </div>
+              </div>
+              <div class="quick-grid">
+                <a class="quick-card" href="#movements">
+                  <span class="quick-title">Nova movimentação</span>
+                  <span class="quick-meta">Depósitos, saques e pagamentos</span>
+                </a>
+                <a class="quick-card" href="#pix">
+                  <span class="quick-title">Enviar Pix</span>
+                  <span class="quick-meta">Chave, valor e descrição</span>
+                </a>
+                <a class="quick-card" href="#cards">
+                  <span class="quick-title">Emitir cartão</span>
+                  <span class="quick-meta">Virtual ou físico</span>
+                </a>
+              </div>
+            </section>
+
+            <section class="section" id="accounts" data-reveal>
+              <div class="section-head section-head--inline">
+                <div>
+                  <h2>Contas</h2>
+                  <p class="lead">Gerencie suas contas internas e saldos.</p>
+                </div>
                 <button class="btn btn-ghost" type="button" id="refreshAccounts">Atualizar</button>
               </div>
-              <div class="chip-row" id="accountChips"></div>
-              <div class="list" id="accountsList"></div>
-              <form class="form" id="accountForm">
-                <label>
-                  Nova conta
-                  <input type="text" name="name" placeholder="Conta principal" required />
-                </label>
-                <label>
-                  Moeda
-                  <input type="text" name="currency" placeholder="BRL" maxlength="3" />
-                </label>
-                <button class="btn btn-primary" type="submit">Adicionar</button>
-              </form>
-            </div>
+              <div class="grid-2">
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Contas ativas</h3>
+                    <span class="tag">Saldo</span>
+                  </div>
+                  <div class="chip-row" id="accountChips"></div>
+                  <div class="list" id="accountsList"></div>
+                </div>
 
-            <div class="card">
-              <div class="card-head">
-                <h3>Movimentações</h3>
-                <button class="btn btn-ghost" type="button" id="refreshOverview">Atualizar resumo</button>
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Nova conta</h3>
+                    <span class="tag">Interna</span>
+                  </div>
+                  <p class="muted">Crie contas para separar fluxos e objetivos.</p>
+                  <form class="form" id="accountForm">
+                    <label>
+                      Nome da conta
+                      <input type="text" name="name" placeholder="Conta principal" required />
+                    </label>
+                    <label>
+                      Moeda
+                      <input type="text" name="currency" placeholder="BRL" maxlength="3" />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Adicionar</button>
+                  </form>
+                </div>
               </div>
-              <p class="muted">Movimentações externas são simuladas. Informe os dados de origem ou destino.</p>
-              <form class="form" id="transactionForm">
-                <label>
-                  Tipo
-                  <select name="type" required>
-                    <option value="deposit">Depósito</option>
-                    <option value="withdrawal">Saque</option>
-                    <option value="transfer">Transferência</option>
-                    <option value="payment">Pagamento</option>
-                  </select>
-                </label>
-                <label>
-                  Valor
-                  <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
-                </label>
-                <label>
-                  Conta de origem
-                  <select name="fromAccountId"></select>
-                </label>
-                <label>
-                  Conta de destino
-                  <select name="toAccountId"></select>
-                </label>
-                <label>
-                  Contraparte (origem/destino)
-                  <input type="text" name="counterparty" placeholder="Nome da pessoa ou empresa" />
-                </label>
-                <label>
-                  Documento (CPF/CNPJ)
-                  <input type="text" name="externalDocument" placeholder="000.000.000-00" />
-                </label>
-                <label>
-                  Instituição/Banco
-                  <input type="text" name="externalInstitution" placeholder="Banco X / Pix" />
-                </label>
-                <label>
-                  Identificador (agência/conta ou chave Pix)
-                  <input type="text" name="externalIdentifier" placeholder="Ag 0001 / Conta 12345-6" />
-                </label>
-                <label>
-                  Nota
-                  <input type="text" name="note" placeholder="Opcional" />
-                </label>
-                <button class="btn btn-primary" type="submit">Enviar</button>
-              </form>
-              <div class="card-subhead card-head">
-                <h4>Últimas movimentações</h4>
+            </section>
+
+            <section class="section" id="movements" data-reveal>
+              <div class="section-head section-head--inline">
+                <div>
+                  <h2>Movimentações</h2>
+                  <p class="lead">Depósitos, saques e transferências internas.</p>
+                </div>
                 <button class="btn btn-ghost" type="button" id="refreshTransactions">Atualizar lista</button>
               </div>
-              <div class="list" id="transactionsList"></div>
-            </div>
-          </div>
-        </section>
+              <div class="grid-2">
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Nova movimentação</h3>
+                    <span class="tag">Sandbox</span>
+                  </div>
+                  <p class="muted">Movimentações externas são simuladas. Informe os dados de origem ou destino.</p>
+                  <form class="form" id="transactionForm">
+                    <label>
+                      Tipo
+                      <select name="type" required>
+                        <option value="deposit">Depósito</option>
+                        <option value="withdrawal">Saque</option>
+                        <option value="transfer">Transferência</option>
+                        <option value="payment">Pagamento</option>
+                      </select>
+                    </label>
+                    <label>
+                      Valor
+                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                    </label>
+                    <label>
+                      Conta de origem
+                      <select name="fromAccountId"></select>
+                    </label>
+                    <label>
+                      Conta de destino
+                      <select name="toAccountId"></select>
+                    </label>
+                    <label>
+                      Contraparte (origem/destino)
+                      <input type="text" name="counterparty" placeholder="Nome da pessoa ou empresa" />
+                    </label>
+                    <label>
+                      Documento (CPF/CNPJ)
+                      <input type="text" name="externalDocument" placeholder="000.000.000-00" />
+                    </label>
+                    <label>
+                      Instituição/Banco
+                      <input type="text" name="externalInstitution" placeholder="Banco X / Pix" />
+                    </label>
+                    <label>
+                      Identificador (agência/conta ou chave Pix)
+                      <input type="text" name="externalIdentifier" placeholder="Ag 0001 / Conta 12345-6" />
+                    </label>
+                    <label>
+                      Nota
+                      <input type="text" name="note" placeholder="Opcional" />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Enviar</button>
+                  </form>
+                </div>
 
-        <section class="section" id="pix" data-reveal>
-          <div class="section-head">
-            <h2>Pix</h2>
-            <p class="lead">Chaves, transferências e cobranças em um so lugar.</p>
-          </div>
-          <div class="grid-2">
-            <div class="card">
-              <div class="card-head">
-                <h3>Chaves e transferências</h3>
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Últimas movimentações</h3>
+                    <span class="tag">Resumo</span>
+                  </div>
+                  <div class="list" id="transactionsList"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="section" id="pix" data-reveal>
+              <div class="section-head section-head--inline">
+                <div>
+                  <h2>Pix</h2>
+                  <p class="lead">Chaves, transferências e cobranças em um só lugar.</p>
+                </div>
                 <button class="btn btn-ghost" type="button" id="refreshPix">Atualizar</button>
               </div>
-              <p class="muted">Cadastre suas chaves e envie Pix.</p>
-              <div class="pill-row" id="pixKeysList"></div>
-              <form class="form" id="pixKeyForm">
-                <label>
-                  Tipo de chave
-                  <select name="type">
-                    <option value="random">Aleatória</option>
-                    <option value="email">Email</option>
-                    <option value="phone">Telefone</option>
-                    <option value="cpf">CPF</option>
-                  </select>
-                </label>
-                <label>
-                  Valor da chave
-                  <input type="text" name="value" placeholder="Somente email/telefone/cpf" />
-                </label>
-                <button class="btn btn-primary" type="submit">Criar chave</button>
-              </form>
+              <div class="grid-3">
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Chaves Pix</h3>
+                    <span class="tag">Cadastro</span>
+                  </div>
+                  <p class="muted">Cadastre suas chaves para receber Pix.</p>
+                  <div class="pill-row" id="pixKeysList"></div>
+                  <form class="form" id="pixKeyForm">
+                    <label>
+                      Tipo de chave
+                      <select name="type">
+                        <option value="random">Aleatória</option>
+                        <option value="email">Email</option>
+                        <option value="phone">Telefone</option>
+                        <option value="cpf">CPF</option>
+                      </select>
+                    </label>
+                    <label>
+                      Valor da chave
+                      <input type="text" name="value" placeholder="Somente email/telefone/cpf" />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Criar chave</button>
+                  </form>
+                </div>
 
-              <div class="card-subhead">
-                <h4>Transferência Pix</h4>
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Transferência Pix</h3>
+                    <span class="tag">Envio</span>
+                  </div>
+                  <form class="form" id="pixTransferForm">
+                    <label>
+                      Conta de origem
+                      <select name="accountId" required></select>
+                    </label>
+                    <label>
+                      Tipo da chave
+                      <select name="keyType">
+                        <option value="email">Email</option>
+                        <option value="phone">Telefone</option>
+                        <option value="cpf">CPF</option>
+                        <option value="random">Aleatória</option>
+                      </select>
+                    </label>
+                    <label>
+                      Chave destino
+                      <input type="text" name="keyValue" placeholder="Chave Pix" required />
+                    </label>
+                    <label>
+                      Valor
+                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                    </label>
+                    <label>
+                      Descrição
+                      <input type="text" name="description" placeholder="Opcional" />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Enviar Pix</button>
+                  </form>
+                </div>
+
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Cobranças Pix</h3>
+                    <button class="btn btn-ghost" type="button" id="refreshCharges">Atualizar</button>
+                  </div>
+                  <form class="form" id="pixChargeForm">
+                    <label>
+                      Conta
+                      <select name="accountId" required></select>
+                    </label>
+                    <label>
+                      Chave Pix
+                      <select name="keyId" required></select>
+                    </label>
+                    <label>
+                      Valor
+                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                    </label>
+                    <label>
+                      Descrição
+                      <input type="text" name="description" placeholder="Opcional" />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Criar cobrança</button>
+                  </form>
+                  <div class="list" id="pixChargesList"></div>
+                </div>
               </div>
-              <form class="form" id="pixTransferForm">
-                <label>
-                  Conta de origem
-                  <select name="accountId" required></select>
-                </label>
-                <label>
-                  Tipo da chave
-                  <select name="keyType">
-                    <option value="email">Email</option>
-                    <option value="phone">Telefone</option>
-                    <option value="cpf">CPF</option>
-                    <option value="random">Aleatória</option>
-                  </select>
-                </label>
-                <label>
-                  Chave destino
-                  <input type="text" name="keyValue" placeholder="Chave Pix" required />
-                </label>
-                <label>
-                  Valor
-                  <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
-                </label>
-                <label>
-                  Descrição
-                  <input type="text" name="description" placeholder="Opcional" />
-                </label>
-                <button class="btn btn-primary" type="submit">Enviar Pix</button>
-              </form>
-            </div>
+            </section>
 
-            <div class="card">
-              <div class="card-head">
-                <h3>Cobranças Pix</h3>
-                <button class="btn btn-ghost" type="button" id="refreshCharges">Atualizar</button>
-              </div>
-              <form class="form" id="pixChargeForm">
-                <label>
-                  Conta
-                  <select name="accountId" required></select>
-                </label>
-                <label>
-                  Chave Pix
-                  <select name="keyId" required></select>
-                </label>
-                <label>
-                  Valor
-                  <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
-                </label>
-                <label>
-                  Descrição
-                  <input type="text" name="description" placeholder="Opcional" />
-                </label>
-                <button class="btn btn-primary" type="submit">Criar cobrança</button>
-              </form>
-              <div class="list" id="pixChargesList"></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section" id="cards" data-reveal>
-          <div class="section-head">
-            <h2>Cartões</h2>
-            <p class="lead">Emissão e controle dos seus cartões.</p>
-          </div>
-          <div class="grid-2">
-            <div class="card">
-              <div class="card-head">
-                <h3>Cartões</h3>
+            <section class="section" id="cards" data-reveal>
+              <div class="section-head section-head--inline">
+                <div>
+                  <h2>Cartões</h2>
+                  <p class="lead">Emissão e controle dos seus cartões.</p>
+                </div>
                 <button class="btn btn-ghost" type="button" id="refreshCards">Atualizar</button>
               </div>
-              <div class="list" id="cardsList"></div>
-              <form class="form" id="cardForm">
-                <label>
-                  Conta de débito
-                  <select name="accountId" required></select>
-                </label>
-                <label>
-                  Tipo de cartão
-                  <select name="type">
-                    <option value="virtual">Virtual</option>
-                    <option value="physical">Físico</option>
-                  </select>
-                </label>
-                <label>
-                  Limite
-                  <input type="number" name="limit" placeholder="5000.00" min="0" step="0.01" />
-                </label>
-                <button class="btn btn-primary" type="submit">Emitir cartão</button>
-              </form>
-            </div>
+              <div class="grid-2">
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Cartões ativos</h3>
+                    <span class="tag">Status</span>
+                  </div>
+                  <div class="list" id="cardsList"></div>
+                  <div class="card-subhead">
+                    <h4>Emitir cartão</h4>
+                  </div>
+                  <form class="form" id="cardForm">
+                    <label>
+                      Conta de débito
+                      <select name="accountId" required></select>
+                    </label>
+                    <label>
+                      Tipo de cartão
+                      <select name="type">
+                        <option value="virtual">Virtual</option>
+                        <option value="physical">Físico</option>
+                      </select>
+                    </label>
+                    <label>
+                      Limite
+                      <input type="number" name="limit" placeholder="5000.00" min="0" step="0.01" />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Emitir cartão</button>
+                  </form>
+                </div>
 
-            <div class="card">
-              <div class="card-head">
-                <h3>Compras recentes</h3>
-                <button class="btn btn-ghost" type="button" id="refreshCardTx">Atualizar</button>
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Compras recentes</h3>
+                    <button class="btn btn-ghost" type="button" id="refreshCardTx">Atualizar</button>
+                  </div>
+                  <form class="form" id="cardTxnForm">
+                    <label>
+                      Cartão
+                      <select name="cardId" required></select>
+                    </label>
+                    <label>
+                      Valor
+                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                    </label>
+                    <label>
+                      Loja
+                      <input type="text" name="merchant" placeholder="Nome do estabelecimento" required />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Registrar compra</button>
+                  </form>
+                  <div class="list" id="cardTransactionsList"></div>
+                </div>
               </div>
-              <form class="form" id="cardTxnForm">
-                <label>
-                  Cartão
-                  <select name="cardId" required></select>
-                </label>
-                <label>
-                  Valor
-                  <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
-                </label>
-                <label>
-                  Loja
-                  <input type="text" name="merchant" placeholder="Nome do estabelecimento" required />
-                </label>
-                <button class="btn btn-primary" type="submit">Registrar compra</button>
-              </form>
-              <div class="list" id="cardTransactionsList"></div>
-            </div>
+            </section>
           </div>
-        </section>
+        </div>
       </section>
     </main>
 

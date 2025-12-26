@@ -15,6 +15,7 @@
   };
 
   const elements = {
+    consoleHero: document.getElementById('consoleHero'),
     authPanel: document.getElementById('authPanel'),
     dashboardPanel: document.getElementById('dashboardPanel'),
     loginForm: document.getElementById('loginForm'),
@@ -31,6 +32,7 @@
     metricIncomeFull: document.getElementById('metricIncomeFull'),
     metricSpendFull: document.getElementById('metricSpendFull'),
     metricCount: document.getElementById('metricCount'),
+    sidebarName: document.getElementById('sidebarName'),
     accountChips: document.getElementById('accountChips'),
     accountsList: document.getElementById('accountsList'),
     accountForm: document.getElementById('accountForm'),
@@ -153,8 +155,17 @@
   function setAuthUI(isAuthed) {
     elements.authPanel.classList.toggle('hidden', isAuthed);
     elements.dashboardPanel.classList.toggle('hidden', !isAuthed);
+    if (elements.consoleHero) {
+      elements.consoleHero.classList.toggle('hidden', isAuthed);
+    }
     if (elements.logoutBtn) {
       elements.logoutBtn.classList.toggle('hidden', !isAuthed);
+    }
+    if (!isAuthed && elements.sidebarName) {
+      elements.sidebarName.textContent = '--';
+    }
+    if (!isAuthed && elements.welcomeTitle) {
+      elements.welcomeTitle.textContent = 'Sua conta digital em um painel simples.';
     }
   }
 
@@ -427,6 +438,9 @@
       renderMetrics(data.metrics || {});
       if (state.user) {
         elements.welcomeTitle.textContent = `Bem-vindo, ${state.user.name}`;
+        if (elements.sidebarName) {
+          elements.sidebarName.textContent = state.user.name;
+        }
       }
       setError('');
     } catch (err) {
