@@ -9,13 +9,22 @@ const { validateBody, validateQuery } = require('../middleware/validate');
 
 const router = express.Router();
 
+const metadataSchema = z
+  .object({
+    externalInstitution: z.string().max(80).optional(),
+    externalDocument: z.string().max(40).optional(),
+    externalIdentifier: z.string().max(80).optional()
+  })
+  .optional();
+
 const transactionSchema = z.object({
   type: z.enum(['deposit', 'withdrawal', 'transfer', 'payment']),
   amount: z.union([z.string(), z.number()]),
   fromAccountId: z.string().min(1).optional(),
   toAccountId: z.string().min(1).optional(),
   counterparty: z.string().max(80).optional(),
-  note: z.string().max(160).optional()
+  note: z.string().max(160).optional(),
+  metadata: metadataSchema
 });
 
 const querySchema = z.object({
@@ -43,7 +52,7 @@ router.get('/', validateQuery(querySchema), async (req, res) => {
   try {
     const result = accountId
       ? await pool.query(
-          `SELECT id, type, amount_cents, from_account_id, to_account_id, counterparty, note, status, created_at
+          `SELECT id, type, amount_cents, from_account_id, to_account_id, counterparty, note, metadata, status, created_at
            FROM transactions
            WHERE user_id = $1 AND (from_account_id = $2 OR to_account_id = $2)
            ORDER BY created_at DESC
@@ -51,7 +60,7 @@ router.get('/', validateQuery(querySchema), async (req, res) => {
           [req.user.id, accountId, limit]
         )
       : await pool.query(
-          `SELECT id, type, amount_cents, from_account_id, to_account_id, counterparty, note, status, created_at
+          `SELECT id, type, amount_cents, from_account_id, to_account_id, counterparty, note, metadata, status, created_at
            FROM transactions
            WHERE user_id = $1
            ORDER BY created_at DESC
@@ -67,6 +76,7 @@ router.get('/', validateQuery(querySchema), async (req, res) => {
       toAccountId: row.to_account_id,
       counterparty: row.counterparty,
       note: row.note,
+      metadata: row.metadata,
       status: row.status,
       createdAt: row.created_at
     }));
@@ -84,7 +94,7 @@ router.post('/', idempotencyGuard('transactions.create'), validateBody(transacti
     return res.status(400).json({ error: 'Invalid amount' });
   }
 
-  const { type, fromAccountId, toAccountId, counterparty, note } = req.body;
+  const { type, fromAccountId, toAccountId, counterparty, note, metadata } = req.body;
 
   if (type === 'payment' && (!counterparty || !counterparty.trim())) {
     return res.status(400).json({ error: 'Counterparty required for payments' });
@@ -101,7 +111,8 @@ router.post('/', idempotencyGuard('transactions.create'), validateBody(transacti
       fromAccountId,
       toAccountId,
       counterparty: counterparty ? counterparty.trim() : null,
-      note: note ? note.trim() : null
+      note: note ? note.trim() : null,
+      metadata: metadata || null
     });
 
     await client.query('COMMIT');
@@ -115,6 +126,7 @@ router.post('/', idempotencyGuard('transactions.create'), validateBody(transacti
         toAccountId: result.toAccount ? result.toAccount.id : null,
         counterparty: counterparty ? counterparty.trim() : null,
         note: note ? note.trim() : null,
+        metadata: metadata || null,
         status: 'completed',
         createdAt: result.createdAt
       },

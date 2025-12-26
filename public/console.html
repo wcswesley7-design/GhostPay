@@ -221,6 +221,7 @@
                 <h3>Movimentações</h3>
                 <button class="btn btn-ghost" type="button" id="refreshOverview">Atualizar resumo</button>
               </div>
+              <p class="muted">Movimentações externas são simuladas. Informe os dados de origem ou destino.</p>
               <form class="form" id="transactionForm">
                 <label>
                   Tipo
@@ -244,8 +245,20 @@
                   <select name="toAccountId"></select>
                 </label>
                 <label>
-                  Contraparte
-                  <input type="text" name="counterparty" placeholder="Fornecedor" />
+                  Contraparte (origem/destino)
+                  <input type="text" name="counterparty" placeholder="Nome da pessoa ou empresa" />
+                </label>
+                <label>
+                  Documento (CPF/CNPJ)
+                  <input type="text" name="externalDocument" placeholder="000.000.000-00" />
+                </label>
+                <label>
+                  Instituição/Banco
+                  <input type="text" name="externalInstitution" placeholder="Banco X / Pix" />
+                </label>
+                <label>
+                  Identificador (agência/conta ou chave Pix)
+                  <input type="text" name="externalIdentifier" placeholder="Ag 0001 / Conta 12345-6" />
                 </label>
                 <label>
                   Nota

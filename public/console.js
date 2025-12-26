@@ -182,7 +182,8 @@
     state.accounts.forEach((account) => {
       const option = document.createElement('option');
       option.value = account.id;
-      option.textContent = `${account.name} (${account.currency})`;
+      const numberLabel = account.accountNumber ? ` - ${account.accountNumber}` : '';
+      option.textContent = `${account.name} (${account.currency})${numberLabel}`;
       select.appendChild(option);
     });
   }
@@ -258,8 +259,27 @@
       .map((transaction) => {
         const label = labels[transaction.type] || transaction.type;
         const amount = formatCents(transaction.amountCents, 'BRL');
-        const counterparty = transaction.counterparty ? ` - ${transaction.counterparty}` : '';
-        const note = transaction.note ? ` - ${transaction.note}` : '';
+        const detailParts = [];
+        if (transaction.counterparty) {
+          detailParts.push(`Contraparte: ${transaction.counterparty}`);
+        }
+        if (transaction.note) {
+          detailParts.push(`Nota: ${transaction.note}`);
+        }
+        const detailsLine = detailParts.join(' · ');
+
+        const metadata = transaction.metadata || {};
+        const metadataParts = [];
+        if (metadata.externalInstitution) {
+          metadataParts.push(`Banco: ${metadata.externalInstitution}`);
+        }
+        if (metadata.externalDocument) {
+          metadataParts.push(`Documento: ${metadata.externalDocument}`);
+        }
+        if (metadata.externalIdentifier) {
+          metadataParts.push(`Identificador: ${metadata.externalIdentifier}`);
+        }
+        const metadataLine = metadataParts.join(' · ');
 
         return `
           <div class="list-item">
@@ -269,8 +289,10 @@
               <span>${amount}</span>
             </div>
             <div class="list-meta">
-              <span>${transaction.status}${counterparty}${note}</span>
+              <span>Status: ${transaction.status}</span>
             </div>
+            ${detailsLine ? `<div class="list-meta"><span>${detailsLine}</span></div>` : ''}
+            ${metadataLine ? `<div class="list-meta"><span>${metadataLine}</span></div>` : ''}
           </div>
         `;
       })
@@ -478,18 +500,37 @@
     const fromLabel = elements.transactionForm.elements.fromAccountId.closest('label');
     const toLabel = elements.transactionForm.elements.toAccountId.closest('label');
     const counterpartyLabel = elements.transactionForm.elements.counterparty.closest('label');
+    const documentLabel = elements.transactionForm.elements.externalDocument.closest('label');
+    const institutionLabel = elements.transactionForm.elements.externalInstitution.closest('label');
+    const identifierLabel = elements.transactionForm.elements.externalIdentifier.closest('label');
 
     const needsFrom = type === 'withdrawal' || type === 'transfer' || type === 'payment';
     const needsTo = type === 'deposit' || type === 'transfer';
-    const needsCounterparty = type === 'payment';
+    const needsExternal = type === 'deposit' || type === 'withdrawal' || type === 'payment';
 
     elements.transactionForm.elements.fromAccountId.disabled = !needsFrom;
     elements.transactionForm.elements.toAccountId.disabled = !needsTo;
-    elements.transactionForm.elements.counterparty.disabled = !needsCounterparty;
+    elements.transactionForm.elements.counterparty.disabled = !needsExternal;
+    elements.transactionForm.elements.externalDocument.disabled = !needsExternal;
+    elements.transactionForm.elements.externalInstitution.disabled = !needsExternal;
+    elements.transactionForm.elements.externalIdentifier.disabled = !needsExternal;
+
+    elements.transactionForm.elements.counterparty.required = needsExternal;
+    elements.transactionForm.elements.externalIdentifier.required = needsExternal;
 
     fromLabel.classList.toggle('is-disabled', !needsFrom);
     toLabel.classList.toggle('is-disabled', !needsTo);
-    counterpartyLabel.classList.toggle('is-disabled', !needsCounterparty);
+    counterpartyLabel.classList.toggle('hidden', !needsExternal);
+    documentLabel.classList.toggle('hidden', !needsExternal);
+    institutionLabel.classList.toggle('hidden', !needsExternal);
+    identifierLabel.classList.toggle('hidden', !needsExternal);
+
+    if (!needsExternal) {
+      elements.transactionForm.elements.counterparty.value = '';
+      elements.transactionForm.elements.externalDocument.value = '';
+      elements.transactionForm.elements.externalInstitution.value = '';
+      elements.transactionForm.elements.externalIdentifier.value = '';
+    }
   }
 
   function updatePixKeyField() {
@@ -567,6 +608,30 @@
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.transactionForm).entries());
 
+    const needsExternal = payload.type === 'deposit' || payload.type === 'withdrawal' || payload.type === 'payment';
+    if (needsExternal && !payload.counterparty) {
+      showToast('Informe a contraparte.', 'error');
+      return;
+    }
+    if (needsExternal && !payload.externalIdentifier) {
+      showToast('Informe o identificador externo.', 'error');
+      return;
+    }
+
+    const metadata = {};
+    if (payload.externalDocument) {
+      metadata.externalDocument = payload.externalDocument;
+    }
+    if (payload.externalInstitution) {
+      metadata.externalInstitution = payload.externalInstitution;
+    }
+    if (payload.externalIdentifier) {
+      metadata.externalIdentifier = payload.externalIdentifier;
+    }
+    if (Object.keys(metadata).length) {
+      payload.metadata = metadata;
+    }
+
     if (!payload.fromAccountId) {
       delete payload.fromAccountId;
     }
@@ -579,6 +644,9 @@
     if (!payload.note) {
       delete payload.note;
     }
+    delete payload.externalDocument;
+    delete payload.externalInstitution;
+    delete payload.externalIdentifier;
 
     try {
       await apiRequest('/api/transactions', {
