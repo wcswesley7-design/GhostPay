@@ -11,9 +11,13 @@
       return '/';
     }
     let clean = path.split('?')[0].split('#')[0];
-    clean = clean.replace(/\\/index\\.html$/, '/');\n    clean = clean.replace(/^index\\.html$/, '/');
+    clean = clean.replace(/\/index\.html$/, '/');
+    clean = clean.replace(/^index\.html$/, '/');
     clean = clean.replace(/\.html$/, '');
     clean = clean.replace(/\/+$/, '') || '/';
+    if (clean !== '/' && !clean.startsWith('/')) {
+      clean = `/${clean}`;
+    }
     return clean === '/index' ? '/' : clean;
   }
 

@@ -11,10 +11,7 @@
     transactions: [],
     pixKeys: [],
     pixCharges: [],
-    cards: [],
-    integrations: null,
-    webhooks: [],
-    webhookEvents: []
+    cards: []
   };
 
   const elements = {
@@ -23,8 +20,6 @@
     loginForm: document.getElementById('loginForm'),
     registerForm: document.getElementById('registerForm'),
     tabs: document.querySelectorAll('.tab'),
-    demoBtn: document.getElementById('demoBtn'),
-    demoHelper: document.getElementById('demoHelper'),
     logoutBtn: document.getElementById('logoutBtn'),
     toast: document.getElementById('toast'),
     errorBanner: document.getElementById('errorBanner'),
@@ -50,19 +45,13 @@
     cardForm: document.getElementById('cardForm'),
     cardTxnForm: document.getElementById('cardTxnForm'),
     cardTransactionsList: document.getElementById('cardTransactionsList'),
-    integrationList: document.getElementById('integrationList'),
-    webhookList: document.getElementById('webhookList'),
-    webhookForm: document.getElementById('webhookForm'),
-    webhookEvents: document.getElementById('webhookEvents'),
     refreshAccounts: document.getElementById('refreshAccounts'),
     refreshOverview: document.getElementById('refreshOverview'),
     refreshTransactions: document.getElementById('refreshTransactions'),
     refreshPix: document.getElementById('refreshPix'),
     refreshCharges: document.getElementById('refreshCharges'),
     refreshCards: document.getElementById('refreshCards'),
-    refreshCardTx: document.getElementById('refreshCardTx'),
-    refreshIntegrations: document.getElementById('refreshIntegrations'),
-    refreshWebhooks: document.getElementById('refreshWebhooks')
+    refreshCardTx: document.getElementById('refreshCardTx')
   };
 
   const labels = {
@@ -167,12 +156,6 @@
     if (elements.logoutBtn) {
       elements.logoutBtn.classList.toggle('hidden', !isAuthed);
     }
-    if (elements.demoBtn) {
-      elements.demoBtn.classList.toggle('hidden', isAuthed);
-    }
-    if (elements.demoHelper) {
-      elements.demoHelper.classList.toggle('hidden', isAuthed);
-    }
   }
 
   function renderSkeleton(container, count) {
@@ -267,7 +250,7 @@
 
   function renderTransactions(transactions) {
     if (!transactions.length) {
-      elements.transactionsList.innerHTML = '<div class="list-item">Nenhuma transacao recente.</div>';
+      elements.transactionsList.innerHTML = '<div class="list-item">Nenhuma movimentacao recente.</div>';
       return;
     }
 
@@ -334,7 +317,7 @@
         const statusClass = charge.status === 'pending' ? 'pending' : charge.status;
         const action =
           charge.status === 'pending'
-            ? `<button class="btn btn-ghost" data-action="pay" data-id="${charge.id}" type="button">Simular pagamento</button>`
+            ? `<button class="btn btn-ghost" data-action="pay" data-id="${charge.id}" type="button">Pagar cobranca</button>`
             : '';
         return `
           <div class="list-item">
@@ -389,7 +372,7 @@
 
   function renderCardTransactions(transactions) {
     if (!transactions.length) {
-      elements.cardTransactionsList.innerHTML = '<div class="list-item">Sem movimentacao do cartao.</div>';
+      elements.cardTransactionsList.innerHTML = '<div class="list-item">Sem compras registradas.</div>';
       return;
     }
 
@@ -408,82 +391,6 @@
       .join('');
   }
 
-  function renderIntegrations(data) {
-    if (!data) {
-      elements.integrationList.innerHTML = '<div class="list-item">Integracoes indisponiveis.</div>';
-      return;
-    }
-
-    const items = [
-      { label: 'Dock configurado', ok: data.ready },
-      { label: 'Modo Dock', value: data.mode || 'n/a', ok: true },
-      { label: 'Base URL', ok: data.baseUrl },
-      { label: 'Token URL', ok: data.tokenUrl },
-      { label: 'Client ID', ok: data.clientId },
-      { label: 'Client Secret', ok: data.clientSecret },
-      { label: 'Webhook secret', ok: data.webhookSecret }
-    ];
-
-    elements.integrationList.innerHTML = items
-      .map(
-        (item) => `
-          <div class="list-item">
-            <strong>${item.label}</strong>
-            <div class="list-meta">
-              <span>${item.value || (item.ok ? 'ok' : 'pendente')}</span>
-              <span class="status-pill ${item.ok ? 'ok' : 'pending'}">${item.ok ? 'ok' : 'pendente'}</span>
-            </div>
-          </div>
-        `
-      )
-      .join('');
-  }
-
-  function renderWebhooks(webhooks) {
-    if (!webhooks.length) {
-      elements.webhookList.innerHTML = '<div class="list-item">Nenhum webhook cadastrado.</div>';
-      return;
-    }
-
-    elements.webhookList.innerHTML = webhooks
-      .map(
-        (webhook) => `
-          <div class="list-item">
-            <strong>${webhook.url}</strong>
-            <div class="list-meta">
-              <span class="status-pill ${webhook.status}">${webhook.status}</span>
-              <span>${formatDate(webhook.createdAt)}</span>
-            </div>
-            <div class="list-meta">
-              <button class="btn btn-ghost" type="button" data-action="test" data-id="${webhook.id}">Testar</button>
-              <button class="btn btn-ghost" type="button" data-action="disable" data-id="${webhook.id}">Desativar</button>
-            </div>
-          </div>
-        `
-      )
-      .join('');
-  }
-
-  function renderWebhookEvents(events) {
-    if (!events.length) {
-      elements.webhookEvents.innerHTML = '<div class="list-item">Sem eventos recentes.</div>';
-      return;
-    }
-
-    elements.webhookEvents.innerHTML = events
-      .map(
-        (event) => `
-          <div class="list-item">
-            <strong>${event.type}</strong>
-            <div class="list-meta">
-              <span>${formatDate(event.createdAt)}</span>
-              <span>${event.id}</span>
-            </div>
-          </div>
-        `
-      )
-      .join('');
-  }
 
   async function loadOverview() {
     renderSkeleton(elements.accountsList, 2);
@@ -554,36 +461,8 @@
     renderCardTransactions(data.transactions || []);
   }
 
-  async function loadIntegrations() {
-    renderSkeleton(elements.integrationList, 2);
-    try {
-      const data = await apiRequest('/api/integrations/dock');
-      state.integrations = data;
-      renderIntegrations(data);
-    } catch (err) {
-      renderIntegrations(null);
-      showToast(err.message, 'error');
-    }
-  }
-
-  async function loadWebhooks() {
-    renderSkeleton(elements.webhookList, 2);
-    try {
-      const data = await apiRequest('/api/webhooks');
-      state.webhooks = data.webhooks || [];
-      renderWebhooks(state.webhooks);
-      const events = await apiRequest('/api/webhooks/events');
-      state.webhookEvents = events.events || [];
-      renderWebhookEvents(state.webhookEvents.slice(0, 6));
-    } catch (err) {
-      renderWebhooks([]);
-      renderWebhookEvents([]);
-      showToast(err.message, 'error');
-    }
-  }
-
   async function loadExtensions() {
-    await Promise.allSettled([loadPix(), loadCards(), loadIntegrations(), loadWebhooks()]);
+    await Promise.allSettled([loadPix(), loadCards()]);
   }
 
   function setActiveTab(target) {
@@ -664,22 +543,6 @@
     }
   }
 
-  async function handleDemo() {
-    try {
-      const data = await apiRequest('/api/auth/demo', {
-        method: 'POST'
-      });
-      setToken(data.token);
-      state.user = data.user;
-      setAuthUI(true);
-      await loadOverview();
-      await loadExtensions();
-      showToast('Demo carregada');
-    } catch (err) {
-      showToast('Rode npm run seed e tente novamente.', 'error');
-    }
-  }
-
   async function handleAccountCreate(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.accountForm).entries());
@@ -725,7 +588,7 @@
       elements.transactionForm.reset();
       updateTransactionFields();
       await loadOverview();
-      showToast('Transacao enviada');
+      showToast('Movimentacao registrada');
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -813,7 +676,7 @@
       });
       await loadOverview();
       await loadPix();
-      showToast('Pix pago');
+      showToast('Pagamento registrado');
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -858,53 +721,7 @@
       await loadOverview();
       await loadCards();
       await loadCardTransactions(cardId);
-      showToast('Transacao do cartao registrada');
-    } catch (err) {
-      showToast(err.message, 'error');
-    }
-  }
-
-  async function handleWebhookCreate(event) {
-    event.preventDefault();
-    const payload = Object.fromEntries(new FormData(elements.webhookForm).entries());
-    if (!payload.secret) {
-      delete payload.secret;
-    }
-
-    try {
-      await apiRequest('/api/webhooks', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
-      elements.webhookForm.reset();
-      await loadWebhooks();
-      showToast('Webhook criado');
-    } catch (err) {
-      showToast(err.message, 'error');
-    }
-  }
-
-  async function handleWebhookAction(event) {
-    const button = event.target.closest('button');
-    if (!button) {
-      return;
-    }
-    const action = button.dataset.action;
-    const id = button.dataset.id;
-    if (!action || !id) {
-      return;
-    }
-
-    try {
-      if (action === 'test') {
-        await apiRequest(`/api/webhooks/${id}/test`, { method: 'POST' });
-        showToast('Webhook em fila');
-      }
-      if (action === 'disable') {
-        await apiRequest(`/api/webhooks/${id}`, { method: 'DELETE' });
-        showToast('Webhook desativado');
-      }
-      await loadWebhooks();
+      showToast('Compra registrada');
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -930,8 +747,6 @@
     elements.cardTxnForm.elements.cardId.addEventListener('change', async (event) => {
       await loadCardTransactions(event.target.value);
     });
-    elements.webhookForm.addEventListener('submit', handleWebhookCreate);
-    elements.webhookList.addEventListener('click', handleWebhookAction);
 
     elements.refreshAccounts.addEventListener('click', loadOverview);
     elements.refreshOverview.addEventListener('click', loadOverview);
@@ -940,15 +755,6 @@
     elements.refreshCharges.addEventListener('click', loadPix);
     elements.refreshCards.addEventListener('click', loadCards);
     elements.refreshCardTx.addEventListener('click', loadCards);
-    elements.refreshIntegrations.addEventListener('click', loadIntegrations);
-    elements.refreshWebhooks.addEventListener('click', loadWebhooks);
-
-    if (elements.demoBtn) {
-      elements.demoBtn.addEventListener('click', handleDemo);
-    }
-    if (elements.demoHelper) {
-      elements.demoHelper.addEventListener('click', handleDemo);
-    }
     if (elements.logoutBtn) {
       elements.logoutBtn.addEventListener('click', () => {
         setToken(null);

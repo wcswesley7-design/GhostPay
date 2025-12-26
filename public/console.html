@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="GhostPay console" />
-    <title>GhostPay | Console</title>
+    <meta name="description" content="GhostPay area do cliente" />
+    <title>GhostPay | Conta</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -29,7 +29,7 @@
           <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
           <span class="brand-text">
             <span class="brand-name">GhostPay</span>
-            <span class="brand-tag">Console</span>
+            <span class="brand-tag">Conta digital</span>
           </span>
         </a>
 
@@ -37,7 +37,7 @@
           <a class="nav-link" href="/">Inicio</a>
           <a class="nav-link" href="/platform">Plataforma</a>
           <a class="nav-link" href="/security">Seguranca</a>
-          <a class="nav-link" href="/developers">Desenvolvedores</a>
+          <a class="nav-link" href="/empresa">Empresa</a>
           <a class="nav-link" href="/pricing">Planos</a>
           <a class="nav-link" href="/support">Suporte</a>
         </nav>
@@ -54,11 +54,11 @@
       <section class="hero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Console GhostPay</p>
-            <h1 id="welcomeTitle">Controle total da sua operacao.</h1>
-            <p class="lead">Acompanhe contas, Pix, cartoes, webhooks e integracoes em tempo real.</p>
+            <p class="eyebrow">Conta GhostPay</p>
+            <h1 id="welcomeTitle">Sua conta digital em um painel simples.</h1>
+            <p class="lead">Acompanhe saldo, Pix e cartoes em tempo real.</p>
             <div class="hero-actions">
-              <button class="btn btn-primary" type="button" id="demoBtn">Carregar demo</button>
+              <a class="btn btn-primary" href="/pricing">Ver planos</a>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
             </div>
           </div>
@@ -93,8 +93,8 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-head">
-              <h3>Acesso ao console</h3>
-              <span class="tag">Conta</span>
+              <h3>Acesso a conta</h3>
+              <span class="tag">Cliente</span>
             </div>
             <div class="tab-group">
               <button class="tab active" data-tab="login" type="button">Entrar</button>
@@ -129,24 +129,30 @@
           </div>
           <div class="card">
             <div class="card-head">
-              <h3>Credenciais demo</h3>
-              <span class="tag">Demo</span>
+              <h3>Beneficios da conta</h3>
+              <span class="tag">Premium</span>
             </div>
             <div class="list">
               <div class="list-item">
-                <strong>Email</strong>
+                <strong>Pix instantaneo</strong>
                 <div class="list-meta">
-                  <span>demo@ghostpay.local</span>
+                  <span>Envie e receba 24/7.</span>
                 </div>
               </div>
               <div class="list-item">
-                <strong>Senha</strong>
+                <strong>Cartoes com controle</strong>
                 <div class="list-meta">
-                  <span>ghostpay-demo</span>
+                  <span>Limites e notificacoes em tempo real.</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <strong>Seguranca premium</strong>
+                <div class="list-meta">
+                  <span>Protecao e suporte dedicado.</span>
                 </div>
               </div>
             </div>
-            <button class="btn btn-ghost" type="button" id="demoHelper">Carregar demo</button>
+            <a class="btn btn-ghost" href="/pricing">Ver planos</a>
           </div>
         </div>
       </section>
@@ -157,8 +163,6 @@
           <a class="pill" href="#accounts">Contas</a>
           <a class="pill" href="#pix">Pix</a>
           <a class="pill" href="#cards">Cartoes</a>
-          <a class="pill" href="#webhooks">Webhooks</a>
-          <a class="pill" href="#integrations">Integracoes</a>
         </nav>
 
         <section class="section" id="overview" data-reveal>
@@ -188,8 +192,8 @@
 
         <section class="section" id="accounts" data-reveal>
           <div class="section-head">
-            <h2>Contas e transacoes</h2>
-            <p class="lead">Cadastre contas e registre movimentacoes.</p>
+            <h2>Contas e movimentacoes</h2>
+            <p class="lead">Gerencie suas contas e registre movimentacoes.</p>
           </div>
           <div class="grid-2">
             <div class="card">
@@ -202,7 +206,7 @@
               <form class="form" id="accountForm">
                 <label>
                   Nova conta
-                  <input type="text" name="name" placeholder="Vault" required />
+                  <input type="text" name="name" placeholder="Conta principal" required />
                 </label>
                 <label>
                   Moeda
@@ -214,7 +218,7 @@
 
             <div class="card">
               <div class="card-head">
-                <h3>Transacoes</h3>
+                <h3>Movimentacoes</h3>
                 <button class="btn btn-ghost" type="button" id="refreshOverview">Atualizar resumo</button>
               </div>
               <form class="form" id="transactionForm">
@@ -250,7 +254,7 @@
                 <button class="btn btn-primary" type="submit">Enviar</button>
               </form>
               <div class="card-subhead card-head">
-                <h4>Ultimas transacoes</h4>
+                <h4>Ultimas movimentacoes</h4>
                 <button class="btn btn-ghost" type="button" id="refreshTransactions">Atualizar lista</button>
               </div>
               <div class="list" id="transactionsList"></div>
@@ -261,7 +265,7 @@
         <section class="section" id="pix" data-reveal>
           <div class="section-head">
             <h2>Pix</h2>
-            <p class="lead">Chaves, transferencias e cobrancas em ambiente de teste.</p>
+            <p class="lead">Chaves, transferencias e cobrancas em um so lugar.</p>
           </div>
           <div class="grid-2">
             <div class="card">
@@ -269,7 +273,7 @@
                 <h3>Chaves e transferencias</h3>
                 <button class="btn btn-ghost" type="button" id="refreshPix">Atualizar</button>
               </div>
-              <p class="muted">Ambiente de teste para operacao Pix.</p>
+              <p class="muted">Cadastre suas chaves e envie Pix.</p>
               <div class="pill-row" id="pixKeysList"></div>
               <form class="form" id="pixKeyForm">
                 <label>
@@ -353,7 +357,7 @@
         <section class="section" id="cards" data-reveal>
           <div class="section-head">
             <h2>Cartoes</h2>
-            <p class="lead">Emissao de cartoes e simulacao de compras.</p>
+            <p class="lead">Emissao e controle dos seus cartoes.</p>
           </div>
           <div class="grid-2">
             <div class="card">
@@ -384,7 +388,7 @@
 
             <div class="card">
               <div class="card-head">
-                <h3>Compras do cartao</h3>
+                <h3>Compras recentes</h3>
                 <button class="btn btn-ghost" type="button" id="refreshCardTx">Atualizar</button>
               </div>
               <form class="form" id="cardTxnForm">
@@ -400,48 +404,9 @@
                   Loja
                   <input type="text" name="merchant" placeholder="Nome do estabelecimento" required />
                 </label>
-                <button class="btn btn-primary" type="submit">Simular compra</button>
+                <button class="btn btn-primary" type="submit">Registrar compra</button>
               </form>
               <div class="list" id="cardTransactionsList"></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section" id="webhooks" data-reveal>
-          <div class="section-head">
-            <h2>Webhooks e integracoes</h2>
-            <p class="lead">Eventos assinados e conexoes com parceiros.</p>
-          </div>
-          <div class="grid-2">
-            <div class="card">
-              <div class="card-head">
-                <h3>Webhooks</h3>
-                <button class="btn btn-ghost" type="button" id="refreshWebhooks">Atualizar</button>
-              </div>
-              <form class="form" id="webhookForm">
-                <label>
-                  URL
-                  <input type="url" name="url" placeholder="https://webhook.site/ghostpay" required />
-                </label>
-                <label>
-                  Segredo (opcional)
-                  <input type="text" name="secret" placeholder="Minimo 8 caracteres" />
-                </label>
-                <button class="btn btn-primary" type="submit">Criar webhook</button>
-              </form>
-              <div class="list" id="webhookList"></div>
-            </div>
-
-            <div class="card" id="integrations">
-              <div class="card-head">
-                <h3>Integracoes</h3>
-                <button class="btn btn-ghost" type="button" id="refreshIntegrations">Verificar</button>
-              </div>
-              <div class="list" id="integrationList"></div>
-              <div class="card-subhead">
-                <h4>Eventos recentes</h4>
-              </div>
-              <div class="list" id="webhookEvents"></div>
             </div>
           </div>
         </section>
@@ -452,7 +417,7 @@
       <div class="container footer-grid">
         <div>
           <div class="brand-name">GhostPay</div>
-          <small>Banco digital para equipes fintech.</small>
+          <small>Banco digital premium para pessoas e negocios.</small>
         </div>
         <div class="footer-col">
           <strong>Produto</strong>
@@ -461,15 +426,22 @@
           <a href="/pricing">Planos</a>
         </div>
         <div class="footer-col">
-          <strong>Console</strong>
-          <a href="/console">Acessar</a>
-          <a href="/developers">Desenvolvedores</a>
+          <strong>Empresa</strong>
+          <a href="/empresa">Empresa</a>
           <a href="/support">Suporte</a>
+          <a href="/pricing">Planos</a>
         </div>
         <div class="footer-col">
-          <strong>Infra</strong>
-          <span class="muted">AWS + Postgres</span>
-          <span class="muted">Pronto para Cloudflare</span>
+          <strong>Conta</strong>
+          <a href="/console">Acessar conta</a>
+          <a href="/console">Abrir conta</a>
+          <a href="/support">Atendimento</a>
+        </div>
+        <div class="footer-col">
+          <strong>Legal</strong>
+          <span class="muted">LGPD</span>
+          <span class="muted">Privacidade</span>
+          <span class="muted">Termos de uso</span>
         </div>
       </div>
     </footer>

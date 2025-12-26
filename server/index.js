@@ -66,7 +66,8 @@ const pageRoutes = {
   '/': 'index.html',
   '/platform': 'platform.html',
   '/security': 'security.html',
-  '/developers': 'developers.html',
+  '/empresa': 'empresa.html',
+  '/developers': 'empresa.html',
   '/pricing': 'pricing.html',
   '/support': 'support.html',
   '/console': 'console.html'
