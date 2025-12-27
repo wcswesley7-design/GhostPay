@@ -323,6 +323,24 @@ html[data-theme='light'] .topbar.is-scrolled {
   font-size: 0.72rem;
 }
 
+.btn-icon {
+  display: none;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.btn-label {
+  display: inline;
+}
+
 .btn-danger {
   border-color: rgba(255, 107, 107, 0.45);
   color: var(--danger);
@@ -686,17 +704,82 @@ html[data-theme='light'] .topbar.is-scrolled {
   font-size: 0.8rem;
 }
 
-.pill-action {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  justify-content: space-between;
-  flex-wrap: wrap;
+#pixKeysList {
+  display: grid;
+  gap: 12px;
 }
 
-.pill-action button {
-  white-space: nowrap;
+#pixKeysList .pix-key {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+#pixKeysList .pix-key-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+#pixKeysList .pix-key-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+#pixKeysList .pix-key-meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+#pixKeysList .btn-danger {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-2px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#pixKeysList .pix-key:hover .btn-danger,
+#pixKeysList .pix-key:focus-within .btn-danger {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+#accountsList .btn-danger {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-2px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#accountsList .list-item:hover .btn-danger,
+#accountsList .list-item:focus-within .btn-danger {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+#pixKeysList .pix-key:hover .btn-danger .btn-label,
+#pixKeysList .pix-key:focus-within .btn-danger .btn-label,
+#accountsList .list-item:hover .btn-danger .btn-label,
+#accountsList .list-item:focus-within .btn-danger .btn-label {
+  display: none;
+}
+
+#pixKeysList .pix-key:hover .btn-danger .btn-icon,
+#pixKeysList .pix-key:focus-within .btn-danger .btn-icon,
+#accountsList .list-item:hover .btn-danger .btn-icon,
+#accountsList .list-item:focus-within .btn-danger .btn-icon {
+  display: inline-flex;
 }
 
 .muted {

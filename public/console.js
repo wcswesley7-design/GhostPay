@@ -73,6 +73,15 @@
     payment: 'Pagamento'
   };
 
+  const trashIcon = `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M3 6h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M8 6V4.5A1.5 1.5 0 0 1 9.5 3h5A1.5 1.5 0 0 1 16 4.5V6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </svg>
+  `;
+
   const pixStatusLabels = {
     pending: 'pendente',
     paid: 'pago',
@@ -377,8 +386,9 @@
                 <strong>${account.name}</strong>
                 <button class="btn btn-ghost btn-sm btn-danger" type="button" data-action="delete-account" data-id="${
                   account.id
-                }" ${canRemove ? '' : 'disabled'} title="${title}">
-                  Remover
+                }" ${canRemove ? '' : 'disabled'} title="${title}" aria-label="Remover conta">
+                  <span class="btn-label">Remover</span>
+                  <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
                 </button>
               </div>
               <div class="list-meta">
@@ -461,10 +471,14 @@
             const accountLabel = getAccountLabel(key.accountId);
             const label = `${key.type.toUpperCase()} ${key.value}`;
             return `
-              <div class="pill pill-action">
-                <span>${key.type.toUpperCase()}: ${key.value} | ${accountLabel}</span>
-                <button class="btn btn-ghost btn-xs btn-danger" type="button" data-action="delete-key" data-id="${key.id}" data-label="${label}">
-                  Remover
+              <div class="pix-key">
+                <div class="pix-key-text">
+                  <span class="pix-key-title">${key.type.toUpperCase()}: ${key.value}</span>
+                  <span class="pix-key-meta">Conta: ${accountLabel}</span>
+                </div>
+                <button class="btn btn-ghost btn-xs btn-danger" type="button" data-action="delete-key" data-id="${key.id}" data-label="${label}" aria-label="Remover chave Pix">
+                  <span class="btn-label">Remover</span>
+                  <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
                 </button>
               </div>
             `;
