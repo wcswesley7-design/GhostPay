@@ -59,6 +59,15 @@ router.post('/keys', idempotencyGuard('pix.keys.create'), validateBody(createKey
   }
 });
 
+router.delete('/keys/:id', async (req, res) => {
+  try {
+    await pixProvider().deleteKey(req.user.id, req.params.id);
+    return res.status(204).end();
+  } catch (err) {
+    return handleProviderError(res, err, 'Unable to remove Pix key');
+  }
+});
+
 router.get('/charges', async (req, res) => {
   try {
     const charges = await pixProvider().listCharges(req.user.id);

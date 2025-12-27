@@ -317,6 +317,12 @@ html[data-theme='light'] .topbar.is-scrolled {
   font-size: 0.78rem;
 }
 
+.btn-xs {
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+}
+
 .btn-danger {
   border-color: rgba(255, 107, 107, 0.45);
   color: var(--danger);
@@ -678,6 +684,19 @@ html[data-theme='light'] .topbar.is-scrolled {
   border-radius: 999px;
   border: 1px solid rgba(215, 178, 92, 0.3);
   font-size: 0.8rem;
+}
+
+.pill-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.pill-action button {
+  white-space: nowrap;
 }
 
 .muted {

@@ -66,6 +66,11 @@ const cards = {
   }
 };
 
+pix.deleteKey = async () => {
+  ensureDockReady();
+  return notImplemented();
+};
+
 module.exports = {
   pix,
   cards

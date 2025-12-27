@@ -15,7 +15,7 @@ function makeError(status, message) {
 const pix = {
   async listKeys(userId) {
     const result = await pool.query(
-      'SELECT id, account_id, type, value, status, created_at FROM pix_keys WHERE user_id = $1 ORDER BY created_at DESC',
+      "SELECT id, account_id, type, value, status, created_at FROM pix_keys WHERE user_id = $1 AND status = 'active' ORDER BY created_at DESC",
       [userId]
     );
     return result.rows.map((row) => ({
@@ -91,6 +91,17 @@ const pix = {
       status: 'active',
       createdAt: now
     };
+  },
+
+  async deleteKey(userId, keyId) {
+    const result = await pool.query(
+      "UPDATE pix_keys SET status = 'disabled' WHERE id = $1 AND user_id = $2 AND status = 'active' RETURNING id",
+      [keyId, userId]
+    );
+    if (!result.rows[0]) {
+      throw makeError(404, 'Pix key not found');
+    }
+    return { id: keyId, status: 'disabled' };
   },
 
   async listCharges(userId) {

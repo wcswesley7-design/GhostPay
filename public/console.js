@@ -459,7 +459,15 @@
         elements.pixKeysList.innerHTML = keys
           .map((key) => {
             const accountLabel = getAccountLabel(key.accountId);
-            return `<span class="pill">${key.type.toUpperCase()}: ${key.value} | ${accountLabel}</span>`;
+            const label = `${key.type.toUpperCase()} ${key.value}`;
+            return `
+              <div class="pill pill-action">
+                <span>${key.type.toUpperCase()}: ${key.value} | ${accountLabel}</span>
+                <button class="btn btn-ghost btn-xs btn-danger" type="button" data-action="delete-key" data-id="${key.id}" data-label="${label}">
+                  Remover
+                </button>
+              </div>
+            `;
           })
           .join('');
       }
@@ -997,6 +1005,35 @@
     }
   }
 
+  async function handlePixKeyAction(event) {
+    const button = event.target.closest('button[data-action="delete-key"]');
+    if (!button) {
+      return;
+    }
+    const keyId = button.dataset.id;
+    if (!keyId) {
+      return;
+    }
+    const label = button.dataset.label || 'esta chave';
+    const confirmed = await openConfirmModal({
+      title: 'Remover chave Pix',
+      message: `Remover a chave ${label}? Esta ação não pode ser desfeita.`,
+      confirmText: 'Remover',
+      cancelText: 'Cancelar'
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/api/pix/keys/${keyId}`, { method: 'DELETE' });
+      await loadPix();
+      showToast('Chave Pix removida');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
   async function handlePixTransfer(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.pixTransferForm).entries());
@@ -1135,6 +1172,9 @@
     if (elements.pixKeyForm) {
       elements.pixKeyForm.addEventListener('submit', handlePixKeyCreate);
       elements.pixKeyForm.elements.type.addEventListener('change', updatePixKeyField);
+    }
+    if (elements.pixKeysList) {
+      elements.pixKeysList.addEventListener('click', handlePixKeyAction);
     }
     if (elements.pixTransferForm) {
       elements.pixTransferForm.addEventListener('submit', handlePixTransfer);
