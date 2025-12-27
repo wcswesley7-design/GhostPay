@@ -75,10 +75,10 @@
 
   const trashIcon = `
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none">
-      <path d="M3 6h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-      <path d="M8 6V4.8A1.8 1.8 0 0 1 9.8 3h4.4A1.8 1.8 0 0 1 16 4.8V6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-      <path d="M6.2 6l.9 13.1A2 2 0 0 0 9.1 21h5.8a2 2 0 0 0 2-1.9L17.8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M10 10.5v6M14 10.5v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      <path d="M3.5 6.5H20.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+      <path d="M9 6.5V4.6a1.6 1.6 0 0 1 1.6-1.6h2.8A1.6 1.6 0 0 1 15 4.6v1.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+      <path d="M7 6.5l.9 12.4A2 2 0 0 0 9.9 21h4.2a2 2 0 0 0 2-2.1L17 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M10.2 10.4v6.4M13.8 10.4v6.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
     </svg>
   `;
 
