@@ -863,18 +863,6 @@ html[data-theme='light'] .topbar.is-scrolled {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), var(--shadow);
 }
 
-.card-visual--artwork {
-  background-image: linear-gradient(135deg, rgba(7, 6, 8, 0.2), rgba(7, 6, 8, 0.45)), url('/assets/ghostpay-card.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.card-visual--artwork::before,
-.card-visual--artwork::after {
-  opacity: 0.12;
-}
-
 .card-visual > * {
   position: relative;
   z-index: 1;
