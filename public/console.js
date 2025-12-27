@@ -1665,6 +1665,14 @@
       });
     }
 
+    const preferredTab = (() => {
+      const param = new URLSearchParams(window.location.search).get('tab');
+      return param === 'register' ? 'register' : param === 'login' ? 'login' : null;
+    })();
+    if (preferredTab && elements.tabs.length) {
+      setActiveTab(preferredTab);
+    }
+
     updateTransactionFields();
     updatePixKeyField();
 
