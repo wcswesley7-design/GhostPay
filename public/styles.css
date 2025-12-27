@@ -494,6 +494,13 @@ html[data-theme='light'] .topbar.is-scrolled {
   padding: 10px 14px;
 }
 
+.console-nav--stacked + .btn {
+  margin-top: 12px;
+  width: 100%;
+  justify-content: center;
+  display: inline-flex;
+}
+
 .section-head--inline {
   display: flex;
   align-items: flex-start;
