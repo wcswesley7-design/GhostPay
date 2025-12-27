@@ -12,6 +12,28 @@ function makeError(status, message) {
   return err;
 }
 
+async function updateCardStatus(userId, cardId, nextStatus, allowedStatuses) {
+  const result = await pool.query(
+    'SELECT id, status FROM cards WHERE id = $1 AND user_id = $2',
+    [cardId, userId]
+  );
+  const card = result.rows[0];
+  if (!card) {
+    throw makeError(404, 'Card not found');
+  }
+  if (!allowedStatuses.includes(card.status)) {
+    throw makeError(400, 'Card status does not allow this action');
+  }
+
+  await pool.query('UPDATE cards SET status = $1 WHERE id = $2 AND user_id = $3', [
+    nextStatus,
+    cardId,
+    userId
+  ]);
+
+  return { id: cardId, status: nextStatus };
+}
+
 const pix = {
   async listKeys(userId) {
     const result = await pool.query(
@@ -478,15 +500,16 @@ const cards = {
     };
   },
 
-  async deleteCard(userId, cardId) {
-    const result = await pool.query(
-      "UPDATE cards SET status = 'blocked' WHERE id = $1 AND user_id = $2 RETURNING id",
-      [cardId, userId]
-    );
-    if (!result.rows[0]) {
-      throw makeError(404, 'Card not found');
-    }
-    return { id: cardId, status: 'blocked' };
+  async blockCard(userId, cardId) {
+    return updateCardStatus(userId, cardId, 'blocked', ['active']);
+  },
+
+  async unblockCard(userId, cardId) {
+    return updateCardStatus(userId, cardId, 'active', ['blocked']);
+  },
+
+  async requestCancelCard(userId, cardId) {
+    return updateCardStatus(userId, cardId, 'cancel_pending', ['active', 'blocked']);
   },
 
   async listCardTransactions(userId, cardId) {

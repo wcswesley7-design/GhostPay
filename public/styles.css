@@ -324,6 +324,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .btn-icon-only {
+  display: inline-flex;
   padding: 6px;
   width: 32px;
   height: 32px;
@@ -364,6 +365,17 @@ html[data-theme='light'] .topbar.is-scrolled {
   border-color: rgba(255, 107, 107, 0.75);
   color: var(--danger);
   background: rgba(255, 107, 107, 0.08);
+}
+
+.btn-warning {
+  border-color: rgba(255, 199, 138, 0.5);
+  color: var(--warning);
+}
+
+.btn-warning:hover {
+  border-color: rgba(255, 199, 138, 0.8);
+  color: var(--warning);
+  background: rgba(255, 199, 138, 0.08);
 }
 
 .btn:disabled {
@@ -782,15 +794,21 @@ html[data-theme='light'] .topbar.is-scrolled {
   transform: translateY(0);
 }
 
-#cardsList .btn-danger {
+#cardsList .card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#cardsList .card-actions .btn {
   opacity: 0;
   pointer-events: none;
   transform: translateY(-2px);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-#cardsList .list-item:hover .btn-danger,
-#cardsList .list-item:focus-within .btn-danger {
+#cardsList .list-item:hover .card-actions .btn,
+#cardsList .list-item:focus-within .card-actions .btn {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
@@ -1138,6 +1156,29 @@ html[data-theme='light'] .banner {
   gap: 10px;
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+.modal-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.modal-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.modal-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
 }
 
 .toast.show {

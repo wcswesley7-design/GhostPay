@@ -66,6 +66,17 @@
     isOpen: false
   };
 
+  const cancelModal = {
+    overlay: null,
+    titleEl: null,
+    messageEl: null,
+    confirmBtn: null,
+    cancelBtn: null,
+    checkbox: null,
+    resolve: null,
+    isOpen: false
+  };
+
   const labels = {
     deposit: 'Depósito',
     withdrawal: 'Saque',
@@ -82,6 +93,28 @@
     </svg>
   `;
 
+  const lockIcon = `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none">
+      <rect x="5.5" y="10" width="13" height="10" rx="2" stroke="currentColor" stroke-width="1.3" />
+      <path d="M8 10V7.6a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+    </svg>
+  `;
+
+  const unlockIcon = `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none">
+      <rect x="5.5" y="10" width="13" height="10" rx="2" stroke="currentColor" stroke-width="1.3" />
+      <path d="M14 6.8a3.6 3.6 0 0 0-7.2 0V10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+    </svg>
+  `;
+
+  const contractIcon = `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none">
+      <path d="M7 4.5h7l3 3V19.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M14 4.5v3h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M8.5 12.5h7M8.5 15.5h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+    </svg>
+  `;
+
   const pixStatusLabels = {
     pending: 'pendente',
     paid: 'pago',
@@ -91,7 +124,8 @@
   const cardStatusLabels = {
     active: 'ativo',
     inactive: 'inativo',
-    blocked: 'bloqueado'
+    blocked: 'bloqueado',
+    cancel_pending: 'cancelamento em análise'
   };
 
   function showToast(message, mode = 'info') {
@@ -225,6 +259,87 @@
     if (confirmModal.resolve) {
       confirmModal.resolve(result);
       confirmModal.resolve = null;
+    }
+  }
+
+  function initCancelModal() {
+    if (cancelModal.overlay) {
+      return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-backdrop';
+    overlay.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cancelTitle" aria-describedby="cancelMessage">
+        <h3 class="modal-title" id="cancelTitle">Solicitar cancelamento</h3>
+        <p class="muted" id="cancelMessage">Sua solicitação passará pelas etapas abaixo:</p>
+        <ul class="modal-list">
+          <li>Validação de identidade e titularidade</li>
+          <li>Revisão de contratos e termos aplicáveis</li>
+          <li>Prazo estimado de análise: 24-72h úteis</li>
+        </ul>
+        <label class="modal-check">
+          <input type="checkbox" />
+          Li e concordo com os termos de cancelamento.
+        </label>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-cancel-close>Voltar</button>
+          <button class="btn btn-ghost btn-danger" type="button" data-cancel-confirm disabled>Solicitar</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    cancelModal.overlay = overlay;
+    cancelModal.titleEl = overlay.querySelector('#cancelTitle');
+    cancelModal.messageEl = overlay.querySelector('#cancelMessage');
+    cancelModal.confirmBtn = overlay.querySelector('[data-cancel-confirm]');
+    cancelModal.cancelBtn = overlay.querySelector('[data-cancel-close]');
+    cancelModal.checkbox = overlay.querySelector('input[type="checkbox"]');
+
+    cancelModal.checkbox.addEventListener('change', (event) => {
+      cancelModal.confirmBtn.disabled = !event.target.checked;
+    });
+    cancelModal.confirmBtn.addEventListener('click', () => closeCancelModal(true));
+    cancelModal.cancelBtn.addEventListener('click', () => closeCancelModal(false));
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) {
+        closeCancelModal(false);
+      }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (cancelModal.isOpen && event.key === 'Escape') {
+        closeCancelModal(false);
+      }
+    });
+  }
+
+  function openCancelModal({ cardLabel }) {
+    initCancelModal();
+    cancelModal.messageEl.textContent = `Sua solicitação para ${cardLabel} passará pelas etapas abaixo:`;
+    cancelModal.checkbox.checked = false;
+    cancelModal.confirmBtn.disabled = true;
+
+    cancelModal.overlay.classList.add('is-visible');
+    document.body.classList.add('modal-open');
+    cancelModal.isOpen = true;
+    cancelModal.cancelBtn.focus();
+
+    return new Promise((resolve) => {
+      cancelModal.resolve = resolve;
+    });
+  }
+
+  function closeCancelModal(result) {
+    if (!cancelModal.overlay) {
+      return;
+    }
+    cancelModal.overlay.classList.remove('is-visible');
+    document.body.classList.remove('modal-open');
+    cancelModal.isOpen = false;
+    if (cancelModal.resolve) {
+      cancelModal.resolve(result);
+      cancelModal.resolve = null;
     }
   }
 
@@ -581,22 +696,47 @@
     }
 
     if (elements.cardsList) {
-      const activeCards = cards.filter((card) => card.status === 'active');
-      if (!activeCards.length) {
-        elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartão ativo.</div>';
+      if (!cards.length) {
+        elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartão emitido.</div>';
       } else {
-        elements.cardsList.innerHTML = activeCards
+        elements.cardsList.innerHTML = cards
           .map((card) => {
             const statusLabel = cardStatusLabels[card.status] || card.status;
             const label = `${card.brand} **** ${card.last4}`;
+            const actions = [];
+            if (card.status === 'active') {
+              actions.push(`
+                <button class="btn btn-ghost btn-xs btn-warning btn-icon-only" type="button" data-action="block-card" data-id="${card.id}" data-label="${label}" aria-label="Bloquear cartão">
+                  <span class="sr-only">Bloquear</span>
+                  <span class="btn-icon" aria-hidden="true">${lockIcon}</span>
+                </button>
+              `);
+              actions.push(`
+                <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="cancel-card" data-id="${card.id}" data-label="${label}" aria-label="Solicitar cancelamento">
+                  <span class="sr-only">Solicitar cancelamento</span>
+                  <span class="btn-icon" aria-hidden="true">${contractIcon}</span>
+                </button>
+              `);
+            }
+            if (card.status === 'blocked') {
+              actions.push(`
+                <button class="btn btn-ghost btn-xs btn-warning btn-icon-only" type="button" data-action="unblock-card" data-id="${card.id}" data-label="${label}" aria-label="Desbloquear cartão">
+                  <span class="sr-only">Desbloquear</span>
+                  <span class="btn-icon" aria-hidden="true">${unlockIcon}</span>
+                </button>
+              `);
+              actions.push(`
+                <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="cancel-card" data-id="${card.id}" data-label="${label}" aria-label="Solicitar cancelamento">
+                  <span class="sr-only">Solicitar cancelamento</span>
+                  <span class="btn-icon" aria-hidden="true">${contractIcon}</span>
+                </button>
+              `);
+            }
             return `
               <div class="list-item">
                 <div class="list-row">
                   <strong>${label}</strong>
-                  <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="delete-card" data-id="${card.id}" data-label="${label}" aria-label="Cancelar cartão">
-                    <span class="sr-only">Remover</span>
-                    <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
-                  </button>
+                  <div class="card-actions">${actions.join('')}</div>
                 </div>
                 <div class="list-meta">
                   <span>${card.type} - ${statusLabel}</span>
@@ -611,9 +751,18 @@
 
     if (elements.cardTxnForm) {
       const cardSelect = elements.cardTxnForm.elements.cardId;
-      cardSelect.disabled = false;
       cardSelect.innerHTML = '';
-      cards.forEach((card) => {
+      const activeCards = cards.filter((card) => card.status === 'active');
+      if (!activeCards.length) {
+        cardSelect.disabled = true;
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'Nenhum cartão ativo';
+        cardSelect.appendChild(option);
+        return;
+      }
+      cardSelect.disabled = false;
+      activeCards.forEach((card) => {
         const option = document.createElement('option');
         option.value = card.id;
         option.textContent = `${card.brand} **** ${card.last4}`;
@@ -1173,7 +1322,7 @@
   }
 
   async function handleCardAction(event) {
-    const button = event.target.closest('button[data-action="delete-card"]');
+    const button = event.target.closest('button[data-action]');
     if (!button) {
       return;
     }
@@ -1182,22 +1331,60 @@
       return;
     }
     const label = button.dataset.label || 'este cartão';
-    const confirmed = await openConfirmModal({
-      title: 'Cancelar cartão',
-      message: `Cancelar ${label}? Esta ação não pode ser desfeita.`,
-      confirmText: 'Cancelar',
-      cancelText: 'Manter'
-    });
-    if (!confirmed) {
+    const action = button.dataset.action;
+
+    if (action === 'block-card') {
+      const confirmed = await openConfirmModal({
+        title: 'Bloquear cartão',
+        message: `Bloquear ${label} temporariamente?`,
+        confirmText: 'Bloquear',
+        cancelText: 'Manter ativo'
+      });
+      if (!confirmed) {
+        return;
+      }
+      try {
+        await apiRequest(`/api/cards/${cardId}/block`, { method: 'POST' });
+        await loadCards();
+        showToast('Cartão bloqueado');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
       return;
     }
 
-    try {
-      await apiRequest(`/api/cards/${cardId}`, { method: 'DELETE' });
-      await loadCards();
-      showToast('Cartão cancelado');
-    } catch (err) {
-      showToast(err.message, 'error');
+    if (action === 'unblock-card') {
+      const confirmed = await openConfirmModal({
+        title: 'Desbloquear cartão',
+        message: `Desbloquear ${label}?`,
+        confirmText: 'Desbloquear',
+        cancelText: 'Manter bloqueado'
+      });
+      if (!confirmed) {
+        return;
+      }
+      try {
+        await apiRequest(`/api/cards/${cardId}/unblock`, { method: 'POST' });
+        await loadCards();
+        showToast('Cartão desbloqueado');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+      return;
+    }
+
+    if (action === 'cancel-card') {
+      const confirmed = await openCancelModal({ cardLabel: label });
+      if (!confirmed) {
+        return;
+      }
+      try {
+        await apiRequest(`/api/cards/${cardId}/cancel-request`, { method: 'POST' });
+        await loadCards();
+        showToast('Solicitação enviada');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
     }
   }
 

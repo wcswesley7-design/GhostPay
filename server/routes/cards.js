@@ -49,12 +49,39 @@ router.post('/', idempotencyGuard('cards.create'), validateBody(createCardSchema
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.post('/:id/block', async (req, res) => {
   try {
-    await cardProvider().deleteCard(req.user.id, req.params.id);
+    await cardProvider().blockCard(req.user.id, req.params.id);
     return res.status(204).end();
   } catch (err) {
-    return handleProviderError(res, err, 'Unable to remove card');
+    return handleProviderError(res, err, 'Unable to block card');
+  }
+});
+
+router.post('/:id/unblock', async (req, res) => {
+  try {
+    await cardProvider().unblockCard(req.user.id, req.params.id);
+    return res.status(204).end();
+  } catch (err) {
+    return handleProviderError(res, err, 'Unable to unblock card');
+  }
+});
+
+router.post('/:id/cancel-request', async (req, res) => {
+  try {
+    await cardProvider().requestCancelCard(req.user.id, req.params.id);
+    return res.status(204).end();
+  } catch (err) {
+    return handleProviderError(res, err, 'Unable to request card cancellation');
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    await cardProvider().requestCancelCard(req.user.id, req.params.id);
+    return res.status(204).end();
+  } catch (err) {
+    return handleProviderError(res, err, 'Unable to request card cancellation');
   }
 });
 
