@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
     <meta name="description" content="GhostPay área do cliente" />
-    <title>GhostPay | Cart?es</title>
+    <title>GhostPay | Cartões</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -167,7 +167,7 @@
               </div>
               <div class="list">
                 <div class="list-item">
-                  <strong>Usu?rio</strong>
+                  <strong>Usuário</strong>
                   <div class="list-meta">
                     <span id="sidebarName">--</span>
                   </div>
@@ -175,7 +175,7 @@
                 <div class="list-item">
                   <strong>Status</strong>
                   <div class="list-meta">
-                    <span>Opera??es simuladas</span>
+                    <span>Operações simuladas</span>
                   </div>
                 </div>
               </div>
@@ -183,14 +183,14 @@
             <div class="card">
               <div class="card-head">
                 <h3>Atalhos</h3>
-                <span class="tag">Navega??o</span>
+                <span class="tag">Navegação</span>
               </div>
               <nav class="console-nav console-nav--stacked">
-                <a class="pill" href="/console">Vis?o geral</a>
+                <a class="pill" href="/console">Visão geral</a>
                 <a class="pill" href="/console/contas">Contas</a>
-                <a class="pill" href="/console/movimentacoes">Movimenta??es</a>
+                <a class="pill" href="/console/movimentacoes">Movimentações</a>
                 <a class="pill" href="/console/pix">Pix</a>
-                <a class="pill" href="/console/cartoes" aria-current="page">Cart?es</a>
+                <a class="pill" href="/console/cartoes" aria-current="page">Cartões</a>
               </nav>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
             </div>
@@ -200,38 +200,38 @@
             <section class="section" id="cards" data-reveal>
               <div class="section-head section-head--inline">
                 <div>
-                  <h2>Cart?es</h2>
-                  <p class="lead">Emiss?o e controle dos seus cart?es.</p>
+                  <h2>Cartões</h2>
+                  <p class="lead">Emissão e controle dos seus cartões.</p>
                 </div>
                 <button class="btn btn-ghost" type="button" id="refreshCards">Atualizar</button>
               </div>
               <div class="grid-2">
                 <div class="card">
                   <div class="card-head">
-                    <h3>Cart?es ativos</h3>
+                    <h3>Cartões ativos</h3>
                     <span class="tag">Status</span>
                   </div>
                   <div class="list" id="cardsList"></div>
                   <div class="card-subhead">
-                    <h4>Emitir cart?o</h4>
+                    <h4>Emitir cartão</h4>
                   </div>
                   <form class="form" id="cardForm">
                     <label>
-                      Conta de d?bito
+                      Conta de débito
                       <select name="accountId" required></select>
                     </label>
                     <label>
-                      Tipo de cart?o
+                      Tipo de cartão
                       <select name="type">
                         <option value="virtual">Virtual</option>
-                        <option value="physical">F?sico</option>
+                        <option value="physical">Físico</option>
                       </select>
                     </label>
                     <label>
                       Limite
                       <input type="number" name="limit" placeholder="5000.00" min="0" step="0.01" />
                     </label>
-                    <button class="btn btn-primary" type="submit">Emitir cart?o</button>
+                    <button class="btn btn-primary" type="submit">Emitir cartão</button>
                   </form>
                 </div>
 
@@ -242,7 +242,7 @@
                   </div>
                   <form class="form" id="cardTxnForm">
                     <label>
-                      Cart?o
+                      Cartão
                       <select name="cardId" required></select>
                     </label>
                     <label>

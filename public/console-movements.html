@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
     <meta name="description" content="GhostPay área do cliente" />
-    <title>GhostPay | Movimenta??es</title>
+    <title>GhostPay | Movimentações</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -167,7 +167,7 @@
               </div>
               <div class="list">
                 <div class="list-item">
-                  <strong>Usu?rio</strong>
+                  <strong>Usuário</strong>
                   <div class="list-meta">
                     <span id="sidebarName">--</span>
                   </div>
@@ -175,7 +175,7 @@
                 <div class="list-item">
                   <strong>Status</strong>
                   <div class="list-meta">
-                    <span>Opera??es simuladas</span>
+                    <span>Operações simuladas</span>
                   </div>
                 </div>
               </div>
@@ -183,14 +183,14 @@
             <div class="card">
               <div class="card-head">
                 <h3>Atalhos</h3>
-                <span class="tag">Navega??o</span>
+                <span class="tag">Navegação</span>
               </div>
               <nav class="console-nav console-nav--stacked">
-                <a class="pill" href="/console">Vis?o geral</a>
+                <a class="pill" href="/console">Visão geral</a>
                 <a class="pill" href="/console/contas">Contas</a>
-                <a class="pill" href="/console/movimentacoes" aria-current="page">Movimenta??es</a>
+                <a class="pill" href="/console/movimentacoes" aria-current="page">Movimentações</a>
                 <a class="pill" href="/console/pix">Pix</a>
-                <a class="pill" href="/console/cartoes">Cart?es</a>
+                <a class="pill" href="/console/cartoes">Cartões</a>
               </nav>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
             </div>
@@ -200,25 +200,25 @@
             <section class="section" id="movements" data-reveal>
               <div class="section-head section-head--inline">
                 <div>
-                  <h2>Movimenta??es</h2>
-                  <p class="lead">Dep?sitos, saques e transfer?ncias internas.</p>
+                  <h2>Movimentações</h2>
+                  <p class="lead">Depósitos, saques e transferências internas.</p>
                 </div>
                 <button class="btn btn-ghost" type="button" id="refreshTransactions">Atualizar lista</button>
               </div>
               <div class="grid-2">
                 <div class="card">
                   <div class="card-head">
-                    <h3>Nova movimenta??o</h3>
+                    <h3>Nova movimentação</h3>
                     <span class="tag">Sandbox</span>
                   </div>
-                  <p class="muted">Movimenta??es externas s?o simuladas. Informe os dados de origem ou destino.</p>
+                  <p class="muted">Movimentações externas são simuladas. Informe os dados de origem ou destino.</p>
                   <form class="form" id="transactionForm">
                     <label>
                       Tipo
                       <select name="type" required>
-                        <option value="deposit">Dep?sito</option>
+                        <option value="deposit">Depósito</option>
                         <option value="withdrawal">Saque</option>
-                        <option value="transfer">Transfer?ncia</option>
+                        <option value="transfer">Transferência</option>
                         <option value="payment">Pagamento</option>
                       </select>
                     </label>
@@ -243,11 +243,11 @@
                       <input type="text" name="externalDocument" placeholder="000.000.000-00" />
                     </label>
                     <label>
-                      Institui??o/Banco
+                      Instituição/Banco
                       <input type="text" name="externalInstitution" placeholder="Banco X / Pix" />
                     </label>
                     <label>
-                      Identificador (ag?ncia/conta ou chave Pix)
+                      Identificador (agência/conta ou chave Pix)
                       <input type="text" name="externalIdentifier" placeholder="Ag 0001 / Conta 12345-6" />
                     </label>
                     <label>
@@ -260,7 +260,7 @@
 
                 <div class="card">
                   <div class="card-head">
-                    <h3>?ltimas movimenta??es</h3>
+                    <h3>Últimas movimentações</h3>
                     <span class="tag">Resumo</span>
                   </div>
                   <div class="list" id="transactionsList"></div>
