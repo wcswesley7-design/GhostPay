@@ -74,11 +74,11 @@
   };
 
   const trashIcon = `
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M3 6h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-      <path d="M8 6V4.5A1.5 1.5 0 0 1 9.5 3h5A1.5 1.5 0 0 1 16 4.5V6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-      <path d="M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none">
+      <path d="M3 6h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      <path d="M8 6V4.8A1.8 1.8 0 0 1 9.8 3h4.4A1.8 1.8 0 0 1 16 4.8V6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      <path d="M6.2 6l.9 13.1A2 2 0 0 0 9.1 21h5.8a2 2 0 0 0 2-1.9L17.8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M10 10.5v6M14 10.5v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
     </svg>
   `;
 
@@ -384,10 +384,10 @@
             <div class="list-item">
               <div class="list-row">
                 <strong>${account.name}</strong>
-                <button class="btn btn-ghost btn-sm btn-danger" type="button" data-action="delete-account" data-id="${
+                <button class="btn btn-ghost btn-sm btn-danger btn-icon-only" type="button" data-action="delete-account" data-id="${
                   account.id
                 }" ${canRemove ? '' : 'disabled'} title="${title}" aria-label="Remover conta">
-                  <span class="btn-label">Remover</span>
+                  <span class="sr-only">Remover</span>
                   <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
                 </button>
               </div>
@@ -476,8 +476,8 @@
                   <span class="pix-key-title">${key.type.toUpperCase()}: ${key.value}</span>
                   <span class="pix-key-meta">Conta: ${accountLabel}</span>
                 </div>
-                <button class="btn btn-ghost btn-xs btn-danger" type="button" data-action="delete-key" data-id="${key.id}" data-label="${label}" aria-label="Remover chave Pix">
-                  <span class="btn-label">Remover</span>
+                <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="delete-key" data-id="${key.id}" data-label="${label}" aria-label="Remover chave Pix">
+                  <span class="sr-only">Remover</span>
                   <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
                 </button>
               </div>

@@ -323,8 +323,15 @@ html[data-theme='light'] .topbar.is-scrolled {
   font-size: 0.72rem;
 }
 
+.btn-icon-only {
+  padding: 6px;
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+}
+
 .btn-icon {
-  display: none;
+  display: inline-flex;
   width: 16px;
   height: 16px;
   align-items: center;
@@ -337,8 +344,15 @@ html[data-theme='light'] .topbar.is-scrolled {
   display: block;
 }
 
-.btn-label {
-  display: inline;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 .btn-danger {
@@ -766,20 +780,6 @@ html[data-theme='light'] .topbar.is-scrolled {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
-}
-
-#pixKeysList .pix-key:hover .btn-danger .btn-label,
-#pixKeysList .pix-key:focus-within .btn-danger .btn-label,
-#accountsList .list-item:hover .btn-danger .btn-label,
-#accountsList .list-item:focus-within .btn-danger .btn-label {
-  display: none;
-}
-
-#pixKeysList .pix-key:hover .btn-danger .btn-icon,
-#pixKeysList .pix-key:focus-within .btn-danger .btn-icon,
-#accountsList .list-item:hover .btn-danger .btn-icon,
-#accountsList .list-item:focus-within .btn-danger .btn-icon {
-  display: inline-flex;
 }
 
 .muted {
