@@ -56,6 +56,16 @@
     refreshCardTx: document.getElementById('refreshCardTx')
   };
 
+  const confirmModal = {
+    overlay: null,
+    titleEl: null,
+    messageEl: null,
+    confirmBtn: null,
+    cancelBtn: null,
+    resolve: null,
+    isOpen: false
+  };
+
   const labels = {
     deposit: 'Depósito',
     withdrawal: 'Saque',
@@ -130,6 +140,82 @@
       return JSON.parse(atob(normalized));
     } catch (err) {
       return null;
+    }
+  }
+
+  function initConfirmModal() {
+    if (confirmModal.overlay) {
+      return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-backdrop';
+    overlay.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+        <h3 class="modal-title" id="confirmTitle">Confirmar</h3>
+        <p class="muted" id="confirmMessage">Tem certeza?</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-modal-cancel>Cancelar</button>
+          <button class="btn btn-ghost btn-danger" type="button" data-modal-confirm>Confirmar</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    confirmModal.overlay = overlay;
+    confirmModal.titleEl = overlay.querySelector('#confirmTitle');
+    confirmModal.messageEl = overlay.querySelector('#confirmMessage');
+    confirmModal.confirmBtn = overlay.querySelector('[data-modal-confirm]');
+    confirmModal.cancelBtn = overlay.querySelector('[data-modal-cancel]');
+
+    confirmModal.confirmBtn.addEventListener('click', () => closeConfirmModal(true));
+    confirmModal.cancelBtn.addEventListener('click', () => closeConfirmModal(false));
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) {
+        closeConfirmModal(false);
+      }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (confirmModal.isOpen && event.key === 'Escape') {
+        closeConfirmModal(false);
+      }
+    });
+  }
+
+  function openConfirmModal(options = {}) {
+    initConfirmModal();
+    const {
+      title = 'Confirmar ação',
+      message = 'Tem certeza?',
+      confirmText = 'Confirmar',
+      cancelText = 'Cancelar'
+    } = options;
+
+    confirmModal.titleEl.textContent = title;
+    confirmModal.messageEl.textContent = message;
+    confirmModal.confirmBtn.textContent = confirmText;
+    confirmModal.cancelBtn.textContent = cancelText;
+
+    confirmModal.overlay.classList.add('is-visible');
+    document.body.classList.add('modal-open');
+    confirmModal.isOpen = true;
+    confirmModal.confirmBtn.focus();
+
+    return new Promise((resolve) => {
+      confirmModal.resolve = resolve;
+    });
+  }
+
+  function closeConfirmModal(result) {
+    if (!confirmModal.overlay) {
+      return;
+    }
+    confirmModal.overlay.classList.remove('is-visible');
+    document.body.classList.remove('modal-open');
+    confirmModal.isOpen = false;
+    if (confirmModal.resolve) {
+      confirmModal.resolve(result);
+      confirmModal.resolve = null;
     }
   }
 
@@ -815,9 +901,12 @@
     }
     const account = state.accounts.find((item) => item.id === accountId);
     const accountName = account ? account.name : 'esta conta';
-    const confirmed = window.confirm(
-      `Remover ${accountName}? Esta ação não pode ser desfeita.`
-    );
+    const confirmed = await openConfirmModal({
+      title: 'Remover conta',
+      message: `Remover ${accountName}? Esta ação não pode ser desfeita.`,
+      confirmText: 'Remover',
+      cancelText: 'Cancelar'
+    });
     if (!confirmed) {
       return;
     }
