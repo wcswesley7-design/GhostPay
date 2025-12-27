@@ -211,20 +211,31 @@
                   <div class="card-visual" id="cardVisual">
                     <div class="card-visual-top">
                       <span class="card-branding">
-                        <img src="/assets/ghostpay-logo.png" alt="GhostPay" class="card-logo" />
+                        <span class="card-logo-wrap">
+                          <img src="/assets/ghostpay-logo.png" alt="GhostPay" class="card-logo" />
+                        </span>
                       </span>
                       <span class="card-network">VISA</span>
                     </div>
-                    <div class="card-chip" aria-hidden="true"></div>
+                    <div class="card-chip-row">
+                      <div class="card-chip" aria-hidden="true"></div>
+                      <span class="card-contactless" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+                          <path d="M8 9c1.7 1.7 1.7 4.3 0 6" />
+                          <path d="M11 7c2.8 2.8 2.8 7.2 0 10" />
+                          <path d="M14 5c3.9 3.9 3.9 9.1 0 13" />
+                        </svg>
+                      </span>
+                    </div>
                     <div class="card-number" id="cardVisualNumber">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; 0000</div>
                     <div class="card-visual-footer">
-                      <div class="card-meta">
-                        <span class="card-label">Validade</span>
-                        <span id="cardVisualExpiry">--/--</span>
-                      </div>
                       <div class="card-meta card-meta-name">
                         <span class="card-label">Titular</span>
                         <span id="cardVisualHolder">--</span>
+                      </div>
+                      <div class="card-meta card-meta-expiry">
+                        <span class="card-label">Validade</span>
+                        <span id="cardVisualExpiry">--/--</span>
                       </div>
                     </div>
                   </div>
