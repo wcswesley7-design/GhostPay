@@ -200,11 +200,19 @@
   }
 
   function updateAccountSelects() {
-    fillAccountSelect(elements.transactionForm.elements.fromAccountId, '<option value="">Selecionar conta</option>');
-    fillAccountSelect(elements.transactionForm.elements.toAccountId, '<option value="">Selecionar conta</option>');
-    fillAccountSelect(elements.pixTransferForm.elements.accountId, '<option value="">Selecionar conta</option>');
-    fillAccountSelect(elements.pixChargeForm.elements.accountId, '<option value="">Selecionar conta</option>');
-    fillAccountSelect(elements.cardForm.elements.accountId, '<option value="">Selecionar conta</option>');
+    if (elements.transactionForm) {
+      fillAccountSelect(elements.transactionForm.elements.fromAccountId, '<option value="">Selecionar conta</option>');
+      fillAccountSelect(elements.transactionForm.elements.toAccountId, '<option value="">Selecionar conta</option>');
+    }
+    if (elements.pixTransferForm) {
+      fillAccountSelect(elements.pixTransferForm.elements.accountId, '<option value="">Selecionar conta</option>');
+    }
+    if (elements.pixChargeForm) {
+      fillAccountSelect(elements.pixChargeForm.elements.accountId, '<option value="">Selecionar conta</option>');
+    }
+    if (elements.cardForm) {
+      fillAccountSelect(elements.cardForm.elements.accountId, '<option value="">Selecionar conta</option>');
+    }
   }
 
   function renderMetrics(metrics) {
@@ -235,32 +243,46 @@
   }
 
   function renderAccounts(accounts) {
+    if (!elements.accountsList && !elements.accountChips) {
+      return;
+    }
     if (!accounts.length) {
-      elements.accountsList.innerHTML = '<div class="list-item">Nenhuma conta criada ainda.</div>';
-      elements.accountChips.innerHTML = '';
+      if (elements.accountsList) {
+        elements.accountsList.innerHTML = '<div class="list-item">Nenhuma conta criada ainda.</div>';
+      }
+      if (elements.accountChips) {
+        elements.accountChips.innerHTML = '';
+      }
       return;
     }
 
-    elements.accountsList.innerHTML = accounts
-      .map(
-        (account) => `
-          <div class="list-item">
-            <strong>${account.name}</strong>
-            <div class="list-meta">
-              <span>${account.currency} - ${account.accountNumber}</span>
-              <strong>${formatCents(account.balanceCents, account.currency)}</strong>
+    if (elements.accountsList) {
+      elements.accountsList.innerHTML = accounts
+        .map(
+          (account) => `
+            <div class="list-item">
+              <strong>${account.name}</strong>
+              <div class="list-meta">
+                <span>${account.currency} - ${account.accountNumber}</span>
+                <strong>${formatCents(account.balanceCents, account.currency)}</strong>
+              </div>
             </div>
-          </div>
-        `
-      )
-      .join('');
+          `
+        )
+        .join('');
+    }
 
-    elements.accountChips.innerHTML = accounts
-      .map((account) => `<span class="chip">${account.name}: ${formatCents(account.balanceCents, account.currency)}</span>`)
-      .join('');
+    if (elements.accountChips) {
+      elements.accountChips.innerHTML = accounts
+        .map((account) => `<span class="chip">${account.name}: ${formatCents(account.balanceCents, account.currency)}</span>`)
+        .join('');
+    }
   }
 
   function renderTransactions(transactions) {
+    if (!elements.transactionsList) {
+      return;
+    }
     if (!transactions.length) {
       elements.transactionsList.innerHTML = '<div class="list-item">Nenhuma movimentação recente.</div>';
       return;
@@ -311,12 +333,18 @@
   }
 
   function renderPixKeys(keys) {
-    if (!keys.length) {
-      elements.pixKeysList.innerHTML = '<span class="pill">Sem chaves Pix</span>';
-    } else {
-      elements.pixKeysList.innerHTML = keys
-        .map((key) => `<span class="pill">${key.type.toUpperCase()}: ${key.value}</span>`)
-        .join('');
+    if (elements.pixKeysList) {
+      if (!keys.length) {
+        elements.pixKeysList.innerHTML = '<span class="pill">Sem chaves Pix</span>';
+      } else {
+        elements.pixKeysList.innerHTML = keys
+          .map((key) => `<span class="pill">${key.type.toUpperCase()}: ${key.value}</span>`)
+          .join('');
+      }
+    }
+
+    if (!elements.pixChargeForm) {
+      return;
     }
 
     const keySelect = elements.pixChargeForm.elements.keyId;
@@ -339,6 +367,9 @@
   }
 
   function renderPixCharges(charges) {
+    if (!elements.pixChargesList) {
+      return;
+    }
     if (!charges.length) {
       elements.pixChargesList.innerHTML = '<div class="list-item">Nenhuma cobrança Pix criada.</div>';
       return;
@@ -370,40 +401,54 @@
   }
 
   function renderCards(cards) {
+    if (!elements.cardsList && !elements.cardTxnForm) {
+      return;
+    }
     if (!cards.length) {
-      elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartão emitido.</div>';
-      elements.cardTxnForm.elements.cardId.innerHTML = '';
-      elements.cardTxnForm.elements.cardId.disabled = true;
+      if (elements.cardsList) {
+        elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartão emitido.</div>';
+      }
+      if (elements.cardTxnForm) {
+        elements.cardTxnForm.elements.cardId.innerHTML = '';
+        elements.cardTxnForm.elements.cardId.disabled = true;
+      }
       return;
     }
 
-    elements.cardsList.innerHTML = cards
-      .map((card) => {
-        const statusLabel = cardStatusLabels[card.status] || card.status;
-        return `
-          <div class="list-item">
-            <strong>${card.brand} **** ${card.last4}</strong>
-            <div class="list-meta">
-              <span>${card.type} - ${statusLabel}</span>
-              <span>${formatCents(card.availableCents, 'BRL')} disponível</span>
+    if (elements.cardsList) {
+      elements.cardsList.innerHTML = cards
+        .map((card) => {
+          const statusLabel = cardStatusLabels[card.status] || card.status;
+          return `
+            <div class="list-item">
+              <strong>${card.brand} **** ${card.last4}</strong>
+              <div class="list-meta">
+                <span>${card.type} - ${statusLabel}</span>
+                <span>${formatCents(card.availableCents, 'BRL')} disponível</span>
+              </div>
             </div>
-          </div>
-        `;
-      })
-      .join('');
+          `;
+        })
+        .join('');
+    }
 
-    const cardSelect = elements.cardTxnForm.elements.cardId;
-    cardSelect.disabled = false;
-    cardSelect.innerHTML = '';
-    cards.forEach((card) => {
-      const option = document.createElement('option');
-      option.value = card.id;
-      option.textContent = `${card.brand} **** ${card.last4}`;
-      cardSelect.appendChild(option);
-    });
+    if (elements.cardTxnForm) {
+      const cardSelect = elements.cardTxnForm.elements.cardId;
+      cardSelect.disabled = false;
+      cardSelect.innerHTML = '';
+      cards.forEach((card) => {
+        const option = document.createElement('option');
+        option.value = card.id;
+        option.textContent = `${card.brand} **** ${card.last4}`;
+        cardSelect.appendChild(option);
+      });
+    }
   }
 
   function renderCardTransactions(transactions) {
+    if (!elements.cardTransactionsList) {
+      return;
+    }
     if (!transactions.length) {
       elements.cardTransactionsList.innerHTML = '<div class="list-item">Sem compras registradas.</div>';
       return;
@@ -426,8 +471,12 @@
 
 
   async function loadOverview() {
-    renderSkeleton(elements.accountsList, 2);
-    renderSkeleton(elements.transactionsList, 3);
+    if (elements.accountsList) {
+      renderSkeleton(elements.accountsList, 2);
+    }
+    if (elements.transactionsList) {
+      renderSkeleton(elements.transactionsList, 3);
+    }
     try {
       const data = await apiRequest('/api/overview');
       state.accounts = data.accounts || [];
@@ -450,7 +499,12 @@
   }
 
   async function loadPix() {
-    renderSkeleton(elements.pixChargesList, 2);
+    if (!elements.pixKeysList && !elements.pixChargesList && !elements.pixKeyForm && !elements.pixTransferForm && !elements.pixChargeForm) {
+      return;
+    }
+    if (elements.pixChargesList) {
+      renderSkeleton(elements.pixChargesList, 2);
+    }
     try {
       const [keys, charges] = await Promise.all([
         apiRequest('/api/pix/keys'),
@@ -461,35 +515,52 @@
       renderPixKeys(state.pixKeys);
       renderPixCharges(state.pixCharges.slice(0, 5));
     } catch (err) {
-      elements.pixKeysList.innerHTML = '<span class="pill">Falha ao carregar Pix</span>';
-      elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar cobranças Pix.</div>';
+      if (elements.pixKeysList) {
+        elements.pixKeysList.innerHTML = '<span class="pill">Falha ao carregar Pix</span>';
+      }
+      if (elements.pixChargesList) {
+        elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar cobranças Pix.</div>';
+      }
       showToast(err.message, 'error');
     }
   }
 
   async function loadCards() {
-    renderSkeleton(elements.cardsList, 2);
-    renderSkeleton(elements.cardTransactionsList, 2);
+    if (!elements.cardsList && !elements.cardTransactionsList && !elements.cardForm && !elements.cardTxnForm) {
+      return;
+    }
+    if (elements.cardsList) {
+      renderSkeleton(elements.cardsList, 2);
+    }
+    if (elements.cardTransactionsList) {
+      renderSkeleton(elements.cardTransactionsList, 2);
+    }
     try {
       const data = await apiRequest('/api/cards');
       state.cards = data.cards || [];
       renderCards(state.cards);
-      const selected = elements.cardTxnForm.elements.cardId.value || (state.cards[0] && state.cards[0].id);
-      if (selected) {
-        elements.cardTxnForm.elements.cardId.value = selected;
-        await loadCardTransactions(selected);
-      } else {
-        renderCardTransactions([]);
+      if (elements.cardTxnForm) {
+        const selected = elements.cardTxnForm.elements.cardId.value || (state.cards[0] && state.cards[0].id);
+        if (selected) {
+          elements.cardTxnForm.elements.cardId.value = selected;
+          await loadCardTransactions(selected);
+        } else {
+          renderCardTransactions([]);
+        }
       }
     } catch (err) {
-      elements.cardsList.innerHTML = '<div class="list-item">Falha ao carregar cartões.</div>';
-      elements.cardTransactionsList.innerHTML = '<div class="list-item">Falha ao carregar transações.</div>';
+      if (elements.cardsList) {
+        elements.cardsList.innerHTML = '<div class="list-item">Falha ao carregar cartões.</div>';
+      }
+      if (elements.cardTransactionsList) {
+        elements.cardTransactionsList.innerHTML = '<div class="list-item">Falha ao carregar transações.</div>';
+      }
       showToast(err.message, 'error');
     }
   }
 
   async function loadCardTransactions(cardId) {
-    if (!cardId) {
+    if (!cardId || !elements.cardTransactionsList) {
       renderCardTransactions([]);
       return;
     }
@@ -497,8 +568,48 @@
     renderCardTransactions(data.transactions || []);
   }
 
-  async function loadExtensions() {
-    await Promise.allSettled([loadPix(), loadCards()]);
+  function needsOverviewData() {
+    return Boolean(
+      elements.accountsList ||
+        elements.accountChips ||
+        elements.accountForm ||
+        elements.transactionForm ||
+        elements.transactionsList ||
+        elements.metricBalance ||
+        elements.metricIncome ||
+        elements.metricSpend ||
+        elements.metricBalanceFull ||
+        elements.metricIncomeFull ||
+        elements.metricSpendFull ||
+        elements.metricCount ||
+        elements.pixTransferForm ||
+        elements.pixChargeForm ||
+        elements.cardForm
+    );
+  }
+
+  function needsPixData() {
+    return Boolean(elements.pixKeysList || elements.pixChargesList || elements.pixKeyForm || elements.pixTransferForm || elements.pixChargeForm);
+  }
+
+  function needsCardsData() {
+    return Boolean(elements.cardsList || elements.cardTransactionsList || elements.cardForm || elements.cardTxnForm);
+  }
+
+  async function loadPageData() {
+    const tasks = [];
+    if (needsOverviewData()) {
+      tasks.push(loadOverview());
+    }
+    if (needsPixData()) {
+      tasks.push(loadPix());
+    }
+    if (needsCardsData()) {
+      tasks.push(loadCards());
+    }
+    if (tasks.length) {
+      await Promise.allSettled(tasks);
+    }
   }
 
   function setActiveTab(target) {
@@ -510,6 +621,9 @@
   }
 
   function updateTransactionFields() {
+    if (!elements.transactionForm) {
+      return;
+    }
     const type = elements.transactionForm.elements.type.value;
     const fromLabel = elements.transactionForm.elements.fromAccountId.closest('label');
     const toLabel = elements.transactionForm.elements.toAccountId.closest('label');
@@ -548,6 +662,9 @@
   }
 
   function updatePixKeyField() {
+    if (!elements.pixKeyForm) {
+      return;
+    }
     const type = elements.pixKeyForm.elements.type.value;
     const valueInput = elements.pixKeyForm.elements.value;
     const isRandom = type === 'random';
@@ -570,8 +687,7 @@
       setToken(data.token);
       state.user = data.user;
       setAuthUI(true);
-      await loadOverview();
-      await loadExtensions();
+      await loadPageData();
       showToast('Login realizado');
     } catch (err) {
       showToast(err.message, 'error');
@@ -590,8 +706,7 @@
       setToken(data.token);
       state.user = data.user;
       setAuthUI(true);
-      await loadOverview();
-      await loadExtensions();
+      await loadPageData();
       showToast('Conta criada');
     } catch (err) {
       showToast(err.message, 'error');
@@ -810,33 +925,69 @@
   }
 
   async function initialize() {
-    elements.tabs.forEach((tab) => {
-      tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
-    });
+    if (elements.tabs.length) {
+      elements.tabs.forEach((tab) => {
+        tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
+      });
+    }
 
-    elements.loginForm.addEventListener('submit', handleLogin);
-    elements.registerForm.addEventListener('submit', handleRegister);
-    elements.accountForm.addEventListener('submit', handleAccountCreate);
-    elements.transactionForm.addEventListener('submit', handleTransaction);
-    elements.transactionForm.elements.type.addEventListener('change', updateTransactionFields);
-    elements.pixKeyForm.addEventListener('submit', handlePixKeyCreate);
-    elements.pixKeyForm.elements.type.addEventListener('change', updatePixKeyField);
-    elements.pixTransferForm.addEventListener('submit', handlePixTransfer);
-    elements.pixChargeForm.addEventListener('submit', handlePixChargeCreate);
-    elements.pixChargesList.addEventListener('click', handlePixChargeAction);
-    elements.cardForm.addEventListener('submit', handleCardCreate);
-    elements.cardTxnForm.addEventListener('submit', handleCardTransaction);
-    elements.cardTxnForm.elements.cardId.addEventListener('change', async (event) => {
-      await loadCardTransactions(event.target.value);
-    });
+    if (elements.loginForm) {
+      elements.loginForm.addEventListener('submit', handleLogin);
+    }
+    if (elements.registerForm) {
+      elements.registerForm.addEventListener('submit', handleRegister);
+    }
+    if (elements.accountForm) {
+      elements.accountForm.addEventListener('submit', handleAccountCreate);
+    }
+    if (elements.transactionForm) {
+      elements.transactionForm.addEventListener('submit', handleTransaction);
+      elements.transactionForm.elements.type.addEventListener('change', updateTransactionFields);
+    }
+    if (elements.pixKeyForm) {
+      elements.pixKeyForm.addEventListener('submit', handlePixKeyCreate);
+      elements.pixKeyForm.elements.type.addEventListener('change', updatePixKeyField);
+    }
+    if (elements.pixTransferForm) {
+      elements.pixTransferForm.addEventListener('submit', handlePixTransfer);
+    }
+    if (elements.pixChargeForm) {
+      elements.pixChargeForm.addEventListener('submit', handlePixChargeCreate);
+    }
+    if (elements.pixChargesList) {
+      elements.pixChargesList.addEventListener('click', handlePixChargeAction);
+    }
+    if (elements.cardForm) {
+      elements.cardForm.addEventListener('submit', handleCardCreate);
+    }
+    if (elements.cardTxnForm) {
+      elements.cardTxnForm.addEventListener('submit', handleCardTransaction);
+      elements.cardTxnForm.elements.cardId.addEventListener('change', async (event) => {
+        await loadCardTransactions(event.target.value);
+      });
+    }
 
-    elements.refreshAccounts.addEventListener('click', loadOverview);
-    elements.refreshOverview.addEventListener('click', loadOverview);
-    elements.refreshTransactions.addEventListener('click', loadOverview);
-    elements.refreshPix.addEventListener('click', loadPix);
-    elements.refreshCharges.addEventListener('click', loadPix);
-    elements.refreshCards.addEventListener('click', loadCards);
-    elements.refreshCardTx.addEventListener('click', loadCards);
+    if (elements.refreshAccounts) {
+      elements.refreshAccounts.addEventListener('click', loadOverview);
+    }
+    if (elements.refreshOverview) {
+      elements.refreshOverview.addEventListener('click', loadOverview);
+    }
+    if (elements.refreshTransactions) {
+      elements.refreshTransactions.addEventListener('click', loadOverview);
+    }
+    if (elements.refreshPix) {
+      elements.refreshPix.addEventListener('click', loadPix);
+    }
+    if (elements.refreshCharges) {
+      elements.refreshCharges.addEventListener('click', loadPix);
+    }
+    if (elements.refreshCards) {
+      elements.refreshCards.addEventListener('click', loadCards);
+    }
+    if (elements.refreshCardTx) {
+      elements.refreshCardTx.addEventListener('click', loadCards);
+    }
     if (elements.logoutBtn) {
       elements.logoutBtn.addEventListener('click', () => {
         setToken(null);
@@ -855,8 +1006,7 @@
         state.user = { name: decoded.name };
       }
       try {
-        await loadOverview();
-        await loadExtensions();
+        await loadPageData();
         setAuthUI(true);
       } catch (err) {
         setToken(null);

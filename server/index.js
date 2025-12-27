@@ -70,7 +70,12 @@ const pageRoutes = {
   '/developers': 'empresa.html',
   '/pricing': 'pricing.html',
   '/support': 'support.html',
-  '/console': 'console.html'
+  '/console': 'console.html',
+  '/console/overview': 'console.html',
+  '/console/contas': 'console-accounts.html',
+  '/console/movimentacoes': 'console-movements.html',
+  '/console/pix': 'console-pix.html',
+  '/console/cartoes': 'console-cards.html'
 };
 
 Object.entries(pageRoutes).forEach(([route, file]) => {

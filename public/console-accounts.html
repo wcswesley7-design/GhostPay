@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
     <meta name="description" content="GhostPay área do cliente" />
-    <title>GhostPay | Conta</title>
+    <title>GhostPay | Contas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,7 +50,7 @@
       </div>
     </header>
 
-    <main class="page console-page" id="consoleShell" data-console-page="overview">
+    <main class="page console-page" id="consoleShell" data-console-page="accounts">
       <section class="hero" id="consoleHero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
@@ -186,8 +186,8 @@
                 <span class="tag">Navega??o</span>
               </div>
               <nav class="console-nav console-nav--stacked">
-                <a class="pill" href="/console" aria-current="page">Vis?o geral</a>
-                <a class="pill" href="/console/contas">Contas</a>
+                <a class="pill" href="/console">Vis?o geral</a>
+                <a class="pill" href="/console/contas" aria-current="page">Contas</a>
                 <a class="pill" href="/console/movimentacoes">Movimenta??es</a>
                 <a class="pill" href="/console/pix">Pix</a>
                 <a class="pill" href="/console/cartoes">Cart?es</a>
@@ -197,45 +197,42 @@
           </aside>
 
           <div class="console-main">
-            <section class="section" id="overview" data-reveal>
+            <section class="section" id="accounts" data-reveal>
               <div class="section-head section-head--inline">
                 <div>
-                  <h2>Vis?o geral</h2>
-                  <p class="lead">Saldos e atividade das ?ltimas semanas.</p>
+                  <h2>Contas</h2>
+                  <p class="lead">Gerencie suas contas internas e saldos.</p>
                 </div>
-                <button class="btn btn-ghost" type="button" id="refreshOverview">Atualizar</button>
+                <button class="btn btn-ghost" type="button" id="refreshAccounts">Atualizar</button>
               </div>
-              <div class="metric-grid">
-                <div class="metric">
-                  <span class="muted">Saldo total</span>
-                  <strong id="metricBalanceFull">--</strong>
+              <div class="grid-2">
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Contas ativas</h3>
+                    <span class="tag">Saldo</span>
+                  </div>
+                  <div class="chip-row" id="accountChips"></div>
+                  <div class="list" id="accountsList"></div>
                 </div>
-                <div class="metric">
-                  <span class="muted">Entradas 30d</span>
-                  <strong id="metricIncomeFull">--</strong>
+
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Nova conta</h3>
+                    <span class="tag">Interna</span>
+                  </div>
+                  <p class="muted">Crie contas para separar fluxos e objetivos.</p>
+                  <form class="form" id="accountForm">
+                    <label>
+                      Nome da conta
+                      <input type="text" name="name" placeholder="Conta principal" required />
+                    </label>
+                    <label>
+                      Moeda
+                      <input type="text" name="currency" placeholder="BRL" maxlength="3" />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Adicionar</button>
+                  </form>
                 </div>
-                <div class="metric">
-                  <span class="muted">Sa?das 30d</span>
-                  <strong id="metricSpendFull">--</strong>
-                </div>
-                <div class="metric">
-                  <span class="muted">Atividade</span>
-                  <strong id="metricCount">--</strong>
-                </div>
-              </div>
-              <div class="quick-grid">
-                <a class="quick-card" href="/console/movimentacoes">
-                  <span class="quick-title">Nova movimenta??o</span>
-                  <span class="quick-meta">Dep?sitos, saques e pagamentos</span>
-                </a>
-                <a class="quick-card" href="/console/pix">
-                  <span class="quick-title">Enviar Pix</span>
-                  <span class="quick-meta">Chave, valor e descri??o</span>
-                </a>
-                <a class="quick-card" href="/console/cartoes">
-                  <span class="quick-title">Emitir cart?o</span>
-                  <span class="quick-meta">Virtual ou f?sico</span>
-                </a>
               </div>
             </section>
           </div>
