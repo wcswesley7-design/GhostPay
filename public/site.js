@@ -55,6 +55,16 @@
     menuToggle.addEventListener('click', () => {
       nav.classList.toggle('is-open');
     });
+    document.addEventListener('click', (event) => {
+      if (!nav.classList.contains('is-open')) {
+        return;
+      }
+      const target = event.target;
+      if (nav.contains(target) || menuToggle.contains(target)) {
+        return;
+      }
+      nav.classList.remove('is-open');
+    });
     nav.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
         nav.classList.remove('is-open');
