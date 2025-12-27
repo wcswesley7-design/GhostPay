@@ -847,6 +847,204 @@ html[data-theme='light'] .topbar.is-scrolled {
   gap: 8px;
 }
 
+.card-visual {
+  position: relative;
+  border-radius: 22px;
+  padding: 26px;
+  min-height: 240px;
+  display: grid;
+  gap: 16px;
+  color: #f2ddb0;
+  background: radial-gradient(circle at 14% 18%, rgba(215, 178, 92, 0.2), transparent 55%),
+    radial-gradient(circle at 85% 22%, rgba(215, 178, 92, 0.12), transparent 50%),
+    linear-gradient(135deg, #1b191b 0%, #0b0b0d 58%, #141217 100%);
+  border: 1px solid rgba(215, 178, 92, 0.35);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), var(--shadow);
+}
+
+.card-visual--artwork {
+  background-image: linear-gradient(135deg, rgba(7, 6, 8, 0.2), rgba(7, 6, 8, 0.45)), url('/assets/ghostpay-card.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card-visual--artwork::before,
+.card-visual--artwork::after {
+  opacity: 0.12;
+}
+
+.card-visual > * {
+  position: relative;
+  z-index: 1;
+}
+
+.card-visual--virtual {
+  border-style: dashed;
+  border-color: rgba(215, 178, 92, 0.2);
+}
+
+.card-visual--physical {
+  border-color: rgba(215, 178, 92, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), var(--glow);
+}
+
+.card-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.06), transparent 45%),
+    repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04) 1px, transparent 1px, transparent 5px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.card-visual::after {
+  content: '';
+  position: absolute;
+  right: -90px;
+  bottom: -120px;
+  width: 340px;
+  height: 240px;
+  background: radial-gradient(circle at 10% 60%, rgba(255, 214, 140, 0.85), transparent 62%),
+    linear-gradient(120deg, rgba(255, 214, 140, 0), rgba(255, 214, 140, 0.45) 40%, rgba(255, 214, 140, 0) 70%);
+  opacity: 0.75;
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+.card-visual-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.card-branding {
+  display: inline-flex;
+  align-items: center;
+}
+
+.card-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5)) saturate(1.1);
+}
+
+.card-network {
+  font-size: 1.05rem;
+  letter-spacing: 0.2em;
+  color: #e9e3d3;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.card-chip {
+  width: 56px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 220, 140, 0.9), rgba(180, 120, 40, 0.8));
+  border: 1px solid rgba(255, 230, 160, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 6px 14px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+.card-chip::before {
+  content: '';
+  position: absolute;
+  inset: 8px 10px;
+  border-top: 1px solid rgba(120, 80, 30, 0.45);
+  border-bottom: 1px solid rgba(255, 240, 200, 0.45);
+}
+
+.card-chip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  width: 2px;
+  height: calc(100% - 12px);
+  background: rgba(120, 80, 30, 0.5);
+  transform: translateX(-50%);
+}
+
+.card-number {
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  letter-spacing: 0.22em;
+  color: #f2d39a;
+  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
+}
+
+.card-visual-footer {
+  display: grid;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.card-meta {
+  display: grid;
+  gap: 4px;
+}
+
+.card-meta-name {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.card-label {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(242, 225, 178, 0.7);
+}
+
+.card-detail-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.card-actions--always .btn {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.detail-item {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-glass);
+}
+
+.detail-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .list-row {
   display: flex;
   align-items: center;

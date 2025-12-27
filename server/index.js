@@ -84,6 +84,10 @@ Object.entries(pageRoutes).forEach(([route, file]) => {
   });
 });
 
+app.get('/console/cartoes/:id', (req, res) => {
+  res.sendFile(path.join(publicDir, 'console-card.html'));
+});
+
 app.get('*', (req, res) => {
   res.status(404).sendFile(path.join(publicDir, '404.html'));
 });

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="GhostPay área do cliente" />
+    <title>GhostPay | Cartão</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="grid-overlay"></div>
+      <div class="scanline"></div>
+    </div>
+
+    <header class="topbar" data-topbar>
+      <div class="container">
+        <a class="brand" href="/">
+          <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
+          <span class="brand-text">
+            <span class="brand-name">GhostPay</span>
+            <span class="brand-tag">Conta digital</span>
+          </span>
+        </a>
+
+        <nav class="nav" data-nav>
+          <a class="nav-link" href="/">Início</a>
+          <a class="nav-link" href="/platform">Plataforma</a>
+          <a class="nav-link" href="/security">Segurança</a>
+          <a class="nav-link" href="/empresa">Empresa</a>
+          <a class="nav-link" href="/pricing">Planos</a>
+          <a class="nav-link" href="/support">Suporte</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
+          <button class="btn btn-ghost hidden" type="button" id="logoutBtn">Sair</button>
+          <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page console-page" id="consoleShell" data-console-page="card-detail">
+      <section class="hero" id="consoleHero" data-reveal>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Conta GhostPay</p>
+            <h1 id="welcomeTitle">Sua conta digital em um painel simples.</h1>
+            <p class="lead">Acompanhe saldo, Pix e cartões em tempo real.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="/pricing">Ver planos</a>
+              <a class="btn btn-ghost" href="/support">Falar com suporte</a>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="glass-card">
+              <div class="card-head">
+                <h3>Resumo rápido</h3>
+                <span class="tag">Ao vivo</span>
+              </div>
+              <div class="signal-list">
+                <div class="signal-row">
+                  <span>Saldo total</span>
+                  <strong id="metricBalance">--</strong>
+                </div>
+                <div class="signal-row">
+                  <span>Entradas 30d</span>
+                  <strong id="metricIncome">--</strong>
+                </div>
+                <div class="signal-row">
+                  <span>Saídas 30d</span>
+                  <strong id="metricSpend">--</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="banner hidden" id="errorBanner"></div>
+
+      <section class="section" id="authPanel" data-reveal>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Acesso à conta</h3>
+              <span class="tag">Cliente</span>
+            </div>
+            <div class="tab-group">
+              <button class="tab active" data-tab="login" type="button">Entrar</button>
+              <button class="tab" data-tab="register" type="button">Criar conta</button>
+            </div>
+            <form class="form" id="loginForm">
+              <label>
+                Email
+                <input type="email" name="email" placeholder="seu@email.com" required />
+              </label>
+              <label>
+                Senha
+                <input type="password" name="password" placeholder="********" required />
+              </label>
+              <button class="btn btn-primary" type="submit">Entrar</button>
+            </form>
+            <form class="form hidden" id="registerForm">
+              <label>
+                Nome completo
+                <input type="text" name="name" placeholder="João Silva" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" placeholder="seu@email.com" required />
+              </label>
+              <label>
+                Senha
+                <input type="password" name="password" placeholder="Mínimo 8 caracteres" required />
+              </label>
+              <button class="btn btn-primary" type="submit">Criar conta</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Benefícios da conta</h3>
+              <span class="tag">Premium</span>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <strong>Pix instantâneo</strong>
+                <div class="list-meta">
+                  <span>Envie e receba 24/7.</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <strong>Cartões com controle</strong>
+                <div class="list-meta">
+                  <span>Limites e notificações em tempo real.</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <strong>Segurança premium</strong>
+                <div class="list-meta">
+                  <span>Proteção e suporte dedicado.</span>
+                </div>
+              </div>
+            </div>
+            <a class="btn btn-ghost" href="/pricing">Ver planos</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section hidden" id="dashboardPanel">
+        <div class="console-layout">
+          <aside class="console-sidebar" data-reveal>
+            <div class="card">
+              <div class="card-head">
+                <h3>Conta</h3>
+                <span class="tag">Conta ativa</span>
+              </div>
+              <div class="list">
+                <div class="list-item">
+                  <strong>Usuário</strong>
+                  <div class="list-meta">
+                    <span id="sidebarName">--</span>
+                  </div>
+                </div>
+                <div class="list-item">
+                  <strong>Status</strong>
+                  <div class="list-meta">
+                    <span>Operações disponíveis</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Atalhos</h3>
+                <span class="tag">Navegação</span>
+              </div>
+              <nav class="console-nav console-nav--stacked">
+                <a class="pill" href="/console">Visão geral</a>
+                <a class="pill" href="/console/contas">Contas</a>
+                <a class="pill" href="/console/movimentacoes">Movimentações</a>
+                <a class="pill" href="/console/pix">Pix</a>
+                <a class="pill" href="/console/cartoes" aria-current="page">Cartões</a>
+              </nav>
+              <a class="btn btn-ghost" href="/support">Falar com suporte</a>
+            </div>
+          </aside>
+
+          <div class="console-main">
+            <section class="section" id="cardDetailPanel" data-reveal>
+              <div class="section-head section-head--inline">
+                <div>
+                  <h2 id="cardDetailTitle">Cartão GhostPay</h2>
+                  <p class="lead" id="cardDetailSubtitle">Informações completas e ações do cartão.</p>
+                </div>
+                <a class="btn btn-ghost" href="/console/cartoes">Voltar</a>
+              </div>
+
+              <div class="grid-2">
+                <div class="card">
+                  <div class="card-visual card-visual--artwork" id="cardVisual">
+                    <div class="card-visual-top">
+                      <span class="card-branding">
+                        <img src="/assets/ghostpay-logo.png" alt="GhostPay" class="card-logo" />
+                      </span>
+                      <span class="card-network">VISA</span>
+                    </div>
+                    <div class="card-chip" aria-hidden="true"></div>
+                    <div class="card-number" id="cardVisualNumber">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; 0000</div>
+                    <div class="card-visual-footer">
+                      <div class="card-meta">
+                        <span class="card-label">Validade</span>
+                        <span id="cardVisualExpiry">--/--</span>
+                      </div>
+                      <div class="card-meta card-meta-name">
+                        <span class="card-label">Titular</span>
+                        <span id="cardVisualHolder">--</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card-detail-badges">
+                    <span class="status-pill" id="cardStatusPill">--</span>
+                    <span class="tag" id="cardTypeTag">--</span>
+                  </div>
+                  <div class="card-actions card-actions--always" id="cardDetailActions"></div>
+                  <p class="muted" id="cardDetailNotice"></p>
+                </div>
+
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Informações do cartão</h3>
+                    <span class="tag">Detalhes</span>
+                  </div>
+                  <div class="detail-grid">
+                    <div class="detail-item">
+                      <span class="detail-label">Status</span>
+                      <strong id="cardInfoStatus">--</strong>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Tipo</span>
+                      <strong id="cardInfoType">--</strong>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Bandeira</span>
+                      <strong id="cardInfoBrand">--</strong>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Final</span>
+                      <strong id="cardInfoLast4">--</strong>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Limite</span>
+                      <strong id="cardInfoLimit">--</strong>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Disponível</span>
+                      <strong id="cardInfoAvailable">--</strong>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Conta vinculada</span>
+                      <strong id="cardInfoAccount">--</strong>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Criado em</span>
+                      <strong id="cardInfoCreated">--</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-head">
+                  <h3>Compras recentes</h3>
+                  <button class="btn btn-ghost" type="button" id="refreshCardDetail">Atualizar</button>
+                </div>
+                <div class="list" id="cardDetailTransactionsList"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand-name">GhostPay</div>
+          <small>Banco digital premium para pessoas e negócios.</small>
+        </div>
+        <div class="footer-col">
+          <strong>Produto</strong>
+          <a href="/platform">Plataforma</a>
+          <a href="/security">Segurança</a>
+          <a href="/pricing">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Empresa</strong>
+          <a href="/empresa">Empresa</a>
+          <a href="/support">Suporte</a>
+          <a href="/pricing">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Conta</strong>
+          <a href="/console">Acessar conta</a>
+          <a href="/console">Abrir conta</a>
+          <a href="/support">Atendimento</a>
+        </div>
+        <div class="footer-col">
+          <strong>Legal</strong>
+          <span class="muted">LGPD</span>
+          <span class="muted">Privacidade</span>
+          <span class="muted">Termos de uso</span>
+        </div>
+      </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/site.js"></script>
+    <script src="/console.js"></script>
+  </body>
+</html>

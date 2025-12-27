@@ -47,13 +47,34 @@
     cardForm: document.getElementById('cardForm'),
     cardTxnForm: document.getElementById('cardTxnForm'),
     cardTransactionsList: document.getElementById('cardTransactionsList'),
+    cardDetailPanel: document.getElementById('cardDetailPanel'),
+    cardDetailTitle: document.getElementById('cardDetailTitle'),
+    cardDetailSubtitle: document.getElementById('cardDetailSubtitle'),
+    cardVisual: document.getElementById('cardVisual'),
+    cardVisualNumber: document.getElementById('cardVisualNumber'),
+    cardVisualHolder: document.getElementById('cardVisualHolder'),
+    cardVisualExpiry: document.getElementById('cardVisualExpiry'),
+    cardStatusPill: document.getElementById('cardStatusPill'),
+    cardTypeTag: document.getElementById('cardTypeTag'),
+    cardDetailActions: document.getElementById('cardDetailActions'),
+    cardDetailNotice: document.getElementById('cardDetailNotice'),
+    cardInfoStatus: document.getElementById('cardInfoStatus'),
+    cardInfoType: document.getElementById('cardInfoType'),
+    cardInfoBrand: document.getElementById('cardInfoBrand'),
+    cardInfoLast4: document.getElementById('cardInfoLast4'),
+    cardInfoLimit: document.getElementById('cardInfoLimit'),
+    cardInfoAvailable: document.getElementById('cardInfoAvailable'),
+    cardInfoAccount: document.getElementById('cardInfoAccount'),
+    cardInfoCreated: document.getElementById('cardInfoCreated'),
+    cardDetailTransactionsList: document.getElementById('cardDetailTransactionsList'),
     refreshAccounts: document.getElementById('refreshAccounts'),
     refreshOverview: document.getElementById('refreshOverview'),
     refreshTransactions: document.getElementById('refreshTransactions'),
     refreshPix: document.getElementById('refreshPix'),
     refreshCharges: document.getElementById('refreshCharges'),
     refreshCards: document.getElementById('refreshCards'),
-    refreshCardTx: document.getElementById('refreshCardTx')
+    refreshCardTx: document.getElementById('refreshCardTx'),
+    refreshCardDetail: document.getElementById('refreshCardDetail')
   };
 
   const confirmModal = {
@@ -174,6 +195,46 @@
     }
     const numberLabel = account.accountNumber ? ` - ${account.accountNumber}` : '';
     return `${account.name} (${account.currency})${numberLabel}`;
+  }
+
+  function formatCardType(type) {
+    return type === 'physical' ? 'Físico' : 'Virtual';
+  }
+
+  function formatCardStatus(status) {
+    return cardStatusLabels[status] || status;
+  }
+
+  function statusClassFor(status) {
+    if (status === 'active') {
+      return 'active';
+    }
+    if (status === 'cancel_pending') {
+      return 'pending';
+    }
+    return 'disabled';
+  }
+
+  function getCardExpiry(createdAt) {
+    if (!createdAt) {
+      return '--/--';
+    }
+    const date = new Date(createdAt);
+    const expiry = new Date(date);
+    expiry.setFullYear(expiry.getFullYear() + 4);
+    const month = String(expiry.getMonth() + 1).padStart(2, '0');
+    const year = String(expiry.getFullYear()).slice(-2);
+    return `${month}/${year}`;
+  }
+
+  function getCardIdFromUrl() {
+    const url = new URL(window.location.href);
+    const idParam = url.searchParams.get('id');
+    if (idParam) {
+      return idParam;
+    }
+    const match = window.location.pathname.match(/\/console\/cartoes\/([^/]+)/);
+    return match ? match[1] : null;
   }
 
   function decodeToken(token) {
@@ -696,57 +757,28 @@
     }
 
     if (elements.cardsList) {
-      if (!cards.length) {
-        elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartão emitido.</div>';
-      } else {
-        elements.cardsList.innerHTML = cards
-          .map((card) => {
-            const statusLabel = cardStatusLabels[card.status] || card.status;
-            const label = `${card.brand} **** ${card.last4}`;
-            const actions = [];
-            if (card.status === 'active') {
-              actions.push(`
-                <button class="btn btn-ghost btn-xs btn-warning btn-icon-only" type="button" data-action="block-card" data-id="${card.id}" data-label="${label}" aria-label="Bloquear cartão">
-                  <span class="sr-only">Bloquear</span>
-                  <span class="btn-icon" aria-hidden="true">${lockIcon}</span>
-                </button>
-              `);
-              actions.push(`
-                <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="cancel-card" data-id="${card.id}" data-label="${label}" aria-label="Solicitar cancelamento">
-                  <span class="sr-only">Solicitar cancelamento</span>
-                  <span class="btn-icon" aria-hidden="true">${contractIcon}</span>
-                </button>
-              `);
-            }
-            if (card.status === 'blocked') {
-              actions.push(`
-                <button class="btn btn-ghost btn-xs btn-warning btn-icon-only" type="button" data-action="unblock-card" data-id="${card.id}" data-label="${label}" aria-label="Desbloquear cartão">
-                  <span class="sr-only">Desbloquear</span>
-                  <span class="btn-icon" aria-hidden="true">${unlockIcon}</span>
-                </button>
-              `);
-              actions.push(`
-                <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="cancel-card" data-id="${card.id}" data-label="${label}" aria-label="Solicitar cancelamento">
-                  <span class="sr-only">Solicitar cancelamento</span>
-                  <span class="btn-icon" aria-hidden="true">${contractIcon}</span>
-                </button>
-              `);
-            }
-            return `
-              <div class="list-item">
-                <div class="list-row">
-                  <strong>${label}</strong>
-                  <div class="card-actions">${actions.join('')}</div>
-                </div>
-                <div class="list-meta">
-                  <span>${card.type} - ${statusLabel}</span>
-                  <span>${formatCents(card.availableCents, 'BRL')} disponível</span>
-                </div>
+      elements.cardsList.innerHTML = cards
+        .map((card) => {
+          const statusLabel = formatCardStatus(card.status);
+          const statusClass = statusClassFor(card.status);
+          const label = `${card.brand} **** ${card.last4}`;
+          return `
+            <div class="list-item">
+              <div class="list-row">
+                <strong>${label}</strong>
+                <a class="btn btn-ghost btn-xs" href="/console/cartoes/${card.id}">Ver cartão</a>
               </div>
-            `;
-          })
-          .join('');
-      }
+              <div class="list-meta">
+                <span>${formatCardType(card.type)} - ${statusLabel}</span>
+                <span>${formatCents(card.availableCents, 'BRL')} disponível</span>
+              </div>
+              <div class="list-meta">
+                <span class="status-pill ${statusClass}">${statusLabel}</span>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
     }
 
     if (elements.cardTxnForm) {
@@ -772,15 +804,19 @@
   }
 
   function renderCardTransactions(transactions) {
-    if (!elements.cardTransactionsList) {
+    renderCardTransactionsList(elements.cardTransactionsList, transactions);
+  }
+
+  function renderCardTransactionsList(container, transactions) {
+    if (!container) {
       return;
     }
     if (!transactions.length) {
-      elements.cardTransactionsList.innerHTML = '<div class="list-item">Sem compras registradas.</div>';
+      container.innerHTML = '<div class="list-item">Sem compras registradas.</div>';
       return;
     }
 
-    elements.cardTransactionsList.innerHTML = transactions
+    container.innerHTML = transactions
       .map(
         (txn) => `
           <div class="list-item">
@@ -899,6 +935,140 @@
     renderCardTransactions(data.transactions || []);
   }
 
+  async function loadCardDetail() {
+    if (!elements.cardDetailPanel) {
+      return;
+    }
+    const cardId = getCardIdFromUrl();
+    if (!cardId) {
+      setError('Cartão não encontrado.');
+      return;
+    }
+    if (elements.cardDetailTransactionsList) {
+      renderSkeleton(elements.cardDetailTransactionsList, 2);
+    }
+    try {
+      const data = await apiRequest('/api/cards');
+      state.cards = data.cards || [];
+      const card = state.cards.find((item) => item.id === cardId);
+      if (!card) {
+        setError('Cartão não encontrado.');
+        return;
+      }
+      renderCardDetail(card);
+      const txData = await apiRequest(`/api/cards/${cardId}/transactions`);
+      renderCardTransactionsList(elements.cardDetailTransactionsList, txData.transactions || []);
+      setError('');
+    } catch (err) {
+      setError(err.message);
+      showToast(err.message, 'error');
+    }
+  }
+
+  function renderCardDetail(card) {
+    const label = `${card.brand} **** ${card.last4}`;
+    const statusLabel = formatCardStatus(card.status);
+    const statusClass = statusClassFor(card.status);
+
+    if (elements.cardDetailTitle) {
+      elements.cardDetailTitle.textContent = label;
+    }
+    if (elements.cardDetailSubtitle) {
+      elements.cardDetailSubtitle.textContent = `${formatCardType(card.type)} · ${statusLabel}`;
+    }
+    if (elements.cardVisualNumber) {
+      elements.cardVisualNumber.textContent = `•••• •••• •••• ${card.last4}`;
+    }
+    if (elements.cardVisualHolder) {
+      elements.cardVisualHolder.textContent = state.user && state.user.name ? state.user.name : 'Titular GhostPay';
+    }
+    if (elements.cardVisualExpiry) {
+      elements.cardVisualExpiry.textContent = getCardExpiry(card.createdAt);
+    }
+    if (elements.cardStatusPill) {
+      elements.cardStatusPill.className = `status-pill ${statusClass}`;
+      elements.cardStatusPill.textContent = statusLabel;
+    }
+    if (elements.cardTypeTag) {
+      elements.cardTypeTag.textContent = formatCardType(card.type);
+    }
+    if (elements.cardVisual) {
+      elements.cardVisual.classList.toggle('card-visual--virtual', card.type === 'virtual');
+      elements.cardVisual.classList.toggle('card-visual--physical', card.type === 'physical');
+    }
+
+    if (elements.cardDetailActions) {
+      const actions = [];
+      if (card.status === 'active') {
+        actions.push(`
+          <button class="btn btn-ghost btn-xs btn-warning btn-icon-only" type="button" data-action="block-card" data-id="${card.id}" data-label="${label}" aria-label="Bloquear cartão">
+            <span class="sr-only">Bloquear</span>
+            <span class="btn-icon" aria-hidden="true">${lockIcon}</span>
+          </button>
+        `);
+        actions.push(`
+          <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="cancel-card" data-id="${card.id}" data-label="${label}" aria-label="Solicitar cancelamento">
+            <span class="sr-only">Solicitar cancelamento</span>
+            <span class="btn-icon" aria-hidden="true">${contractIcon}</span>
+          </button>
+        `);
+      }
+      if (card.status === 'blocked') {
+        actions.push(`
+          <button class="btn btn-ghost btn-xs btn-warning btn-icon-only" type="button" data-action="unblock-card" data-id="${card.id}" data-label="${label}" aria-label="Desbloquear cartão">
+            <span class="sr-only">Desbloquear</span>
+            <span class="btn-icon" aria-hidden="true">${unlockIcon}</span>
+          </button>
+        `);
+        actions.push(`
+          <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="cancel-card" data-id="${card.id}" data-label="${label}" aria-label="Solicitar cancelamento">
+            <span class="sr-only">Solicitar cancelamento</span>
+            <span class="btn-icon" aria-hidden="true">${contractIcon}</span>
+          </button>
+        `);
+      }
+      elements.cardDetailActions.innerHTML = actions.join('');
+    }
+
+    if (elements.cardDetailNotice) {
+      if (card.status === 'cancel_pending') {
+        elements.cardDetailNotice.textContent =
+          'Solicitação em análise. Um especialista revisará sua documentação e contratos.';
+      } else if (card.status === 'blocked') {
+        elements.cardDetailNotice.textContent =
+          'Cartão bloqueado temporariamente. Compras ficam indisponíveis até o desbloqueio.';
+      } else {
+        elements.cardDetailNotice.textContent =
+          'Alguns dados sensíveis permanecem ocultos por segurança.';
+      }
+    }
+
+    if (elements.cardInfoStatus) {
+      elements.cardInfoStatus.textContent = statusLabel;
+    }
+    if (elements.cardInfoType) {
+      elements.cardInfoType.textContent = formatCardType(card.type);
+    }
+    if (elements.cardInfoBrand) {
+      elements.cardInfoBrand.textContent = card.brand;
+    }
+    if (elements.cardInfoLast4) {
+      elements.cardInfoLast4.textContent = card.last4;
+    }
+    if (elements.cardInfoLimit) {
+      elements.cardInfoLimit.textContent = formatCents(card.limitCents, 'BRL');
+    }
+    if (elements.cardInfoAvailable) {
+      elements.cardInfoAvailable.textContent = formatCents(card.availableCents, 'BRL');
+    }
+    if (elements.cardInfoAccount) {
+      elements.cardInfoAccount.textContent = getAccountLabel(card.billingAccountId, 'Conta principal');
+    }
+    if (elements.cardInfoCreated) {
+      elements.cardInfoCreated.textContent = formatDate(card.createdAt);
+    }
+  }
+
   function needsOverviewData() {
     return Boolean(
       elements.accountsList ||
@@ -927,7 +1097,22 @@
     return Boolean(elements.cardsList || elements.cardTransactionsList || elements.cardForm || elements.cardTxnForm);
   }
 
+  function needsCardDetail() {
+    return Boolean(elements.cardDetailPanel);
+  }
+
   async function loadPageData() {
+    if (needsCardDetail()) {
+      if (needsOverviewData()) {
+        await loadOverview();
+      }
+      await loadCardDetail();
+      if (needsPixData()) {
+        await loadPix();
+      }
+      return;
+    }
+
     const tasks = [];
     if (needsOverviewData()) {
       tasks.push(loadOverview());
@@ -1436,6 +1621,9 @@
     if (elements.cardsList) {
       elements.cardsList.addEventListener('click', handleCardAction);
     }
+    if (elements.cardDetailActions) {
+      elements.cardDetailActions.addEventListener('click', handleCardAction);
+    }
     if (elements.cardTxnForm) {
       elements.cardTxnForm.addEventListener('submit', handleCardTransaction);
       elements.cardTxnForm.elements.cardId.addEventListener('change', async (event) => {
@@ -1463,6 +1651,9 @@
     }
     if (elements.refreshCardTx) {
       elements.refreshCardTx.addEventListener('click', loadCards);
+    }
+    if (elements.refreshCardDetail) {
+      elements.refreshCardDetail.addEventListener('click', loadCardDetail);
     }
     if (elements.logoutBtn) {
       elements.logoutBtn.addEventListener('click', () => {
