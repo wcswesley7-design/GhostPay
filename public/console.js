@@ -1657,7 +1657,16 @@
       elements.refreshCardDetail.addEventListener('click', loadCardDetail);
     }
     if (elements.logoutBtn) {
-      elements.logoutBtn.addEventListener('click', () => {
+      elements.logoutBtn.addEventListener('click', async () => {
+        const confirmed = await openConfirmModal({
+          title: 'Sair da conta',
+          message: 'Deseja realmente encerrar a sessão?',
+          confirmText: 'Sair',
+          cancelText: 'Cancelar'
+        });
+        if (!confirmed) {
+          return;
+        }
         setToken(null);
         state.user = null;
         setAuthUI(false);
