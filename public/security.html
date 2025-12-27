@@ -44,8 +44,22 @@
 
         <div class="topbar-actions">
           <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
-          <a class="btn btn-ghost" href="/console?tab=login">Entrar</a>
-          <a class="btn btn-primary" href="/console?tab=register">Abrir conta</a>
+          <a class="btn btn-ghost" href="/console?tab=login">
+            <span class="btn-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <use href="/assets/icons.svg#icon-user"></use>
+              </svg>
+            </span>
+            Entrar
+          </a>
+          <a class="btn btn-primary" href="/console?tab=register">
+            <span class="btn-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <use href="/assets/icons.svg#icon-user-plus"></use>
+              </svg>
+            </span>
+            Abrir conta
+          </a>
           <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
         </div>
       </div>
@@ -89,22 +103,22 @@
         </div>
         <div class="feature-grid">
           <div class="feature-card">
-            <div class="icon">LOCK</div>
+            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-lock"></use></svg></div>
             <h3>Criptografia</h3>
             <p class="muted">Dados protegidos em transito e em repouso.</p>
           </div>
           <div class="feature-card">
-            <div class="icon">ID</div>
+            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-id"></use></svg></div>
             <h3>Acesso seguro</h3>
             <p class="muted">Verificações e alertas para cada sessão.</p>
           </div>
           <div class="feature-card">
-            <div class="icon">MON</div>
+            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-monitor"></use></svg></div>
             <h3>Monitoramento 24/7</h3>
             <p class="muted">Sinais de risco acompanhados em tempo real.</p>
           </div>
           <div class="feature-card">
-            <div class="icon">SAFE</div>
+            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-shield-check"></use></svg></div>
             <h3>Proteção antifraude</h3>
             <p class="muted">Camadas de análise para reduzir fraudes.</p>
           </div>
