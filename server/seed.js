@@ -40,8 +40,8 @@ const client = await pool.connect();
 
     const pixKeyId = randomId('pix');
     await client.query(
-      'INSERT INTO pix_keys (id, user_id, type, value, status, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
-      [pixKeyId, userId, 'random', `gp-demo-${randomId('key').slice(0, 8)}`, 'active', now]
+      'INSERT INTO pix_keys (id, user_id, account_id, type, value, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+      [pixKeyId, userId, primaryId, 'random', `gp-demo-${randomId('key').slice(0, 8)}`, 'active', now]
     );
 
     const cardId = randomId('card');

@@ -8,6 +8,7 @@ const { getProvider } = require('../integrations/provider');
 const router = express.Router();
 
 const createKeySchema = z.object({
+  accountId: z.string().min(1),
   type: z.enum(['cpf', 'phone', 'email', 'random']),
   value: z.string().optional()
 });

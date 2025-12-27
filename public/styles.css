@@ -307,6 +307,29 @@ html[data-theme='light'] .topbar.is-scrolled {
   transform: translateY(-1px);
 }
 
+.btn-sm {
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+}
+
+.btn-danger {
+  border-color: rgba(255, 107, 107, 0.45);
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  border-color: rgba(255, 107, 107, 0.75);
+  color: var(--danger);
+  background: rgba(255, 107, 107, 0.08);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .hero {
   padding: 28px;
   border-radius: var(--radius-lg);
@@ -684,6 +707,14 @@ html[data-theme='light'] .topbar.is-scrolled {
   background: var(--surface-glass);
   display: grid;
   gap: 8px;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .list-meta {

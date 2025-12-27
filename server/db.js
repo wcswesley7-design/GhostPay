@@ -75,12 +75,14 @@ async function initDb() {
       CREATE TABLE IF NOT EXISTS pix_keys (
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        account_id TEXT REFERENCES accounts(id),
         type TEXT NOT NULL,
         value TEXT NOT NULL UNIQUE,
         status TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL
       );
     `);
+    await client.query('ALTER TABLE pix_keys ADD COLUMN IF NOT EXISTS account_id TEXT REFERENCES accounts(id);');
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS pix_charges (
@@ -227,6 +229,9 @@ async function initDb() {
     );
     await client.query(
       'CREATE INDEX IF NOT EXISTS idx_pix_keys_user ON pix_keys(user_id);'
+    );
+    await client.query(
+      'CREATE INDEX IF NOT EXISTS idx_pix_keys_account ON pix_keys(account_id);'
     );
     await client.query(
       'CREATE INDEX IF NOT EXISTS idx_pix_charges_user ON pix_charges(user_id);'

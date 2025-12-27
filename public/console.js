@@ -111,6 +111,18 @@
     return new Date(value).toLocaleString('pt-BR');
   }
 
+  function getAccountLabel(accountId, fallback = 'Conta não vinculada') {
+    if (!accountId) {
+      return fallback;
+    }
+    const account = state.accounts.find((item) => item.id === accountId);
+    if (!account) {
+      return 'Conta não encontrada';
+    }
+    const numberLabel = account.accountNumber ? ` - ${account.accountNumber}` : '';
+    return `${account.name} (${account.currency})${numberLabel}`;
+  }
+
   function decodeToken(token) {
     try {
       const payload = token.split('.')[1];
@@ -138,7 +150,7 @@
     }
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error(data.error || 'Falha na solicitacao');
+      throw new Error(data.error || 'Falha na solicitação');
     }
     return data;
   }
@@ -189,6 +201,7 @@
     if (!select) {
       return;
     }
+    const currentValue = select.value;
     select.innerHTML = placeholder || '';
     state.accounts.forEach((account) => {
       const option = document.createElement('option');
@@ -197,12 +210,21 @@
       option.textContent = `${account.name} (${account.currency})${numberLabel}`;
       select.appendChild(option);
     });
+    if (currentValue) {
+      const hasValue = Array.from(select.options).some((option) => option.value === currentValue);
+      if (hasValue) {
+        select.value = currentValue;
+      }
+    }
   }
 
   function updateAccountSelects() {
     if (elements.transactionForm) {
       fillAccountSelect(elements.transactionForm.elements.fromAccountId, '<option value="">Selecionar conta</option>');
       fillAccountSelect(elements.transactionForm.elements.toAccountId, '<option value="">Selecionar conta</option>');
+    }
+    if (elements.pixKeyForm) {
+      fillAccountSelect(elements.pixKeyForm.elements.accountId, '<option value="">Selecionar conta</option>');
     }
     if (elements.pixTransferForm) {
       fillAccountSelect(elements.pixTransferForm.elements.accountId, '<option value="">Selecionar conta</option>');
@@ -258,17 +280,28 @@
 
     if (elements.accountsList) {
       elements.accountsList.innerHTML = accounts
-        .map(
-          (account) => `
+        .map((account) => {
+          const canRemove = Number(account.balanceCents) === 0;
+          const title = canRemove
+            ? 'Remover conta'
+            : 'Zere o saldo da conta antes de remover';
+          return `
             <div class="list-item">
-              <strong>${account.name}</strong>
+              <div class="list-row">
+                <strong>${account.name}</strong>
+                <button class="btn btn-ghost btn-sm btn-danger" type="button" data-action="delete-account" data-id="${
+                  account.id
+                }" ${canRemove ? '' : 'disabled'} title="${title}">
+                  Remover
+                </button>
+              </div>
               <div class="list-meta">
                 <span>${account.currency} - ${account.accountNumber}</span>
                 <strong>${formatCents(account.balanceCents, account.currency)}</strong>
               </div>
             </div>
-          `
-        )
+          `;
+        })
         .join('');
     }
 
@@ -338,32 +371,56 @@
         elements.pixKeysList.innerHTML = '<span class="pill">Sem chaves Pix</span>';
       } else {
         elements.pixKeysList.innerHTML = keys
-          .map((key) => `<span class="pill">${key.type.toUpperCase()}: ${key.value}</span>`)
+          .map((key) => {
+            const accountLabel = getAccountLabel(key.accountId);
+            return `<span class="pill">${key.type.toUpperCase()}: ${key.value} | ${accountLabel}</span>`;
+          })
           .join('');
       }
     }
+    updatePixChargeKeyOptions();
+  }
 
+  function updatePixChargeKeyOptions() {
     if (!elements.pixChargeForm) {
       return;
     }
 
     const keySelect = elements.pixChargeForm.elements.keyId;
+    const accountSelect = elements.pixChargeForm.elements.accountId;
+    const accountId = accountSelect ? accountSelect.value : '';
+    const keysForAccount = accountId
+      ? state.pixKeys.filter((key) => !key.accountId || key.accountId === accountId)
+      : [];
+
     keySelect.innerHTML = '';
-    if (!keys.length) {
+
+    if (!accountId) {
       keySelect.disabled = true;
       const option = document.createElement('option');
       option.value = '';
-      option.textContent = 'Crie uma chave Pix primeiro';
+      option.textContent = 'Selecione uma conta';
       keySelect.appendChild(option);
-    } else {
-      keySelect.disabled = false;
-      keys.forEach((key) => {
-        const option = document.createElement('option');
-        option.value = key.id;
-        option.textContent = `${key.type.toUpperCase()} - ${key.value}`;
-        keySelect.appendChild(option);
-      });
+      return;
     }
+
+    if (!keysForAccount.length) {
+      keySelect.disabled = true;
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = 'Sem chaves para esta conta';
+      keySelect.appendChild(option);
+      return;
+    }
+
+    keySelect.disabled = false;
+    keysForAccount.forEach((key) => {
+      const option = document.createElement('option');
+      option.value = key.id;
+      const accountLabel = getAccountLabel(key.accountId);
+      option.textContent = `${key.type.toUpperCase()} - ${key.value} (${accountLabel})`;
+      keySelect.appendChild(option);
+    });
   }
 
   function renderPixCharges(charges) {
@@ -485,6 +542,11 @@
       renderAccounts(state.accounts);
       renderTransactions(state.transactions);
       renderMetrics(data.metrics || {});
+      if (elements.pixKeysList && state.pixKeys.length) {
+        renderPixKeys(state.pixKeys);
+      } else {
+        updatePixChargeKeyOptions();
+      }
       if (state.user) {
         elements.welcomeTitle.textContent = `Bem-vindo, ${state.user.name}`;
         if (elements.sidebarName) {
@@ -742,6 +804,35 @@
     }
   }
 
+  async function handleAccountAction(event) {
+    const button = event.target.closest('button[data-action="delete-account"]');
+    if (!button) {
+      return;
+    }
+    const accountId = button.dataset.id;
+    if (!accountId) {
+      return;
+    }
+    const account = state.accounts.find((item) => item.id === accountId);
+    const accountName = account ? account.name : 'esta conta';
+    const confirmed = window.confirm(
+      `Remover ${accountName}? Esta ação não pode ser desfeita.`
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/api/accounts/${accountId}`, {
+        method: 'DELETE'
+      });
+      await loadOverview();
+      showToast('Conta removida');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
   async function handleTransaction(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.transactionForm).entries());
@@ -795,6 +886,10 @@
   async function handlePixKeyCreate(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.pixKeyForm).entries());
+    if (!payload.accountId) {
+      showToast('Selecione uma conta para a chave Pix.', 'error');
+      return;
+    }
     if (!payload.value) {
       delete payload.value;
     }
@@ -841,7 +936,7 @@
       delete payload.description;
     }
     if (!payload.keyId) {
-      showToast('Crie uma chave Pix antes.', 'error');
+      showToast('Crie uma chave Pix para a conta selecionada.', 'error');
       return;
     }
 
@@ -941,6 +1036,9 @@
     if (elements.accountForm) {
       elements.accountForm.addEventListener('submit', handleAccountCreate);
     }
+    if (elements.accountsList) {
+      elements.accountsList.addEventListener('click', handleAccountAction);
+    }
     if (elements.transactionForm) {
       elements.transactionForm.addEventListener('submit', handleTransaction);
       elements.transactionForm.elements.type.addEventListener('change', updateTransactionFields);
@@ -954,6 +1052,9 @@
     }
     if (elements.pixChargeForm) {
       elements.pixChargeForm.addEventListener('submit', handlePixChargeCreate);
+      if (elements.pixChargeForm.elements.accountId) {
+        elements.pixChargeForm.elements.accountId.addEventListener('change', updatePixChargeKeyOptions);
+      }
     }
     if (elements.pixChargesList) {
       elements.pixChargesList.addEventListener('click', handlePixChargeAction);

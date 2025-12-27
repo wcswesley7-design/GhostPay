@@ -15,11 +15,12 @@ function makeError(status, message) {
 const pix = {
   async listKeys(userId) {
     const result = await pool.query(
-      'SELECT id, type, value, status, created_at FROM pix_keys WHERE user_id = $1 ORDER BY created_at DESC',
+      'SELECT id, account_id, type, value, status, created_at FROM pix_keys WHERE user_id = $1 ORDER BY created_at DESC',
       [userId]
     );
     return result.rows.map((row) => ({
       id: row.id,
+      accountId: row.account_id,
       type: row.type,
       value: row.value,
       status: row.status,
@@ -29,7 +30,24 @@ const pix = {
 
   async createKey(userId, payload) {
     const keyType = payload.type;
+    const accountId = payload.accountId;
     let value = payload.value ? payload.value.trim() : null;
+
+    if (!accountId) {
+      throw makeError(400, 'Account required');
+    }
+
+    const accountResult = await pool.query(
+      'SELECT id, currency FROM accounts WHERE id = $1 AND user_id = $2',
+      [accountId, userId]
+    );
+    const account = accountResult.rows[0];
+    if (!account) {
+      throw makeError(404, 'Account not found');
+    }
+    if (account.currency !== 'BRL') {
+      throw makeError(400, 'Pix only supports BRL accounts');
+    }
 
     if (keyType === 'random') {
       value = `gp-${crypto.randomUUID().replace(/-/g, '').slice(0, 20)}`;
@@ -55,8 +73,8 @@ const pix = {
 
     try {
       await pool.query(
-        'INSERT INTO pix_keys (id, user_id, type, value, status, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
-        [keyId, userId, keyType, value, 'active', now]
+        'INSERT INTO pix_keys (id, user_id, account_id, type, value, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [keyId, userId, accountId, keyType, value, 'active', now]
       );
     } catch (err) {
       if (err.code === '23505') {
@@ -67,6 +85,7 @@ const pix = {
 
     return {
       id: keyId,
+      accountId,
       type: keyType,
       value,
       status: 'active',
@@ -113,12 +132,15 @@ const pix = {
     }
 
     const keyResult = await pool.query(
-      "SELECT id, type, value FROM pix_keys WHERE id = $1 AND user_id = $2 AND status = 'active'",
+      "SELECT id, type, value, account_id FROM pix_keys WHERE id = $1 AND user_id = $2 AND status = 'active'",
       [payload.keyId, userId]
     );
     const key = keyResult.rows[0];
     if (!key) {
       throw makeError(404, 'Pix key not found');
+    }
+    if (key.account_id && key.account_id !== payload.accountId) {
+      throw makeError(400, 'Pix key belongs to another account');
     }
 
     const chargeId = randomId('pixc');
