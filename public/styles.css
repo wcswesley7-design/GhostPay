@@ -1463,6 +1463,15 @@ html[data-theme='light'] .skeleton {
   display: none;
 }
 
+html.auth-has-token #authPanel,
+html.auth-has-token #consoleHero {
+  display: none !important;
+}
+
+html.auth-has-token #dashboardPanel {
+  display: grid !important;
+}
+
 [data-reveal] {
   opacity: 0;
   transform: translateY(12px);

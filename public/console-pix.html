@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
+    <script>
+      document.documentElement.classList.toggle('auth-has-token', !!localStorage.getItem('ghostpay_token'));
+    </script>
     <meta name="description" content="GhostPay área do cliente" />
     <title>GhostPay | Pix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

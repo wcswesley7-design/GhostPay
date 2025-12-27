@@ -436,6 +436,7 @@
   }
 
   function setAuthUI(isAuthed) {
+    document.documentElement.classList.toggle('auth-has-token', isAuthed);
     elements.authPanel.classList.toggle('hidden', isAuthed);
     elements.dashboardPanel.classList.toggle('hidden', !isAuthed);
     if (elements.consoleHero) {
