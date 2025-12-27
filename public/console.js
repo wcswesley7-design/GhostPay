@@ -627,37 +627,46 @@
     const type = elements.transactionForm.elements.type.value;
     const fromLabel = elements.transactionForm.elements.fromAccountId.closest('label');
     const toLabel = elements.transactionForm.elements.toAccountId.closest('label');
-    const counterpartyLabel = elements.transactionForm.elements.counterparty.closest('label');
-    const documentLabel = elements.transactionForm.elements.externalDocument.closest('label');
-    const institutionLabel = elements.transactionForm.elements.externalInstitution.closest('label');
-    const identifierLabel = elements.transactionForm.elements.externalIdentifier.closest('label');
+    const counterpartyField = elements.transactionForm.elements.counterparty;
+    const identifierField = elements.transactionForm.elements.externalIdentifier;
+    const counterpartyLabel = counterpartyField ? counterpartyField.closest('label') : null;
+    const identifierLabel = identifierField ? identifierField.closest('label') : null;
 
-    const needsFrom = type === 'withdrawal' || type === 'transfer' || type === 'payment';
-    const needsTo = type === 'deposit' || type === 'transfer';
-    const needsExternal = type === 'deposit' || type === 'withdrawal' || type === 'payment';
+    const needsFrom = type === 'transfer' || type === 'payment';
+    const needsTo = type === 'transfer';
+    const needsExternal = type === 'payment';
 
     elements.transactionForm.elements.fromAccountId.disabled = !needsFrom;
     elements.transactionForm.elements.toAccountId.disabled = !needsTo;
-    elements.transactionForm.elements.counterparty.disabled = !needsExternal;
-    elements.transactionForm.elements.externalDocument.disabled = !needsExternal;
-    elements.transactionForm.elements.externalInstitution.disabled = !needsExternal;
-    elements.transactionForm.elements.externalIdentifier.disabled = !needsExternal;
-
-    elements.transactionForm.elements.counterparty.required = needsExternal;
-    elements.transactionForm.elements.externalIdentifier.required = needsExternal;
+    if (counterpartyField) {
+      counterpartyField.disabled = !needsExternal;
+      counterpartyField.required = needsExternal;
+    }
+    if (identifierField) {
+      identifierField.disabled = !needsExternal;
+      identifierField.required = needsExternal;
+    }
 
     fromLabel.classList.toggle('is-disabled', !needsFrom);
     toLabel.classList.toggle('is-disabled', !needsTo);
-    counterpartyLabel.classList.toggle('hidden', !needsExternal);
-    documentLabel.classList.toggle('hidden', !needsExternal);
-    institutionLabel.classList.toggle('hidden', !needsExternal);
-    identifierLabel.classList.toggle('hidden', !needsExternal);
+    toLabel.classList.toggle('hidden', !needsTo);
+    if (counterpartyLabel) {
+      counterpartyLabel.classList.toggle('hidden', !needsExternal);
+    }
+    if (identifierLabel) {
+      identifierLabel.classList.toggle('hidden', !needsExternal);
+    }
 
     if (!needsExternal) {
-      elements.transactionForm.elements.counterparty.value = '';
-      elements.transactionForm.elements.externalDocument.value = '';
-      elements.transactionForm.elements.externalInstitution.value = '';
-      elements.transactionForm.elements.externalIdentifier.value = '';
+      if (counterpartyField) {
+        counterpartyField.value = '';
+      }
+      if (identifierField) {
+        identifierField.value = '';
+      }
+    }
+    if (!needsTo) {
+      elements.transactionForm.elements.toAccountId.value = '';
     }
   }
 
@@ -737,23 +746,17 @@
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.transactionForm).entries());
 
-    const needsExternal = payload.type === 'deposit' || payload.type === 'withdrawal' || payload.type === 'payment';
+    const needsExternal = payload.type === 'payment';
     if (needsExternal && !payload.counterparty) {
-      showToast('Informe a contraparte.', 'error');
+      showToast('Informe o beneficiário.', 'error');
       return;
     }
     if (needsExternal && !payload.externalIdentifier) {
-      showToast('Informe o identificador externo.', 'error');
+      showToast('Informe o identificador do pagamento.', 'error');
       return;
     }
 
     const metadata = {};
-    if (payload.externalDocument) {
-      metadata.externalDocument = payload.externalDocument;
-    }
-    if (payload.externalInstitution) {
-      metadata.externalInstitution = payload.externalInstitution;
-    }
     if (payload.externalIdentifier) {
       metadata.externalIdentifier = payload.externalIdentifier;
     }
@@ -773,8 +776,6 @@
     if (!payload.note) {
       delete payload.note;
     }
-    delete payload.externalDocument;
-    delete payload.externalInstitution;
     delete payload.externalIdentifier;
 
     try {

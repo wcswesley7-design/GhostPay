@@ -163,7 +163,7 @@
             <div class="card">
               <div class="card-head">
                 <h3>Conta</h3>
-                <span class="tag">Sandbox</span>
+                <span class="tag">Conta ativa</span>
               </div>
               <div class="list">
                 <div class="list-item">
@@ -175,7 +175,7 @@
                 <div class="list-item">
                   <strong>Status</strong>
                   <div class="list-meta">
-                    <span>Operações simuladas</span>
+                    <span>Operações disponíveis</span>
                   </div>
                 </div>
               </div>
@@ -201,7 +201,7 @@
               <div class="section-head section-head--inline">
                 <div>
                   <h2>Movimentações</h2>
-                  <p class="lead">Depósitos, saques e transferências internas.</p>
+                  <p class="lead">Transferências internas e pagamentos.</p>
                 </div>
                 <button class="btn btn-ghost" type="button" id="refreshTransactions">Atualizar lista</button>
               </div>
@@ -209,15 +209,13 @@
                 <div class="card">
                   <div class="card-head">
                     <h3>Nova movimentação</h3>
-                    <span class="tag">Sandbox</span>
+                    <span class="tag">Operação</span>
                   </div>
-                  <p class="muted">Movimentações externas são simuladas. Informe os dados de origem ou destino.</p>
+                  <p class="muted">Registre transferências internas e pagamentos. Para Pix, use a seção Pix.</p>
                   <form class="form" id="transactionForm">
                     <label>
                       Tipo
                       <select name="type" required>
-                        <option value="deposit">Depósito</option>
-                        <option value="withdrawal">Saque</option>
                         <option value="transfer">Transferência</option>
                         <option value="payment">Pagamento</option>
                       </select>
@@ -227,31 +225,23 @@
                       <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
                     </label>
                     <label>
-                      Conta de origem
+                      Conta de débito
                       <select name="fromAccountId"></select>
                     </label>
                     <label>
-                      Conta de destino
+                      Conta de crédito
                       <select name="toAccountId"></select>
                     </label>
                     <label>
-                      Contraparte (origem/destino)
-                      <input type="text" name="counterparty" placeholder="Nome da pessoa ou empresa" />
+                      Beneficiário
+                      <input type="text" name="counterparty" placeholder="Nome do beneficiário" />
                     </label>
                     <label>
-                      Documento (CPF/CNPJ)
-                      <input type="text" name="externalDocument" placeholder="000.000.000-00" />
+                      Identificador do pagamento (linha digitável/ID)
+                      <input type="text" name="externalIdentifier" placeholder="Ex: 23793.38127..." />
                     </label>
                     <label>
-                      Instituição/Banco
-                      <input type="text" name="externalInstitution" placeholder="Banco X / Pix" />
-                    </label>
-                    <label>
-                      Identificador (agência/conta ou chave Pix)
-                      <input type="text" name="externalIdentifier" placeholder="Ag 0001 / Conta 12345-6" />
-                    </label>
-                    <label>
-                      Nota
+                      Descrição
                       <input type="text" name="note" placeholder="Opcional" />
                     </label>
                     <button class="btn btn-primary" type="submit">Enviar</button>
