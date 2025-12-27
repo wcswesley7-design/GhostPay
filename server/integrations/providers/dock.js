@@ -56,6 +56,10 @@ const cards = {
     ensureDockReady();
     return notImplemented();
   },
+  async deleteCard() {
+    ensureDockReady();
+    return notImplemented();
+  },
   async listCardTransactions() {
     ensureDockReady();
     return notImplemented();

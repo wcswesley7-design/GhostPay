@@ -49,6 +49,15 @@ router.post('/', idempotencyGuard('cards.create'), validateBody(createCardSchema
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    await cardProvider().deleteCard(req.user.id, req.params.id);
+    return res.status(204).end();
+  } catch (err) {
+    return handleProviderError(res, err, 'Unable to remove card');
+  }
+});
+
 router.get('/:id/transactions', async (req, res) => {
   try {
     const transactions = await cardProvider().listCardTransactions(req.user.id, req.params.id);

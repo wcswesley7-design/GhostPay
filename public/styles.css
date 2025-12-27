@@ -782,6 +782,20 @@ html[data-theme='light'] .topbar.is-scrolled {
   transform: translateY(0);
 }
 
+#cardsList .btn-danger {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-2px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#cardsList .list-item:hover .btn-danger,
+#cardsList .list-item:focus-within .btn-danger {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 .muted {
   color: var(--muted);
 }

@@ -478,6 +478,17 @@ const cards = {
     };
   },
 
+  async deleteCard(userId, cardId) {
+    const result = await pool.query(
+      "UPDATE cards SET status = 'blocked' WHERE id = $1 AND user_id = $2 RETURNING id",
+      [cardId, userId]
+    );
+    if (!result.rows[0]) {
+      throw makeError(404, 'Card not found');
+    }
+    return { id: cardId, status: 'blocked' };
+  },
+
   async listCardTransactions(userId, cardId) {
     const result = await pool.query(
       `SELECT id, card_id, account_id, amount_cents, merchant, status, created_at

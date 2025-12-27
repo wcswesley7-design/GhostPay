@@ -581,20 +581,32 @@
     }
 
     if (elements.cardsList) {
-      elements.cardsList.innerHTML = cards
-        .map((card) => {
-          const statusLabel = cardStatusLabels[card.status] || card.status;
-          return `
-            <div class="list-item">
-              <strong>${card.brand} **** ${card.last4}</strong>
-              <div class="list-meta">
-                <span>${card.type} - ${statusLabel}</span>
-                <span>${formatCents(card.availableCents, 'BRL')} disponível</span>
+      const activeCards = cards.filter((card) => card.status === 'active');
+      if (!activeCards.length) {
+        elements.cardsList.innerHTML = '<div class="list-item">Nenhum cartão ativo.</div>';
+      } else {
+        elements.cardsList.innerHTML = activeCards
+          .map((card) => {
+            const statusLabel = cardStatusLabels[card.status] || card.status;
+            const label = `${card.brand} **** ${card.last4}`;
+            return `
+              <div class="list-item">
+                <div class="list-row">
+                  <strong>${label}</strong>
+                  <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="delete-card" data-id="${card.id}" data-label="${label}" aria-label="Cancelar cartão">
+                    <span class="sr-only">Remover</span>
+                    <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
+                  </button>
+                </div>
+                <div class="list-meta">
+                  <span>${card.type} - ${statusLabel}</span>
+                  <span>${formatCents(card.availableCents, 'BRL')} disponível</span>
+                </div>
               </div>
-            </div>
-          `;
-        })
-        .join('');
+            `;
+          })
+          .join('');
+      }
     }
 
     if (elements.cardTxnForm) {
@@ -1160,6 +1172,35 @@
     }
   }
 
+  async function handleCardAction(event) {
+    const button = event.target.closest('button[data-action="delete-card"]');
+    if (!button) {
+      return;
+    }
+    const cardId = button.dataset.id;
+    if (!cardId) {
+      return;
+    }
+    const label = button.dataset.label || 'este cartão';
+    const confirmed = await openConfirmModal({
+      title: 'Cancelar cartão',
+      message: `Cancelar ${label}? Esta ação não pode ser desfeita.`,
+      confirmText: 'Cancelar',
+      cancelText: 'Manter'
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/api/cards/${cardId}`, { method: 'DELETE' });
+      await loadCards();
+      showToast('Cartão cancelado');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
   async function initialize() {
     if (elements.tabs.length) {
       elements.tabs.forEach((tab) => {
@@ -1204,6 +1245,9 @@
     }
     if (elements.cardForm) {
       elements.cardForm.addEventListener('submit', handleCardCreate);
+    }
+    if (elements.cardsList) {
+      elements.cardsList.addEventListener('click', handleCardAction);
     }
     if (elements.cardTxnForm) {
       elements.cardTxnForm.addEventListener('submit', handleCardTransaction);
