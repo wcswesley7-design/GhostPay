@@ -696,6 +696,39 @@ html[data-theme='light'] .topbar.is-scrolled {
   height: 22px;
 }
 
+.icon--pix,
+.pill-icon--pix,
+.quick-icon--pix {
+  position: relative;
+}
+
+.icon--pix::before,
+.pill-icon--pix::before,
+.quick-icon--pix::before {
+  content: '';
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-image: url('/assets/iconepix.png');
+  mask-image: url('/assets/iconepix.png');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.icon--pix::before {
+  width: 22px;
+  height: 22px;
+}
+
+.pill-icon--pix::before,
+.quick-icon--pix::before {
+  width: 18px;
+  height: 18px;
+}
+
 .grid-2 {
   display: grid;
   gap: 20px;
