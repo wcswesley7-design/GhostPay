@@ -570,7 +570,8 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .console-nav--stacked .pill {
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 10px;
   padding: 10px 14px;
 }
 
@@ -579,6 +580,20 @@ html[data-theme='light'] .topbar.is-scrolled {
   width: 100%;
   justify-content: center;
   display: inline-flex;
+}
+
+.pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+
+.pill-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .section-head--inline {
@@ -605,6 +620,22 @@ html[data-theme='light'] .topbar.is-scrolled {
   display: grid;
   gap: 6px;
   transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.quick-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(215, 178, 92, 0.12);
+  color: var(--accent);
+}
+
+.quick-icon svg {
+  width: 18px;
+  height: 18px;
 }
 
 .quick-card:hover,
