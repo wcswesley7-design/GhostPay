@@ -7,6 +7,16 @@
     <script>
       document.documentElement.classList.toggle('auth-has-token', !!localStorage.getItem('ghostpay_token'));
     </script>
+    <style>
+      html.auth-has-token #authPanel,
+      html.auth-has-token #consoleHero {
+        display: none !important;
+      }
+
+      html.auth-has-token #dashboardPanel {
+        display: grid !important;
+      }
+    </style>
     <meta name="description" content="GhostPay área do cliente" />
     <title>GhostPay | Contas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
