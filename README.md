@@ -1,6 +1,6 @@
 # GhostPay
 
-GhostPay is a minimalist fintech prototype with a secure API, ledger-backed accounts, and a premium clean-tech UI.
+GhostPay is a minimalist fintech prototype with a secure API, ledger-backed accounts, and a refined clean-tech UI.
 
 ## Features
 - JWT-authenticated sessions with bcrypt password hashing
