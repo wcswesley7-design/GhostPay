@@ -421,7 +421,9 @@
     }
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error(data.error || 'Falha na solicitação');
+      const error = new Error(data.error || 'Falha na solicitação');
+      error.status = response.status;
+      throw error;
     }
     return data;
   }
@@ -450,6 +452,9 @@
     }
     if (!isAuthed && elements.welcomeTitle) {
       elements.welcomeTitle.textContent = 'Sua conta digital em um painel simples.';
+    }
+    if (!isAuthed) {
+      setError('');
     }
   }
 
@@ -861,6 +866,10 @@
       }
       setError('');
     } catch (err) {
+      if (err && err.status === 401) {
+        setError('');
+        return;
+      }
       setError(err.message);
       throw err;
     }
@@ -883,6 +892,9 @@
       renderPixKeys(state.pixKeys);
       renderPixCharges(state.pixCharges.slice(0, 5));
     } catch (err) {
+      if (err && err.status === 401) {
+        return;
+      }
       if (elements.pixKeysList) {
         elements.pixKeysList.innerHTML = '<span class="pill">Falha ao carregar Pix</span>';
       }
@@ -917,6 +929,9 @@
         }
       }
     } catch (err) {
+      if (err && err.status === 401) {
+        return;
+      }
       if (elements.cardsList) {
         elements.cardsList.innerHTML = '<div class="list-item">Falha ao carregar cartões.</div>';
       }
@@ -961,6 +976,10 @@
       renderCardTransactionsList(elements.cardDetailTransactionsList, txData.transactions || []);
       setError('');
     } catch (err) {
+      if (err && err.status === 401) {
+        setError('');
+        return;
+      }
       setError(err.message);
       showToast(err.message, 'error');
     }
@@ -1687,11 +1706,21 @@
 
     if (state.token) {
       const decoded = decodeToken(state.token);
-      if (decoded && decoded.name) {
+      const isExpired = decoded && decoded.exp ? decoded.exp * 1000 < Date.now() : false;
+      if (!decoded || isExpired) {
+        setToken(null);
+        setAuthUI(false);
+        return;
+      }
+      if (decoded.name) {
         state.user = { name: decoded.name };
       }
       try {
         await loadPageData();
+        if (!state.token) {
+          setAuthUI(false);
+          return;
+        }
         setAuthUI(true);
       } catch (err) {
         setToken(null);
