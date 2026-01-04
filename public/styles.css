@@ -276,7 +276,7 @@ html[data-theme='light'] .topbar.is-scrolled {
   gap: 12px;
 }
 
-.menu-toggle {
+.btn.menu-toggle {
   display: none;
 }
 
@@ -707,15 +707,10 @@ html[data-theme='light'] .topbar.is-scrolled {
 .quick-icon--pix::before {
   content: '';
   display: block;
-  background-color: currentColor;
-  -webkit-mask-image: url('/assets/iconepix.png');
-  mask-image: url('/assets/iconepix.png');
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
+  background-image: url('/assets/iconepix.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .icon--pix::before {
@@ -727,6 +722,23 @@ html[data-theme='light'] .topbar.is-scrolled {
 .quick-icon--pix::before {
   width: 18px;
   height: 18px;
+}
+
+@supports ((-webkit-mask-image: url('/assets/iconepix.png')) or (mask-image: url('/assets/iconepix.png'))) {
+  .icon--pix::before,
+  .pill-icon--pix::before,
+  .quick-icon--pix::before {
+    background-image: none;
+    background-color: currentColor;
+    -webkit-mask-image: url('/assets/iconepix.png');
+    mask-image: url('/assets/iconepix.png');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+  }
 }
 
 .grid-2 {
@@ -1603,7 +1615,7 @@ html.auth-has-token #dashboardPanel {
     display: flex;
   }
 
-  .menu-toggle {
+  .btn.menu-toggle {
     display: inline-flex;
   }
 
