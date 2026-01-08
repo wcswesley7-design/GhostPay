@@ -10,6 +10,7 @@ async function seed() {
 
   const email = 'demo@ghostpay.local';
   const password = 'ghostpay-demo';
+  const plan = 'completo';
   const now = new Date().toISOString();
 
   const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
@@ -26,8 +27,8 @@ const client = await pool.connect();
   try {
     await client.query('BEGIN');
     await client.query(
-      'INSERT INTO users (id, name, email, password_hash, created_at) VALUES ($1, $2, $3, $4, $5)',
-      [userId, 'Demo User', email, bcrypt.hashSync(password, 12), now]
+      'INSERT INTO users (id, name, email, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
+      [userId, 'Demo User', email, bcrypt.hashSync(password, 12), plan, now]
     );
     await client.query(
       'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',

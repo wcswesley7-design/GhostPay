@@ -1243,6 +1243,11 @@
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.registerForm).entries());
 
+    if (!payload.plan) {
+      showToast('Selecione um plano de assinatura.', 'error');
+      return;
+    }
+
     try {
       const data = await apiRequest('/api/auth/register', {
         method: 'POST',
@@ -1693,11 +1698,27 @@
       });
     }
 
+    const searchParams = new URLSearchParams(window.location.search);
     const preferredTab = (() => {
-      const param = new URLSearchParams(window.location.search).get('tab');
+      const param = searchParams.get('tab');
       return param === 'register' ? 'register' : param === 'login' ? 'login' : null;
     })();
-    if (preferredTab && elements.tabs.length) {
+    const planParam = searchParams.get('plan');
+    if (planParam && elements.registerForm) {
+      const planSelect = elements.registerForm.elements.plan;
+      const normalizedPlan = planParam.toLowerCase();
+      if (planSelect) {
+        const hasOption = Array.from(planSelect.options).some(
+          (option) => option.value === normalizedPlan
+        );
+        if (hasOption) {
+          planSelect.value = normalizedPlan;
+        }
+      }
+      if (elements.tabs.length) {
+        setActiveTab('register');
+      }
+    } else if (preferredTab && elements.tabs.length) {
       setActiveTab(preferredTab);
     }
 

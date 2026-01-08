@@ -13,7 +13,8 @@ const router = express.Router();
 const registerSchema = z.object({
   name: z.string().min(2).max(80),
   email: z.string().email().max(120),
-  password: z.string().min(8).max(128)
+  password: z.string().min(8).max(128),
+  plan: z.enum(['essencial', 'completo', 'black'])
 });
 
 const loginSchema = z.object({
@@ -35,7 +36,7 @@ function issueToken(user) {
 
 async function findUserByEmail(email) {
   const result = await pool.query(
-    'SELECT id, name, email, password_hash FROM users WHERE email = $1',
+    'SELECT id, name, email, password_hash, plan FROM users WHERE email = $1',
     [email]
   );
   return result.rows[0];
@@ -45,6 +46,7 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
   const name = req.body.name.trim();
   const email = req.body.email.trim().toLowerCase();
   const password = req.body.password;
+  const plan = req.body.plan;
 
   try {
     const existing = await findUserByEmail(email);
@@ -62,8 +64,8 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
     try {
       await client.query('BEGIN');
       await client.query(
-        'INSERT INTO users (id, name, email, password_hash, created_at) VALUES ($1, $2, $3, $4, $5)',
-        [userId, name, email, passwordHash, now]
+        'INSERT INTO users (id, name, email, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
+        [userId, name, email, passwordHash, plan, now]
       );
       await client.query(
         'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
@@ -81,7 +83,7 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
 
     return res.status(201).json({
       token,
-      user: { id: userId, name, email },
+      user: { id: userId, name, email, plan },
       accounts: [
         {
           id: accountId,
@@ -123,7 +125,8 @@ router.post('/login', validateBody(loginSchema), async (req, res) => {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        plan: user.plan
       }
     });
   } catch (err) {
@@ -140,6 +143,7 @@ router.post('/demo', async (req, res) => {
   const demoEmail = 'demo@ghostpay.local';
   const demoName = 'Demo User';
   const demoPassword = 'ghostpay-demo';
+  const demoPlan = 'completo';
 
   try {
     let user = await findUserByEmail(demoEmail);
@@ -157,8 +161,8 @@ router.post('/demo', async (req, res) => {
       try {
         await client.query('BEGIN');
         await client.query(
-          'INSERT INTO users (id, name, email, password_hash, created_at) VALUES ($1, $2, $3, $4, $5)',
-          [userId, demoName, demoEmail, passwordHash, now]
+          'INSERT INTO users (id, name, email, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
+          [userId, demoName, demoEmail, passwordHash, demoPlan, now]
         );
         await client.query(
           'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
@@ -231,7 +235,8 @@ router.post('/demo', async (req, res) => {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        plan: user.plan || demoPlan
       }
     });
   } catch (err) {
