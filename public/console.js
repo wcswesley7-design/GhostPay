@@ -109,9 +109,7 @@
   };
 
   const planLabels = {
-    essencial: 'Essencial',
-    completo: 'Completo',
-    black: 'Black'
+    infinity: 'Infinity · R$ 399,00'
   };
 
   const trashIcon = `
@@ -1269,7 +1267,7 @@
 
     if (!payload.plan) {
       setPlanSelection('');
-      showToast('Selecione um plano de assinatura.', 'error');
+      showToast('Selecione o plano Infinity para continuar.', 'error');
       return;
     }
 

@@ -19,14 +19,15 @@ async function initDb() {
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL,
-        plan TEXT NOT NULL DEFAULT 'essencial',
+        plan TEXT NOT NULL DEFAULT 'infinity',
         created_at TIMESTAMPTZ NOT NULL
       );
     `);
 
     await client.query(
-      "ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'essencial';"
+      "ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'infinity';"
     );
+    await client.query("ALTER TABLE users ALTER COLUMN plan SET DEFAULT 'infinity';");
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS accounts (

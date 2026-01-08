@@ -14,7 +14,7 @@ const registerSchema = z.object({
   name: z.string().min(2).max(80),
   email: z.string().email().max(120),
   password: z.string().min(8).max(128),
-  plan: z.enum(['essencial', 'completo', 'black'])
+  plan: z.enum(['infinity'])
 });
 
 const loginSchema = z.object({
@@ -143,7 +143,7 @@ router.post('/demo', async (req, res) => {
   const demoEmail = 'demo@ghostpay.local';
   const demoName = 'Demo User';
   const demoPassword = 'ghostpay-demo';
-  const demoPlan = 'completo';
+  const demoPlan = 'infinity';
 
   try {
     let user = await findUserByEmail(demoEmail);

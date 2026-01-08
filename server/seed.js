@@ -10,7 +10,7 @@ async function seed() {
 
   const email = 'demo@ghostpay.local';
   const password = 'ghostpay-demo';
-  const plan = 'completo';
+  const plan = 'infinity';
   const now = new Date().toISOString();
 
   const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
