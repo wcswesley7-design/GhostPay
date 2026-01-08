@@ -138,15 +138,12 @@
                 <input type="password" name="password" placeholder="Mínimo 8 caracteres" required />
               </label>
               
-              <label>
-                Plano de assinatura
-                <select name="plan" required>
-                  <option value="">Selecionar plano</option>
-                  <option value="essencial">Essencial</option>
-                  <option value="completo">Completo</option>
-                  <option value="black">Black</option>
-                </select>
-              </label>
+              <div class="plan-summary" id="planSummary">
+                <span class="muted">Plano selecionado</span>
+                <strong id="planSummaryLabel">Selecione um plano</strong>
+                <a class="muted" href="/pricing#planos">Alterar plano</a>
+              </div>
+              <input type="hidden" name="plan" id="planField" />
               <button class="btn btn-primary" type="submit">Criar conta</button>
             </form>
           </div>
@@ -337,7 +334,7 @@
         <div class="footer-col">
           <strong>Conta</strong>
           <a href="/console">Acessar conta</a>
-          <a href="/console">Abrir conta</a>
+          <a href="/pricing#planos">Abrir conta</a>
           <a href="/support">Atendimento</a>
         </div>
         <div class="footer-col">

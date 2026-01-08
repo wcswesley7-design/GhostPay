@@ -20,6 +20,9 @@
     dashboardPanel: document.getElementById('dashboardPanel'),
     loginForm: document.getElementById('loginForm'),
     registerForm: document.getElementById('registerForm'),
+    planField: document.getElementById('planField'),
+    planSummary: document.getElementById('planSummary'),
+    planSummaryLabel: document.getElementById('planSummaryLabel'),
     tabs: document.querySelectorAll('.tab'),
     logoutBtn: document.getElementById('logoutBtn'),
     toast: document.getElementById('toast'),
@@ -105,6 +108,12 @@
     payment: 'Pagamento'
   };
 
+  const planLabels = {
+    essencial: 'Essencial',
+    completo: 'Completo',
+    black: 'Black'
+  };
+
   const trashIcon = `
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none">
       <path d="M4.5 6.5h15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
@@ -183,6 +192,21 @@
 
   function formatDate(value) {
     return new Date(value).toLocaleString('pt-BR');
+  }
+
+  function setPlanSelection(plan) {
+    if (!elements.planField) {
+      return;
+    }
+    const normalized = plan ? plan.toLowerCase() : '';
+    const label = planLabels[normalized] || '';
+    elements.planField.value = label ? normalized : '';
+    if (elements.planSummaryLabel) {
+      elements.planSummaryLabel.textContent = label || 'Selecione um plano';
+    }
+    if (elements.planSummary) {
+      elements.planSummary.classList.toggle('is-empty', !label);
+    }
   }
 
   function getAccountLabel(accountId, fallback = 'Conta não vinculada') {
@@ -1244,6 +1268,7 @@
     const payload = Object.fromEntries(new FormData(elements.registerForm).entries());
 
     if (!payload.plan) {
+      setPlanSelection('');
       showToast('Selecione um plano de assinatura.', 'error');
       return;
     }
@@ -1705,21 +1730,15 @@
     })();
     const planParam = searchParams.get('plan');
     if (planParam && elements.registerForm) {
-      const planSelect = elements.registerForm.elements.plan;
-      const normalizedPlan = planParam.toLowerCase();
-      if (planSelect) {
-        const hasOption = Array.from(planSelect.options).some(
-          (option) => option.value === normalizedPlan
-        );
-        if (hasOption) {
-          planSelect.value = normalizedPlan;
-        }
-      }
+      setPlanSelection(planParam);
       if (elements.tabs.length) {
         setActiveTab('register');
       }
-    } else if (preferredTab && elements.tabs.length) {
-      setActiveTab(preferredTab);
+    } else {
+      setPlanSelection(elements.planField ? elements.planField.value : '');
+      if (preferredTab && elements.tabs.length) {
+        setActiveTab(preferredTab);
+      }
     }
 
     updateTransactionFields();
