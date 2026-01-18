@@ -109,7 +109,7 @@
   };
 
   const planLabels = {
-    infinity: 'Infinity · R$ 399,00'
+    infinity: 'Infinity · R$ 59,90'
   };
 
   const trashIcon = `
