@@ -11,8 +11,10 @@ const transactionsRoutes = require('./routes/transactions');
 const overviewRoutes = require('./routes/overview');
 const pixRoutes = require('./routes/pix');
 const cardsRoutes = require('./routes/cards');
+const subscriptionsRoutes = require('./routes/subscriptions');
 const webhooksRoutes = require('./routes/webhooks');
 const dockWebhooksRoutes = require('./routes/dockWebhooks');
+const mercadoPagoWebhooksRoutes = require('./routes/mercadoPagoWebhooks');
 const integrationsRoutes = require('./routes/integrations');
 const { authRequired } = require('./middleware/auth');
 const { initDb } = require('./db');
@@ -49,12 +51,14 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/accounts', authRequired, accountsRoutes);
 app.use('/api/transactions', authRequired, transactionsRoutes);
 app.use('/api/overview', authRequired, overviewRoutes);
 app.use('/api/pix', authRequired, pixRoutes);
 app.use('/api/cards', authRequired, cardsRoutes);
 app.use('/api/webhooks/dock', dockWebhooksRoutes);
+app.use('/api/webhooks/mercadopago', mercadoPagoWebhooksRoutes);
 app.use('/api/webhooks', authRequired, webhooksRoutes);
 app.use('/api/integrations', authRequired, integrationsRoutes);
 
@@ -69,6 +73,7 @@ const pageRoutes = {
   '/empresa': 'empresa.html',
   '/developers': 'empresa.html',
   '/pricing': 'pricing.html',
+  '/assinatura': 'assinatura.html',
   '/support': 'support.html',
   '/lgpd': 'lgpd.html',
   '/privacidade': 'privacidade.html',

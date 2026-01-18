@@ -14,7 +14,8 @@ const registerSchema = z.object({
   name: z.string().min(2).max(80),
   email: z.string().email().max(120),
   password: z.string().min(8).max(128),
-  plan: z.enum(['infinity'])
+  plan: z.enum(['infinity']),
+  subscriptionSession: z.string().min(1)
 });
 
 const loginSchema = z.object({
@@ -47,6 +48,7 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
   const email = req.body.email.trim().toLowerCase();
   const password = req.body.password;
   const plan = req.body.plan;
+  const subscriptionSession = req.body.subscriptionSession;
 
   try {
     const existing = await findUserByEmail(email);
@@ -63,6 +65,28 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      const sessionResult = await client.query(
+        'SELECT id, plan, status, user_id FROM subscription_sessions WHERE id = $1 FOR UPDATE',
+        [subscriptionSession]
+      );
+      const session = sessionResult.rows[0];
+      if (!session) {
+        await client.query('ROLLBACK');
+        return res.status(402).json({ error: 'subscription_required' });
+      }
+      if (session.plan !== plan) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: 'subscription_plan_mismatch' });
+      }
+      if (session.status !== 'approved') {
+        await client.query('ROLLBACK');
+        return res.status(402).json({ error: 'subscription_not_approved' });
+      }
+      if (session.user_id) {
+        await client.query('ROLLBACK');
+        return res.status(409).json({ error: 'subscription_already_used' });
+      }
+
       await client.query(
         'INSERT INTO users (id, name, email, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
         [userId, name, email, passwordHash, plan, now]
@@ -70,6 +94,10 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
       await client.query(
         'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
         [accountId, userId, 'Primary Wallet', 'BRL', 0, accountNum, now]
+      );
+      await client.query(
+        'UPDATE subscription_sessions SET user_id = $1 WHERE id = $2',
+        [userId, subscriptionSession]
       );
       await client.query('COMMIT');
     } catch (err) {

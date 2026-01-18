@@ -148,6 +148,49 @@
     });
   }
 
+  function initSubscriptionForm() {
+    const form = document.querySelector('[data-subscription-form]');
+    if (!form) {
+      return;
+    }
+    const status = form.querySelector('[data-subscription-status]');
+    const submit = form.querySelector('button[type="submit"]');
+    const originalText = submit ? submit.textContent : '';
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'Abrindo pagamento...';
+      }
+      if (status) {
+        status.textContent = '';
+      }
+
+      const payload = Object.fromEntries(new FormData(form).entries());
+      try {
+        const response = await fetch('/api/subscriptions/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.initPoint) {
+          throw new Error(data.error || 'Não foi possível iniciar a assinatura.');
+        }
+        window.location.href = data.initPoint;
+      } catch (err) {
+        if (status) {
+          status.textContent = err.message || 'Falha ao iniciar assinatura.';
+        }
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = originalText || 'Ir para o pagamento';
+        }
+      }
+    });
+  }
+
   initTheme();
   initNav();
   initMenu();
@@ -155,6 +198,7 @@
   initReveal();
   initModules();
   initSupportForm();
+  initSubscriptionForm();
 
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {

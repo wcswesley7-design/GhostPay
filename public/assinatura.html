@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="GhostPay plano Infinity e assinatura mensal" />
-    <title>GhostPay | Plano Infinity</title>
+    <meta name="description" content="GhostPay assinatura Infinity" />
+    <title>GhostPay | Assinatura Infinity</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -29,7 +29,7 @@
           <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
           <span class="brand-text">
             <span class="brand-name">GhostPay</span>
-            <span class="brand-tag">Plano Infinity</span>
+            <span class="brand-tag">Assinatura</span>
           </span>
         </a>
 
@@ -52,13 +52,13 @@
             </span>
             Entrar
           </a>
-          <a class="btn btn-primary" href="#planos">
+          <a class="btn btn-primary" href="/pricing#planos">
             <span class="btn-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <use href="/assets/icons.svg#icon-user-plus"></use>
               </svg>
             </span>
-            Abrir conta
+            Ver plano
           </a>
           <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
         </div>
@@ -69,55 +69,81 @@
       <section class="hero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Plano GhostPay</p>
-            <h1>Plano Infinity com acesso completo.</h1>
-            <p class="lead">Assinatura mensal de R$ 59,90 com tudo liberado.</p>
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="/support">Falar com atendimento</a>
-              <a class="btn btn-ghost" href="#planos">Abrir conta</a>
-            </div>
+            <p class="eyebrow">Assinatura Infinity</p>
+            <h1>Finalize sua assinatura para abrir a conta.</h1>
+            <p class="lead">
+              A cobrança é mensal e garante acesso completo à plataforma GhostPay.
+            </p>
           </div>
           <div class="hero-panel">
             <div class="glass-card">
               <div class="card-head">
-                <h3>Assinatura Infinity</h3>
+                <h3>Infinity</h3>
                 <span class="tag">R$ 59,90/mês</span>
               </div>
-              <p class="muted">Acesso total à conta, Pix, cartões e crédito.</p>
+              <p class="muted">Pix ilimitado, cartões e atendimento dedicado.</p>
+              <div class="pill-row">
+                <span class="pill">Pix</span>
+                <span class="pill">Cartões</span>
+                <span class="pill">Crédito</span>
+                <span class="pill">Suporte</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section" data-reveal id="planos">
-        <div class="pricing-grid">
-          <div class="price-card highlight">
-            <div class="price-head">
-              <strong>Infinity</strong>
-              <span class="tag">Plano único</span>
+      <section class="section" data-reveal>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Dados do titular</h3>
+              <span class="tag">Pagamento</span>
             </div>
-            <div class="price">R$ 59,90/mês</div>
-            <p class="muted">Acesso completo à plataforma GhostPay.</p>
+            <form class="form" data-subscription-form>
+              <input type="hidden" name="plan" value="infinity" />
+              <label>
+                Nome completo
+                <input type="text" name="name" placeholder="Nome e sobrenome" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" placeholder="seu@email.com" required />
+              </label>
+              <label>
+                Celular
+                <input type="tel" name="phone" placeholder="(11) 90000-0000" required />
+              </label>
+              <button class="btn btn-primary" type="submit">Ir para o pagamento</button>
+              <div class="muted form-status" data-subscription-status aria-live="polite"></div>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Como funciona</h3>
+              <span class="tag">Assinatura</span>
+            </div>
             <div class="list">
-              <span class="muted">Pix ilimitado e transferências rápidas</span>
-              <span class="muted">Cartão virtual e físico com controle em tempo real</span>
-              <span class="muted">Empréstimos pessoais e limite flexível</span>
-              <span class="muted">Atendimento dedicado e suporte prioritário</span>
+              <div class="list-item">
+                <strong>1. Confirmação</strong>
+                <div class="list-meta">
+                  <span>Você será redirecionado ao Mercado Pago.</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <strong>2. Aprovação</strong>
+                <div class="list-meta">
+                  <span>Após aprovado, voltamos para criar a conta.</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <strong>3. Cadastro</strong>
+                <div class="list-meta">
+                  <span>Finaliza o cadastro e acessa a plataforma.</span>
+                </div>
+              </div>
             </div>
-            <a class="btn btn-primary" href="/assinatura?plan=infinity">Selecionar Infinity</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="cta" data-reveal>
-        <div class="cta-card">
-          <div>
-            <h2>Dúvidas sobre o plano Infinity?</h2>
-            <p class="lead">Nossa equipe ajuda na contratação e ativação.</p>
-          </div>
-          <div class="cta-actions">
-            <a class="btn btn-primary" href="/support">Falar com atendimento</a>
-            <a class="btn btn-ghost" href="/assinatura?plan=infinity">Continuar com Infinity</a>
+            <a class="btn btn-ghost" href="/pricing#planos">Voltar aos planos</a>
           </div>
         </div>
       </section>

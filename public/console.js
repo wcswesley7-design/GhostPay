@@ -23,6 +23,7 @@
     planField: document.getElementById('planField'),
     planSummary: document.getElementById('planSummary'),
     planSummaryLabel: document.getElementById('planSummaryLabel'),
+    subscriptionSession: document.getElementById('subscriptionSession'),
     tabs: document.querySelectorAll('.tab'),
     logoutBtn: document.getElementById('logoutBtn'),
     toast: document.getElementById('toast'),
@@ -204,6 +205,42 @@
     }
     if (elements.planSummary) {
       elements.planSummary.classList.toggle('is-empty', !label);
+    }
+    if (!label && elements.subscriptionSession) {
+      elements.subscriptionSession.value = '';
+    }
+  }
+
+  function setRegisterAllowed(allowed, message) {
+    if (!elements.registerForm) {
+      return;
+    }
+    const submit = elements.registerForm.querySelector('button[type="submit"]');
+    if (submit) {
+      submit.disabled = !allowed;
+    }
+    if (message) {
+      setError(message);
+    } else if (allowed) {
+      setError('');
+    }
+  }
+
+  async function checkSubscriptionSession(sessionId) {
+    try {
+      const response = await apiRequest(`/api/subscriptions/status?session=${encodeURIComponent(sessionId)}`);
+      if (response.approved) {
+        if (elements.subscriptionSession) {
+          elements.subscriptionSession.value = sessionId;
+        }
+        setPlanSelection('infinity');
+        setRegisterAllowed(true);
+        showToast('Assinatura aprovada. Finalize seu cadastro.');
+        return;
+      }
+      setRegisterAllowed(false, 'Pagamento pendente. Conclua a assinatura para continuar.');
+    } catch (err) {
+      setRegisterAllowed(false, 'Assinatura não encontrada. Inicie pelo plano Infinity.');
     }
   }
 
@@ -1176,6 +1213,9 @@
     });
     elements.loginForm.classList.toggle('hidden', target !== 'login');
     elements.registerForm.classList.toggle('hidden', target !== 'register');
+    if (target === 'login') {
+      setError('');
+    }
   }
 
   function updateTransactionFields() {
@@ -1270,6 +1310,10 @@
       showToast('Selecione o plano Infinity para continuar.', 'error');
       return;
     }
+    if (!payload.subscriptionSession) {
+      showToast('Finalize a assinatura Infinity antes de criar a conta.', 'error');
+      return;
+    }
 
     try {
       const data = await apiRequest('/api/auth/register', {
@@ -1282,7 +1326,13 @@
       await loadPageData();
       showToast('Conta criada');
     } catch (err) {
-      showToast(err.message, 'error');
+      const messages = {
+        subscription_required: 'Finalize a assinatura Infinity antes de criar a conta.',
+        subscription_not_approved: 'Pagamento ainda não aprovado. Aguarde a confirmação.',
+        subscription_plan_mismatch: 'Plano inválido para esta assinatura.',
+        subscription_already_used: 'Assinatura já utilizada.'
+      };
+      showToast(messages[err.message] || err.message, 'error');
     }
   }
 
@@ -1727,10 +1777,19 @@
       return param === 'register' ? 'register' : param === 'login' ? 'login' : null;
     })();
     const planParam = searchParams.get('plan');
+    const sessionParam = searchParams.get('session');
+    if (elements.registerForm) {
+      setRegisterAllowed(false);
+    }
     if (planParam && elements.registerForm) {
       setPlanSelection(planParam);
       if (elements.tabs.length) {
         setActiveTab('register');
+      }
+      if (sessionParam) {
+        await checkSubscriptionSession(sessionParam);
+      } else {
+        setRegisterAllowed(false, 'Finalize a assinatura Infinity antes de criar a conta.');
       }
     } else {
       setPlanSelection(elements.planField ? elements.planField.value : '');

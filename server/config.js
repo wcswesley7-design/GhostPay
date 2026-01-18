@@ -5,9 +5,11 @@ function normalizeMode(value, fallback) {
   return value.toLowerCase();
 }
 
+const port = Number(process.env.PORT) || 3000;
 const config = {
   env: process.env.NODE_ENV || 'development',
-  port: Number(process.env.PORT) || 3000,
+  port,
+  appBaseUrl: process.env.APP_BASE_URL || `http://localhost:${port}`,
   dock: {
     mode: normalizeMode(process.env.DOCK_MODE, 'local'),
     baseUrl: process.env.DOCK_BASE_URL || '',

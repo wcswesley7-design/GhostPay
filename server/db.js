@@ -162,6 +162,21 @@ async function initDb() {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS subscription_sessions (
+        id TEXT PRIMARY KEY,
+        mp_preapproval_id TEXT UNIQUE,
+        plan TEXT NOT NULL,
+        status TEXT NOT NULL,
+        payer_name TEXT NOT NULL,
+        payer_email TEXT NOT NULL,
+        payer_phone TEXT,
+        user_id TEXT REFERENCES users(id),
+        created_at TIMESTAMPTZ NOT NULL,
+        approved_at TIMESTAMPTZ
+      );
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS webhook_events (
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

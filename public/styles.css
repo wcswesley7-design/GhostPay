@@ -293,6 +293,13 @@ html[data-theme='light'] .topbar.is-scrolled {
   transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease, color 0.2s ease;
 }
 
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .btn-primary {
   background: linear-gradient(120deg, var(--accent), var(--accent-2));
   color: #1a1408;
@@ -1205,6 +1212,10 @@ html[data-theme='light'] .topbar.is-scrolled {
 .form {
   display: grid;
   gap: 14px;
+}
+
+.form-status {
+  min-height: 18px;
 }
 
 .plan-summary {
