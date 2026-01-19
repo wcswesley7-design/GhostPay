@@ -1319,6 +1319,62 @@ html[data-theme='light'] .banner {
   font-size: 0.9rem;
 }
 
+.btn.is-disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.pix-output {
+  margin-top: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.pix-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+.pix-qr {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: #fff;
+  display: grid;
+  place-items: center;
+}
+
+.pix-qr img {
+  width: 100%;
+  height: auto;
+  max-width: 180px;
+}
+
+.pix-details textarea {
+  min-height: 96px;
+  font-family: var(--font-mono);
+}
+
+.pix-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 720px) {
+  .pix-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pix-qr {
+    max-width: 220px;
+  }
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;

@@ -30,6 +30,34 @@ async function mpRequest(path, options = {}) {
   return data;
 }
 
+function splitName(fullName) {
+  const parts = String(fullName || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) {
+    return { firstName: 'Cliente', lastName: 'GhostPay' };
+  }
+  if (parts.length === 1) {
+    return { firstName: parts[0], lastName: parts[0] };
+  }
+  return {
+    firstName: parts[0],
+    lastName: parts.slice(1).join(' ')
+  };
+}
+
+function normalizePhone(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+function buildPhone(value) {
+  const digits = normalizePhone(value);
+  if (digits.length < 10) {
+    return null;
+  }
+  const areaCode = digits.slice(0, 2);
+  const number = digits.slice(2);
+  return { area_code: areaCode, number };
+}
+
 async function createPreapproval({ reason, payerEmail, amount, backUrl, externalReference }) {
   return mpRequest('/preapproval', {
     method: 'POST',
@@ -55,7 +83,52 @@ async function getPreapproval(preapprovalId) {
   });
 }
 
+async function createPixPayment({
+  amount,
+  description,
+  payerEmail,
+  payerName,
+  payerCpf,
+  payerPhone,
+  externalReference,
+  notificationUrl,
+  idempotencyKey
+}) {
+  const { firstName, lastName } = splitName(payerName);
+  const phone = buildPhone(payerPhone);
+
+  return mpRequest('/v1/payments', {
+    method: 'POST',
+    headers: idempotencyKey ? { 'X-Idempotency-Key': idempotencyKey } : undefined,
+    body: JSON.stringify({
+      transaction_amount: amount,
+      description,
+      payment_method_id: 'pix',
+      payer: {
+        email: payerEmail,
+        first_name: firstName,
+        last_name: lastName,
+        identification: {
+          type: 'CPF',
+          number: payerCpf
+        },
+        ...(phone ? { phone } : {})
+      },
+      notification_url: notificationUrl || undefined,
+      external_reference: externalReference
+    })
+  });
+}
+
+async function getPayment(paymentId) {
+  return mpRequest(`/v1/payments/${paymentId}`, {
+    method: 'GET'
+  });
+}
+
 module.exports = {
   createPreapproval,
-  getPreapproval
+  getPreapproval,
+  createPixPayment,
+  getPayment
 };

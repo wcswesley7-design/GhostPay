@@ -156,16 +156,142 @@
     const status = form.querySelector('[data-subscription-status]');
     const submit = form.querySelector('button[type="submit"]');
     const originalText = submit ? submit.textContent : '';
+    const pixOutput = document.querySelector('[data-pix-output]');
+    const pixQr = document.querySelector('[data-pix-qr]');
+    const pixCode = document.querySelector('[data-pix-code]');
+    const pixCopy = document.querySelector('[data-pix-copy]');
+    const pixContinue = document.querySelector('[data-pix-continue]');
+    const pixTicket = document.querySelector('[data-pix-ticket]');
+    const pixStatus = document.querySelector('[data-pix-status]');
+    let pollTimer = null;
+    let pollAttempts = 0;
+
+    function setPixVisible(visible) {
+      if (!pixOutput) {
+        return;
+      }
+      pixOutput.classList.toggle('hidden', !visible);
+    }
+
+    function setContinueEnabled(enabled) {
+      if (!pixContinue) {
+        return;
+      }
+      pixContinue.classList.toggle('is-disabled', !enabled);
+      pixContinue.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+      if (!enabled) {
+        pixContinue.addEventListener(
+          'click',
+          (event) => {
+            if (pixContinue.getAttribute('aria-disabled') === 'true') {
+              event.preventDefault();
+            }
+          },
+          { once: true }
+        );
+      }
+    }
+
+    function updatePixPayload(payload, sessionId) {
+      if (!payload) {
+        return;
+      }
+      if (pixQr && payload.qrCodeBase64) {
+        pixQr.src = `data:image/png;base64,${payload.qrCodeBase64}`;
+      }
+      if (pixCode && payload.qrCode) {
+        pixCode.value = payload.qrCode;
+      }
+      if (pixTicket && payload.ticketUrl) {
+        pixTicket.href = payload.ticketUrl;
+        pixTicket.classList.remove('hidden');
+      }
+      if (pixContinue && sessionId) {
+        pixContinue.href = `/console?tab=register&plan=infinity&session=${sessionId}`;
+      }
+    }
+
+    async function pollStatus(sessionId) {
+      if (!sessionId) {
+        return;
+      }
+      pollAttempts += 1;
+      try {
+        const response = await fetch(
+          `/api/subscriptions/status?session=${encodeURIComponent(sessionId)}`
+        );
+        const data = await response.json().catch(() => ({}));
+        if (data.pix) {
+          updatePixPayload(
+            {
+              qrCode: data.pix.qr_code,
+              qrCodeBase64: data.pix.qr_code_base64,
+              ticketUrl: data.pix.ticket_url
+            },
+            sessionId
+          );
+        }
+        if (data.approved) {
+          if (pixStatus) {
+            pixStatus.textContent = 'Pagamento aprovado. Redirecionando...';
+          }
+          setContinueEnabled(true);
+          setTimeout(() => {
+            window.location.href = `/console?tab=register&plan=infinity&session=${sessionId}`;
+          }, 900);
+          return;
+        }
+        if (data.status === 'cancelled' && pixStatus) {
+          pixStatus.textContent = 'Pagamento cancelado. Gere um novo Pix.';
+          setContinueEnabled(false);
+          return;
+        }
+        if (pixStatus) {
+          pixStatus.textContent = 'Aguardando confirma\u00E7\u00E3o do pagamento.';
+        }
+      } catch (err) {
+        if (pixStatus) {
+          pixStatus.textContent = 'N\u00E3o foi poss\u00EDvel confirmar o pagamento agora.';
+        }
+      }
+
+      if (pollAttempts < 120) {
+        pollTimer = setTimeout(() => pollStatus(sessionId), 5000);
+      }
+    }
+
+    if (pixCopy) {
+      pixCopy.addEventListener('click', async () => {
+        if (!pixCode || !pixCode.value) {
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(pixCode.value);
+          if (pixStatus) {
+            pixStatus.textContent = 'C\u00F3digo Pix copiado.';
+          }
+        } catch (err) {
+          if (pixStatus) {
+            pixStatus.textContent = 'N\u00E3o foi poss\u00EDvel copiar o c\u00F3digo Pix.';
+          }
+        }
+      });
+    }
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (submit) {
         submit.disabled = true;
-        submit.textContent = 'Abrindo pagamento...';
+        submit.textContent = 'Gerando Pix...';
       }
       if (status) {
         status.textContent = '';
       }
+      if (pollTimer) {
+        clearTimeout(pollTimer);
+      }
+      pollAttempts = 0;
+      setContinueEnabled(false);
 
       const payload = Object.fromEntries(new FormData(form).entries());
       try {
@@ -175,20 +301,52 @@
           body: JSON.stringify(payload)
         });
         const data = await response.json().catch(() => ({}));
-        if (!response.ok || !data.initPoint) {
-          throw new Error(data.error || 'Não foi possível iniciar a assinatura.');
+        if (!response.ok || !data.qrCode) {
+          throw new Error(data.error || 'N\u00E3o foi poss\u00EDvel iniciar a assinatura.');
         }
-        window.location.href = data.initPoint;
+
+        updatePixPayload(
+          {
+            qrCode: data.qrCode,
+            qrCodeBase64: data.qrCodeBase64,
+            ticketUrl: data.ticketUrl
+          },
+          data.sessionId
+        );
+        setPixVisible(true);
+        if (data.approved) {
+          if (pixStatus) {
+            pixStatus.textContent = 'Pagamento aprovado. Redirecionando...';
+          }
+          setContinueEnabled(true);
+          setTimeout(() => {
+            window.location.href = `/console?tab=register&plan=infinity&session=${data.sessionId}`;
+          }, 900);
+          return;
+        }
+        if (pixStatus) {
+          pixStatus.textContent = 'Aguardando confirma\u00E7\u00E3o do pagamento.';
+        }
+        pollStatus(data.sessionId);
       } catch (err) {
         if (status) {
           status.textContent = err.message || 'Falha ao iniciar assinatura.';
         }
+      } finally {
         if (submit) {
           submit.disabled = false;
-          submit.textContent = originalText || 'Ir para o pagamento';
+          submit.textContent = originalText || 'Gerar Pix';
         }
       }
     });
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const sessionParam = searchParams.get('session');
+    if (sessionParam) {
+      setPixVisible(true);
+      setContinueEnabled(false);
+      pollStatus(sessionParam);
+    }
   }
 
   initTheme();

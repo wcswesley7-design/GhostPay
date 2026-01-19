@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="GhostPay assinatura Infinity" />
+    <meta name="description" content="GhostPay assinatura Infinity via Pix" />
     <title>GhostPay | Assinatura Infinity</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,7 +26,9 @@
     <header class="topbar" data-topbar>
       <div class="container">
         <a class="brand" href="/">
-          <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
+          <span class="brand-mark"
+            ><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo"
+          /></span>
           <span class="brand-text">
             <span class="brand-name">GhostPay</span>
             <span class="brand-tag">Assinatura</span>
@@ -70,9 +72,9 @@
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Assinatura Infinity</p>
-            <h1>Finalize sua assinatura para abrir a conta.</h1>
+            <h1>Assinatura via Pix para liberar sua conta.</h1>
             <p class="lead">
-              A cobrança é mensal e garante acesso completo à plataforma GhostPay.
+              Geramos um Pix mensal e liberamos o cadastro assim que o pagamento for confirmado.
             </p>
           </div>
           <div class="hero-panel">
@@ -108,15 +110,62 @@
               </label>
               <label>
                 Email
-                <input type="email" name="email" placeholder="seu@email.com" required />
+                <input type="email" name="email" placeholder="seu@email.com" autocomplete="email" required />
               </label>
               <label>
                 Celular
-                <input type="tel" name="phone" placeholder="(11) 90000-0000" required />
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="(11) 90000-0000"
+                  inputmode="numeric"
+                  autocomplete="tel"
+                  required
+                />
               </label>
-              <button class="btn btn-primary" type="submit">Ir para o pagamento</button>
+              <label>
+                CPF
+                <input
+                  type="text"
+                  name="cpf"
+                  placeholder="000.000.000-00"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  required
+                />
+              </label>
+              <button class="btn btn-primary" type="submit">Gerar Pix</button>
               <div class="muted form-status" data-subscription-status aria-live="polite"></div>
             </form>
+            <div class="pix-output hidden" data-pix-output>
+              <div class="pix-grid">
+                <div class="pix-qr">
+                  <img data-pix-qr alt="QR Code Pix" />
+                </div>
+                <div class="pix-details">
+                  <label>
+                    Código Pix
+                    <textarea data-pix-code readonly></textarea>
+                  </label>
+                  <div class="pix-actions">
+                    <button class="btn btn-ghost" type="button" data-pix-copy>Copiar código</button>
+                    <a class="btn btn-primary" data-pix-continue href="/console?tab=register&plan=infinity">
+                      Continuar cadastro
+                    </a>
+                  </div>
+                  <a
+                    class="btn btn-ghost hidden"
+                    data-pix-ticket
+                    href="#"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Abrir no Mercado Pago
+                  </a>
+                  <div class="muted" data-pix-status>Aguardando confirmação do pagamento.</div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="card">
             <div class="card-head">
@@ -125,15 +174,15 @@
             </div>
             <div class="list">
               <div class="list-item">
-                <strong>1. Confirmação</strong>
+                <strong>1. Gerar Pix</strong>
                 <div class="list-meta">
-                  <span>Você será redirecionado ao Mercado Pago.</span>
+                  <span>Mostramos o QR Code e o código copia e cola.</span>
                 </div>
               </div>
               <div class="list-item">
                 <strong>2. Aprovação</strong>
                 <div class="list-meta">
-                  <span>Após aprovado, voltamos para criar a conta.</span>
+                  <span>Após o pagamento, liberamos o cadastro automaticamente.</span>
                 </div>
               </div>
               <div class="list-item">

@@ -1,25 +1,22 @@
 const express = require('express');
 
 const { pool } = require('../db');
-const { getPreapproval } = require('../integrations/mercadoPago');
+const { getPayment } = require('../integrations/mercadoPago');
 
 const router = express.Router();
 
-function mapMpStatus(status) {
+function mapPaymentStatus(status) {
   const normalized = String(status || '').toLowerCase();
-  if (['authorized', 'active'].includes(normalized)) {
+  if (normalized === 'approved') {
     return 'approved';
   }
-  if (['cancelled', 'canceled'].includes(normalized)) {
+  if (['rejected', 'cancelled', 'canceled', 'refunded', 'charged_back'].includes(normalized)) {
     return 'cancelled';
-  }
-  if (normalized === 'paused') {
-    return 'paused';
   }
   return 'pending';
 }
 
-function extractPreapprovalId(req) {
+function extractPaymentId(req) {
   return (
     req.body?.data?.id ||
     req.body?.id ||
@@ -29,32 +26,51 @@ function extractPreapprovalId(req) {
   );
 }
 
+function extractPixPayload(payment) {
+  const data = payment?.point_of_interaction?.transaction_data;
+  if (!data) {
+    return null;
+  }
+  return {
+    qr_code: data.qr_code || null,
+    qr_code_base64: data.qr_code_base64 || null,
+    ticket_url: data.ticket_url || null,
+    expires_at: payment?.date_of_expiration || null
+  };
+}
+
 router.post('/', async (req, res) => {
-  const preapprovalId = extractPreapprovalId(req);
-  if (!preapprovalId) {
+  const paymentId = extractPaymentId(req);
+  if (!paymentId) {
     return res.json({ status: 'ignored' });
   }
 
   try {
-    const preapproval = await getPreapproval(preapprovalId);
-    const status = mapMpStatus(preapproval.status);
+    const payment = await getPayment(paymentId);
+    const status = mapPaymentStatus(payment.status);
     const approvedAt = status === 'approved' ? new Date().toISOString() : null;
-    const externalReference = preapproval.external_reference;
+    const externalReference = payment.external_reference;
+    const pixPayload = extractPixPayload(payment);
 
     const result = await pool.query(
       `UPDATE subscription_sessions
-       SET status = $1, approved_at = COALESCE(approved_at, $2)
-       WHERE mp_preapproval_id = $3
+       SET status = $1,
+           approved_at = COALESCE(approved_at, $2),
+           pix_payload = COALESCE($3, pix_payload)
+       WHERE mp_payment_id = $4
        RETURNING id`,
-      [status, approvedAt, preapprovalId]
+      [status, approvedAt, pixPayload, paymentId]
     );
 
     if (!result.rows[0] && externalReference) {
       await pool.query(
         `UPDATE subscription_sessions
-         SET mp_preapproval_id = $1, status = $2, approved_at = COALESCE(approved_at, $3)
-         WHERE id = $4`,
-        [preapprovalId, status, approvedAt, externalReference]
+         SET mp_payment_id = COALESCE(mp_payment_id, $1),
+             status = $2,
+             approved_at = COALESCE(approved_at, $3),
+             pix_payload = COALESCE($4, pix_payload)
+         WHERE id = $5`,
+        [paymentId, status, approvedAt, pixPayload, externalReference]
       );
     }
 
