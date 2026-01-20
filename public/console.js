@@ -103,14 +103,14 @@
   };
 
   const labels = {
-    deposit: 'Depósito',
+    deposit: 'Dep\u00F3sito',
     withdrawal: 'Saque',
-    transfer: 'Transferência',
+    transfer: 'Transfer\u00EAncia',
     payment: 'Pagamento'
   };
 
   const planLabels = {
-    infinity: 'Infinity · R$ 59,90'
+    infinity: 'Infinity - R$ 59,90'
   };
 
   const trashIcon = `
@@ -1230,8 +1230,8 @@
     const counterpartyLabel = counterpartyField ? counterpartyField.closest('label') : null;
     const identifierLabel = identifierField ? identifierField.closest('label') : null;
 
-    const needsFrom = type === 'transfer' || type === 'payment';
-    const needsTo = type === 'transfer';
+    const needsFrom = type === 'transfer' || type === 'payment' || type === 'withdrawal';
+    const needsTo = type === 'transfer' || type === 'deposit';
     const needsExternal = type === 'payment';
 
     elements.transactionForm.elements.fromAccountId.disabled = !needsFrom;
@@ -1265,6 +1265,9 @@
     }
     if (!needsTo) {
       elements.transactionForm.elements.toAccountId.value = '';
+    }
+    if (!needsFrom) {
+      elements.transactionForm.elements.fromAccountId.value = '';
     }
   }
 
@@ -1391,6 +1394,19 @@
   async function handleTransaction(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.transactionForm).entries());
+
+    if (payload.type === 'deposit' && !payload.toAccountId) {
+      showToast('Selecione a conta de cr\u00E9dito.', 'error');
+      return;
+    }
+    if (payload.type === 'withdrawal' && !payload.fromAccountId) {
+      showToast('Selecione a conta de d\u00E9bito.', 'error');
+      return;
+    }
+    if (payload.type === 'transfer' && (!payload.fromAccountId || !payload.toAccountId)) {
+      showToast('Selecione as contas de d\u00E9bito e cr\u00E9dito.', 'error');
+      return;
+    }
 
     const needsExternal = payload.type === 'payment';
     if (needsExternal && !payload.counterparty) {
