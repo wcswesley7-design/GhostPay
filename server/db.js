@@ -36,10 +36,14 @@ async function initDb() {
         name TEXT NOT NULL,
         currency TEXT NOT NULL,
         balance_cents INTEGER NOT NULL DEFAULT 0,
+        hold_cents INTEGER NOT NULL DEFAULT 0,
         account_number TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL
       );
     `);
+    await client.query(
+      'ALTER TABLE accounts ADD COLUMN IF NOT EXISTS hold_cents INTEGER NOT NULL DEFAULT 0;'
+    );
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS transactions (
@@ -101,11 +105,42 @@ async function initDb() {
         status TEXT NOT NULL,
         txid TEXT NOT NULL,
         qr_payload TEXT NOT NULL,
+        qr_code_base64 TEXT,
+        ticket_url TEXT,
+        provider TEXT NOT NULL DEFAULT 'local',
+        provider_payment_id TEXT,
+        provider_status TEXT,
+        payer_name TEXT,
+        payer_email TEXT,
+        payer_document TEXT,
+        payer_phone TEXT,
+        external_reference TEXT,
         expires_at TIMESTAMPTZ NOT NULL,
         created_at TIMESTAMPTZ NOT NULL,
         paid_at TIMESTAMPTZ
       );
     `);
+    await client.query('ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS qr_code_base64 TEXT;');
+    await client.query('ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS ticket_url TEXT;');
+    await client.query(
+      "ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS provider TEXT NOT NULL DEFAULT 'local';"
+    );
+    await client.query(
+      'ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS provider_payment_id TEXT;'
+    );
+    await client.query(
+      'ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS provider_status TEXT;'
+    );
+    await client.query('ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS payer_name TEXT;');
+    await client.query('ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS payer_email TEXT;');
+    await client.query(
+      'ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS payer_document TEXT;'
+    );
+    await client.query('ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS payer_phone TEXT;');
+    await client.query(
+      'ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS external_reference TEXT;'
+    );
+    await client.query('ALTER TABLE pix_charges ALTER COLUMN qr_payload DROP NOT NULL;');
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS pix_transfers (
@@ -162,6 +197,19 @@ async function initDb() {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS api_keys (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        key_hash TEXT NOT NULL UNIQUE,
+        label TEXT,
+        status TEXT NOT NULL DEFAULT 'active',
+        last_used_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL,
+        revoked_at TIMESTAMPTZ
+      );
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS subscription_sessions (
         id TEXT PRIMARY KEY,
         mp_preapproval_id TEXT UNIQUE,
@@ -196,6 +244,37 @@ async function initDb() {
         type TEXT NOT NULL,
         payload JSONB NOT NULL,
         created_at TIMESTAMPTZ NOT NULL
+      );
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS withdrawal_requests (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        account_id TEXT NOT NULL REFERENCES accounts(id),
+        amount_cents INTEGER NOT NULL,
+        pix_key_type TEXT NOT NULL,
+        pix_key TEXT NOT NULL,
+        status TEXT NOT NULL,
+        admin_note TEXT,
+        proof_url TEXT,
+        requested_at TIMESTAMPTZ NOT NULL,
+        processed_at TIMESTAMPTZ,
+        paid_at TIMESTAMPTZ
+      );
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS mercadopago_webhook_events (
+        id TEXT PRIMARY KEY,
+        event_id TEXT,
+        payment_id TEXT,
+        payload JSONB NOT NULL,
+        payload_hash TEXT NOT NULL,
+        status TEXT NOT NULL,
+        received_at TIMESTAMPTZ NOT NULL,
+        processed_at TIMESTAMPTZ,
+        error TEXT
       );
     `);
 
@@ -271,6 +350,15 @@ async function initDb() {
       'CREATE INDEX IF NOT EXISTS idx_pix_charges_user ON pix_charges(user_id);'
     );
     await client.query(
+      "CREATE INDEX IF NOT EXISTS idx_pix_charges_status ON pix_charges(user_id, status);"
+    );
+    await client.query(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_pix_charges_provider_payment ON pix_charges(provider_payment_id) WHERE provider_payment_id IS NOT NULL;'
+    );
+    await client.query(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_transactions_reference ON transactions(reference_type, reference_id) WHERE reference_type IS NOT NULL AND reference_id IS NOT NULL;'
+    );
+    await client.query(
       'CREATE INDEX IF NOT EXISTS idx_pix_transfers_user ON pix_transfers(user_id);'
     );
     await client.query(
@@ -290,6 +378,24 @@ async function initDb() {
     );
     await client.query(
       "CREATE UNIQUE INDEX IF NOT EXISTS idx_dock_webhook_event ON dock_webhook_events(event_id) WHERE event_id IS NOT NULL;"
+    );
+    await client.query(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_mp_webhook_hash ON mercadopago_webhook_events(payload_hash);'
+    );
+    await client.query(
+      "CREATE UNIQUE INDEX IF NOT EXISTS idx_mp_webhook_event ON mercadopago_webhook_events(event_id) WHERE event_id IS NOT NULL;"
+    );
+    await client.query(
+      "CREATE UNIQUE INDEX IF NOT EXISTS idx_mp_webhook_payment ON mercadopago_webhook_events(payment_id) WHERE payment_id IS NOT NULL;"
+    );
+    await client.query(
+      'CREATE INDEX IF NOT EXISTS idx_withdrawals_user ON withdrawal_requests(user_id);'
+    );
+    await client.query(
+      'CREATE INDEX IF NOT EXISTS idx_withdrawals_status ON withdrawal_requests(status);'
+    );
+    await client.query(
+      'CREATE INDEX IF NOT EXISTS idx_api_keys_user ON api_keys(user_id);'
     );
     await client.query('COMMIT');
   } catch (err) {

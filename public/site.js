@@ -450,6 +450,201 @@
       });
   }
 
+  function initPublicChargePayment() {
+    const form = document.querySelector('[data-charge-form]');
+    if (!form) {
+      return;
+    }
+    const amountEl = document.querySelector('[data-charge-amount]');
+    const descEl = document.querySelector('[data-charge-description]');
+    const statusTag = document.querySelector('[data-charge-status]');
+    const statusText = document.querySelector('[data-charge-status-text]');
+    const output = document.querySelector('[data-charge-pix-output]');
+    const qrImg = document.querySelector('[data-charge-qr]');
+    const codeEl = document.querySelector('[data-charge-code]');
+    const copyBtn = document.querySelector('[data-charge-copy]');
+    const ticketLink = document.querySelector('[data-charge-ticket]');
+    const progressEl = document.querySelector('[data-charge-progress]');
+    const submit = form.querySelector('button[type="submit"]');
+    const originalSubmitText = submit ? submit.textContent : '';
+
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const chargeId = pathParts[pathParts.length - 1];
+    let pollTimer = null;
+    let pollAttempts = 0;
+
+    const formatCurrency = (cents) =>
+      new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format((Number(cents) || 0) / 100);
+
+    function setOutputVisible(visible) {
+      if (!output) {
+        return;
+      }
+      output.classList.toggle('hidden', !visible);
+    }
+
+    function updateChargeView(charge) {
+      if (amountEl) {
+        amountEl.textContent = formatCurrency(charge.amountCents);
+      }
+      if (descEl) {
+        descEl.textContent = charge.description || 'Pagamento Pix';
+      }
+      if (statusTag) {
+        statusTag.textContent = charge.status || '--';
+      }
+      if (submit && charge.status === 'paid') {
+        submit.disabled = true;
+        submit.textContent = 'Pagamento confirmado';
+      }
+      if (progressEl && charge.status === 'paid') {
+        progressEl.textContent = 'Pagamento confirmado.';
+      }
+      if (charge.brCode || charge.qrCodeBase64) {
+        updatePixPayload({
+          qrCode: charge.brCode,
+          qrCodeBase64: charge.qrCodeBase64,
+          ticketUrl: charge.ticketUrl
+        });
+        setOutputVisible(true);
+      }
+    }
+
+    function updatePixPayload(payload) {
+      if (qrImg && payload.qrCodeBase64) {
+        qrImg.src = `data:image/png;base64,${payload.qrCodeBase64}`;
+      }
+      if (codeEl && payload.qrCode) {
+        codeEl.value = payload.qrCode;
+      }
+      if (ticketLink && payload.ticketUrl) {
+        ticketLink.href = payload.ticketUrl;
+        ticketLink.classList.remove('hidden');
+      }
+    }
+
+    async function copyPixCode() {
+      if (!codeEl || !codeEl.value) {
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(codeEl.value);
+        if (progressEl) {
+          progressEl.textContent = 'Codigo Pix copiado.';
+        }
+      } catch (err) {
+        if (progressEl) {
+          progressEl.textContent = 'Nao foi possivel copiar o codigo.';
+        }
+      }
+    }
+
+    async function pollStatus() {
+      if (!chargeId) {
+        return;
+      }
+      pollAttempts += 1;
+      try {
+        const response = await fetch(`/api/public/charges/${encodeURIComponent(chargeId)}`);
+        const data = await response.json().catch(() => ({}));
+        if (data.charge) {
+          updateChargeView(data.charge);
+          if (data.charge.status === 'paid') {
+            if (progressEl) {
+              progressEl.textContent = 'Pagamento confirmado.';
+            }
+            return;
+          }
+        }
+      } catch (err) {
+        if (progressEl) {
+          progressEl.textContent = 'Nao foi possivel atualizar o status.';
+        }
+      }
+      if (pollAttempts < 120) {
+        pollTimer = setTimeout(pollStatus, 5000);
+      }
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', copyPixCode);
+    }
+
+    if (!chargeId) {
+      if (statusText) {
+        statusText.textContent = 'Cobranca nao encontrada.';
+      }
+      return;
+    }
+
+    fetch(`/api/public/charges/${encodeURIComponent(chargeId)}`)
+      .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok || !data.charge) {
+          throw new Error(data.error || 'Cobranca nao encontrada.');
+        }
+        updateChargeView(data.charge);
+      })
+      .catch((err) => {
+        if (statusText) {
+          statusText.textContent = err.message || 'Falha ao carregar cobranca.';
+        }
+      });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'Gerando Pix...';
+      }
+      if (statusText) {
+        statusText.textContent = '';
+      }
+      if (pollTimer) {
+        clearTimeout(pollTimer);
+      }
+      pollAttempts = 0;
+
+      const payload = Object.fromEntries(new FormData(form).entries());
+      try {
+        const response = await fetch(
+          `/api/public/charges/${encodeURIComponent(chargeId)}/create_payment`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }
+        );
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.error || 'Nao foi possivel gerar o Pix.');
+        }
+        updatePixPayload({
+          qrCode: data.qrCode,
+          qrCodeBase64: data.qrCodeBase64,
+          ticketUrl: data.ticketUrl
+        });
+        setOutputVisible(true);
+        if (progressEl) {
+          progressEl.textContent = 'Aguardando confirmacao do pagamento.';
+        }
+        pollStatus();
+      } catch (err) {
+        if (statusText) {
+          statusText.textContent = err.message || 'Falha ao iniciar pagamento.';
+        }
+      } finally {
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = originalSubmitText || 'Gerar Pix';
+        }
+      }
+    });
+  }
+
   initTheme();
   initNav();
   initMenu();
@@ -459,6 +654,7 @@
   initSupportForm();
   initSubscriptionForm();
   initPixPaymentLink();
+  initPublicChargePayment();
 
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {

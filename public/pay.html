@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="Pagamento Pix GhostPay" />
+    <title>GhostPay | Pagamento Pix</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="grid-overlay"></div>
+      <div class="scanline"></div>
+    </div>
+
+    <header class="topbar" data-topbar>
+      <div class="container">
+        <a class="brand" href="/">
+          <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
+          <span class="brand-text">
+            <span class="brand-name">GhostPay</span>
+            <span class="brand-tag">Pagamento Pix</span>
+          </span>
+        </a>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero" data-reveal>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Pix</p>
+            <h1>Pagamento via Pix</h1>
+            <p class="lead" data-charge-description>Carregando detalhes da cobranca...</p>
+          </div>
+          <div class="hero-panel">
+            <div class="glass-card">
+              <div class="card-head">
+                <h3>Valor</h3>
+                <span class="tag" data-charge-status>--</span>
+              </div>
+              <p class="price" data-charge-amount>--</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Dados do pagador</h3>
+              <span class="tag">Pix</span>
+            </div>
+            <form class="form" data-charge-form>
+              <label>
+                Nome completo
+                <input type="text" name="name" placeholder="Nome e sobrenome" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" placeholder="seu@email.com" autocomplete="email" required />
+              </label>
+              <label>
+                Celular
+                <input type="tel" name="phone" placeholder="(11) 90000-0000" inputmode="numeric" autocomplete="tel" />
+              </label>
+              <label>
+                CPF
+                <input type="text" name="cpf" placeholder="000.000.000-00" inputmode="numeric" autocomplete="off" required />
+              </label>
+              <button class="btn btn-primary" type="submit">Gerar Pix</button>
+              <div class="muted form-status" data-charge-status-text aria-live="polite"></div>
+            </form>
+
+            <div class="pix-output hidden" data-charge-pix-output>
+              <div class="pix-grid">
+                <div class="pix-qr">
+                  <img data-charge-qr alt="QR Code Pix" />
+                </div>
+                <div class="pix-details">
+                  <label>
+                    Codigo Pix
+                    <textarea data-charge-code readonly></textarea>
+                  </label>
+                  <div class="pix-actions">
+                    <button class="btn btn-ghost" type="button" data-charge-copy>Copiar codigo</button>
+                    <a class="btn btn-primary hidden" data-charge-ticket href="#" target="_blank" rel="noreferrer">
+                      Abrir no Mercado Pago
+                    </a>
+                  </div>
+                  <div class="muted" data-charge-progress></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>Como funciona</h3>
+              <span class="tag">Etapas</span>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <strong>1. Gerar Pix</strong>
+                <div class="list-meta">
+                  <span>Mostramos o QR Code e o codigo copia e cola.</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <strong>2. Pagamento</strong>
+                <div class="list-meta">
+                  <span>Efetue o Pix pelo seu banco ou app preferido.</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <strong>3. Confirmacao</strong>
+                <div class="list-meta">
+                  <span>Atualizamos o status automaticamente apos a confirmacao.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand-name">GhostPay</div>
+          <small>Banco digital para pessoas e negocios.</small>
+        </div>
+        <div class="footer-col">
+          <strong>Produto</strong>
+          <a href="/platform">Plataforma</a>
+          <a href="/security">Seguranca</a>
+          <a href="/pricing">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Empresa</strong>
+          <a href="/empresa">Empresa</a>
+          <a href="/support">Suporte</a>
+          <a href="/pricing">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Legal</strong>
+          <a class="muted" href="/lgpd">LGPD</a>
+          <a class="muted" href="/privacidade">Privacidade</a>
+          <a class="muted" href="/termos">Termos de uso</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/site.js"></script>
+  </body>
+</html>

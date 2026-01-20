@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 
 const { pool, initDb } = require('./db');
@@ -119,10 +120,18 @@ const client = await pool.connect();
       ]
     );
 
+    const apiKey = `gpk_${crypto.randomBytes(24).toString('hex')}`;
+    const keyHash = crypto.createHash('sha256').update(apiKey).digest('hex');
+    await client.query(
+      'INSERT INTO api_keys (id, user_id, key_hash, label, status, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
+      [randomId('key'), userId, keyHash, 'Demo key', 'active', now]
+    );
+
     await client.query('COMMIT');
     console.log('Demo user created.');
     console.log(`Email: ${email}`);
     console.log(`Password: ${password}`);
+    console.log(`API Key: ${apiKey}`);
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('Seed failed.', err);
