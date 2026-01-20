@@ -150,9 +150,11 @@
   `;
 
   const pixStatusLabels = {
-    pending: 'pendente',
-    paid: 'pago',
-    failed: 'falhou'
+    created: 'criada',
+    waiting_payment: 'aguardando',
+    paid: 'paga',
+    expired: 'expirada',
+    canceled: 'cancelada'
   };
 
   const cardStatusLabels = {
@@ -597,9 +599,9 @@
     if (elements.pixTransferForm) {
       fillAccountSelect(elements.pixTransferForm.elements.accountId, '<option value="">Selecionar conta</option>');
     }
-    if (elements.pixChargeForm) {
-      fillAccountSelect(elements.pixChargeForm.elements.accountId, '<option value="">Selecionar conta</option>');
-    }
+      if (elements.pixChargeForm && elements.pixChargeForm.elements.accountId) {
+        fillAccountSelect(elements.pixChargeForm.elements.accountId, '<option value="">Selecionar conta</option>');
+      }
     if (elements.cardForm) {
       fillAccountSelect(elements.cardForm.elements.accountId, '<option value="">Selecionar conta</option>');
     }
@@ -780,6 +782,9 @@
 
     const keySelect = elements.pixChargeForm.elements.keyId;
     const accountSelect = elements.pixChargeForm.elements.accountId;
+    if (!keySelect || !accountSelect) {
+      return;
+    }
     const accountId = accountSelect ? accountSelect.value : '';
     const keysForAccount = accountId
       ? state.pixKeys.filter((key) => !key.accountId || key.accountId === accountId)
@@ -815,45 +820,60 @@
     });
   }
 
-    function renderPixCharges(charges) {
-    if (!elements.pixChargesList) {
-      return;
-    }
-    if (!charges.length) {
-      elements.pixChargesList.innerHTML = '<div class="list-item">Nenhum link Pix criado.</div>';
-      return;
+    function normalizePixCharge(raw) {
+      if (!raw) {
+        return null;
+      }
+      return {
+        id: raw.charge_id || raw.id,
+        amountCents: raw.amount_cents ?? raw.amountCents,
+        description: raw.description || '',
+        status: raw.status,
+        createdAt: raw.created_at || raw.createdAt,
+        txid: raw.txid || null,
+        payUrl: raw.pay_url || raw.payUrl || null
+      };
     }
 
-    elements.pixChargesList.innerHTML = charges
-      .map((charge) => {
-        const statusLabel = pixStatusLabels[charge.status] || charge.status;
-        const statusClass = charge.status === 'pending' ? 'pending' : charge.status;
-        const paymentLink = `${window.location.origin}/pix/cobranca/${charge.id}`;
-        const action =
-          charge.status === 'pending'
-            ? `<button class="btn btn-ghost btn-xs" data-action="pay" data-id="${charge.id}" type="button">Simular pagamento</button>`
-            : '';
-        return `
-          <div class="list-item">
-            <strong>${formatCents(charge.amountCents, 'BRL')}</strong>
-            <div class="list-meta">
-              <span>${charge.txid}</span>
-              <span>${formatDate(charge.createdAt)}</span>
+    function renderPixCharges(charges) {
+      if (!elements.pixChargesList) {
+        return;
+      }
+      if (!charges.length) {
+        elements.pixChargesList.innerHTML = '<div class="list-item">Nenhum link Pix criado.</div>';
+        return;
+      }
+
+      elements.pixChargesList.innerHTML = charges
+        .map((charge) => {
+          const statusLabel = pixStatusLabels[charge.status] || charge.status;
+          const statusClass =
+            charge.status === 'created' || charge.status === 'waiting_payment'
+              ? 'pending'
+              : charge.status === 'paid'
+              ? 'paid'
+              : 'failed';
+          const paymentLink = charge.payUrl || `${window.location.origin}/pay/${charge.id}`;
+          return `
+            <div class="list-item">
+              <strong>${formatCents(charge.amountCents, 'BRL')}</strong>
+              <div class="list-meta">
+                <span>${charge.txid || charge.id}</span>
+                <span>${formatDate(charge.createdAt)}</span>
+              </div>
+              <div class="list-meta pix-link-row">
+                <span class="pix-link-label">Link:</span>
+                <a class="pix-link" href="${paymentLink}" target="_blank" rel="noreferrer">${paymentLink}</a>
+                <button class="btn btn-ghost btn-xs" type="button" data-action="copy-link" data-link="${paymentLink}">Copiar link</button>
+              </div>
+              <div class="list-meta">
+                <span class="status-pill ${statusClass}">${statusLabel}</span>
+              </div>
             </div>
-            <div class="list-meta pix-link-row">
-              <span class="pix-link-label">Link:</span>
-              <a class="pix-link" href="${paymentLink}" target="_blank" rel="noreferrer">${paymentLink}</a>
-              <button class="btn btn-ghost btn-xs" type="button" data-action="copy-link" data-link="${paymentLink}">Copiar link</button>
-            </div>
-            <div class="list-meta">
-              <span class="status-pill ${statusClass}">${statusLabel}</span>
-              ${action}
-            </div>
-          </div>
-        `;
-      })
-      .join('');
-  }
+          `;
+        })
+        .join('');
+    }
 
 
   function renderCards(cards) {
@@ -986,35 +1006,37 @@
     }
   }
 
-  async function loadPix() {
-    if (!elements.pixKeysList && !elements.pixChargesList && !elements.pixKeyForm && !elements.pixTransferForm && !elements.pixChargeForm) {
-      return;
-    }
-    if (elements.pixChargesList) {
-      renderSkeleton(elements.pixChargesList, 2);
-    }
-    try {
-      const [keys, charges] = await Promise.all([
-        apiRequest('/api/pix/keys'),
-        apiRequest('/api/pix/charges')
-      ]);
-      state.pixKeys = keys.keys || [];
-      state.pixCharges = charges.charges || [];
-      renderPixKeys(state.pixKeys);
-      renderPixCharges(state.pixCharges.slice(0, 5));
-    } catch (err) {
-      if (err && err.status === 401) {
+    async function loadPix() {
+      if (!elements.pixKeysList && !elements.pixChargesList && !elements.pixKeyForm && !elements.pixTransferForm && !elements.pixChargeForm) {
         return;
       }
-      if (elements.pixKeysList) {
-        elements.pixKeysList.innerHTML = '<span class="pill">Falha ao carregar Pix</span>';
-      }
       if (elements.pixChargesList) {
-        elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar links Pix.</div>';
+        renderSkeleton(elements.pixChargesList, 2);
       }
-      showToast(err.message, 'error');
+      try {
+        const [keys, charges] = await Promise.all([
+          apiRequest('/api/pix/keys'),
+          apiRequest('/v1/charges?limit=5')
+        ]);
+        state.pixKeys = keys.keys || [];
+        state.pixCharges = (charges.charges || [])
+          .map(normalizePixCharge)
+          .filter(Boolean);
+        renderPixKeys(state.pixKeys);
+        renderPixCharges(state.pixCharges);
+      } catch (err) {
+        if (err && err.status === 401) {
+          return;
+        }
+        if (elements.pixKeysList) {
+          elements.pixKeysList.innerHTML = '<span class="pill">Falha ao carregar Pix</span>';
+        }
+        if (elements.pixChargesList) {
+          elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar links Pix.</div>';
+        }
+        showToast(err.message, 'error');
+      }
     }
-  }
 
   async function loadCards() {
     if (!elements.cardsList && !elements.cardTransactionsList && !elements.cardForm && !elements.cardTxnForm) {
@@ -1641,13 +1663,13 @@
     if (!payload.description) {
       delete payload.description;
     }
-    if (!payload.keyId) {
-      showToast('Crie uma chave Pix para a conta selecionada.', 'error');
+    if (!payload.amount) {
+      showToast('Informe o valor do link.', 'error');
       return;
     }
 
     try {
-      await apiRequest('/api/pix/charges', {
+      await apiRequest('/v1/charges', {
         method: 'POST',
         body: JSON.stringify(payload)
       });
@@ -1671,24 +1693,7 @@
       showToast(ok ? 'Link copiado' : 'Não foi possível copiar o link', ok ? 'info' : 'error');
       return;
     }
-    if (action !== 'pay') {
-      return;
-    }
-    const chargeId = button.dataset.id;
-    if (!chargeId) {
-      return;
-    }
-
-    try {
-      await apiRequest(`/api/pix/charges/${chargeId}/simulate-pay`, {
-        method: 'POST'
-      });
-      await loadOverview();
-      await loadPix();
-      showToast('Pagamento registrado');
-    } catch (err) {
-      showToast(err.message, 'error');
-    }
+    return;
   }
 
 

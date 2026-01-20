@@ -25,6 +25,40 @@ function buildPayUrl(chargeId) {
 
 router.use(merchantAuth);
 
+router.get('/charges', async (req, res) => {
+  const limit = Math.min(Number.parseInt(req.query.limit, 10) || 10, 50);
+  try {
+    const result = await pool.query(
+      `SELECT id, amount_cents, description, status, provider_payment_id, provider_status,
+              qr_payload, qr_code_base64, ticket_url, paid_at, expires_at, created_at
+       FROM pix_charges
+       WHERE user_id = $1 AND provider = 'mercadopago'
+       ORDER BY created_at DESC
+       LIMIT $2`,
+      [req.user.id, limit]
+    );
+    const charges = result.rows.map((charge) => ({
+      charge_id: charge.id,
+      amount_cents: charge.amount_cents,
+      description: charge.description,
+      status: charge.status,
+      provider_payment_id: charge.provider_payment_id,
+      provider_status: charge.provider_status,
+      br_code: charge.qr_payload || null,
+      qr_code_base64: charge.qr_code_base64 || null,
+      ticket_url: charge.ticket_url || null,
+      paid_at: charge.paid_at,
+      expires_at: charge.expires_at,
+      created_at: charge.created_at,
+      pay_url: buildPayUrl(charge.id)
+    }));
+    return res.json({ charges });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Unable to load charges' });
+  }
+});
+
 router.post('/charges', idempotencyGuard('gateway.charges.create'), validateBody(createChargeSchema), async (req, res) => {
   const amountCents = parseAmountToCents(req.body.amount);
   if (!amountCents || amountCents <= 0) {
