@@ -336,8 +336,52 @@
                       Descri&ccedil;&atilde;o
                       <input type="text" name="description" placeholder="Opcional" />
                     </label>
-                    <button class="btn btn-primary" type="submit">Criar link</button>
+                    <div class="card-subhead">
+                      <strong>Dados do pagador</strong>
+                    </div>
+                    <label>
+                      Nome completo
+                      <input type="text" name="name" placeholder="Nome e sobrenome" required />
+                    </label>
+                    <label>
+                      Email
+                      <input type="email" name="email" placeholder="seu@email.com" required />
+                    </label>
+                    <label>
+                      CPF
+                      <input type="text" name="cpf" placeholder="000.000.000-00" inputmode="numeric" required />
+                    </label>
+                    <label>
+                      Celular
+                      <input type="tel" name="phone" placeholder="(11) 90000-0000" inputmode="numeric" />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Gerar cobran&ccedil;a Pix</button>
                   </form>
+                  <div class="pix-output hidden" id="pixChargeOutput">
+                    <div class="pix-grid">
+                      <div class="pix-qr">
+                        <img id="pixChargeQr" alt="QR Code Pix" />
+                      </div>
+                      <div class="pix-details">
+                        <label>
+                          C&oacute;digo Pix
+                          <textarea id="pixChargeCode" readonly></textarea>
+                        </label>
+                        <div class="pix-link-row">
+                          <span class="pix-link-label">Link:</span>
+                          <a class="pix-link" id="pixChargeLink" href="#" target="_blank" rel="noreferrer"></a>
+                        </div>
+                        <div class="pix-actions">
+                          <button class="btn btn-ghost" type="button" id="pixChargeCopy">Copiar c&oacute;digo</button>
+                          <button class="btn btn-ghost" type="button" id="pixChargeCopyLink">Copiar link</button>
+                          <a class="btn btn-primary hidden" id="pixChargeTicket" href="#" target="_blank" rel="noreferrer">
+                            Abrir no Mercado Pago
+                          </a>
+                        </div>
+                        <div class="muted" id="pixChargeStatus"></div>
+                      </div>
+                    </div>
+                  </div>
                   <div class="list" id="pixChargesList"></div>
                 </div>
               </div>

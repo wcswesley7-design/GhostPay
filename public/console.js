@@ -16,6 +16,10 @@
     cardNumberVisible: false
   };
 
+  let pixChargePollTimer = null;
+  let pixChargePollAttempts = 0;
+  let activePixChargeId = null;
+
   const elements = {
     consoleHero: document.getElementById('consoleHero'),
     authPanel: document.getElementById('authPanel'),
@@ -49,6 +53,14 @@
     pixKeyForm: document.getElementById('pixKeyForm'),
     pixTransferForm: document.getElementById('pixTransferForm'),
     pixChargeForm: document.getElementById('pixChargeForm'),
+    pixChargeOutput: document.getElementById('pixChargeOutput'),
+    pixChargeQr: document.getElementById('pixChargeQr'),
+    pixChargeCode: document.getElementById('pixChargeCode'),
+    pixChargeCopy: document.getElementById('pixChargeCopy'),
+    pixChargeLink: document.getElementById('pixChargeLink'),
+    pixChargeCopyLink: document.getElementById('pixChargeCopyLink'),
+    pixChargeTicket: document.getElementById('pixChargeTicket'),
+    pixChargeStatus: document.getElementById('pixChargeStatus'),
     cardsList: document.getElementById('cardsList'),
     cardForm: document.getElementById('cardForm'),
     cardTxnForm: document.getElementById('cardTxnForm'),
@@ -1657,6 +1669,76 @@
     }
   }
 
+  function setPixChargeOutputVisible(visible) {
+    if (!elements.pixChargeOutput) {
+      return;
+    }
+    elements.pixChargeOutput.classList.toggle('hidden', !visible);
+  }
+
+  function updatePixChargeOutput(payload) {
+    if (!payload) {
+      return;
+    }
+    if (elements.pixChargeQr && payload.qrCodeBase64) {
+      elements.pixChargeQr.src = `data:image/png;base64,${payload.qrCodeBase64}`;
+    }
+    if (elements.pixChargeCode && payload.qrCode) {
+      elements.pixChargeCode.value = payload.qrCode;
+    }
+    if (elements.pixChargeLink && payload.payUrl) {
+      elements.pixChargeLink.textContent = payload.payUrl;
+      elements.pixChargeLink.href = payload.payUrl;
+    }
+    if (elements.pixChargeTicket) {
+      if (payload.ticketUrl) {
+        elements.pixChargeTicket.href = payload.ticketUrl;
+        elements.pixChargeTicket.classList.remove('hidden');
+      } else {
+        elements.pixChargeTicket.classList.add('hidden');
+      }
+    }
+  }
+
+  async function pollPixChargeStatus(chargeId) {
+    if (!chargeId) {
+      return;
+    }
+    pixChargePollAttempts += 1;
+    try {
+      const data = await apiRequest(`/api/public/charges/${encodeURIComponent(chargeId)}`);
+      if (data.charge) {
+        const status = data.charge.status;
+        if (elements.pixChargeStatus) {
+          if (status === 'paid') {
+            elements.pixChargeStatus.textContent = 'Pagamento confirmado.';
+          } else if (status === 'canceled' || status === 'expired') {
+            elements.pixChargeStatus.textContent = 'Cobran\u00E7a expirada ou cancelada.';
+          } else {
+            elements.pixChargeStatus.textContent = 'Aguardando confirma\u00E7\u00E3o do pagamento.';
+          }
+        }
+        updatePixChargeOutput({
+          qrCode: data.charge.brCode,
+          qrCodeBase64: data.charge.qrCodeBase64,
+          ticketUrl: data.charge.ticketUrl,
+          payUrl: `${window.location.origin}/pay/${data.charge.id}`
+        });
+        if (status === 'paid') {
+          return;
+        }
+      }
+    } catch (err) {
+      if (elements.pixChargeStatus) {
+        elements.pixChargeStatus.textContent = 'N\u00E3o foi poss\u00EDvel atualizar o status.';
+      }
+    }
+
+    if (pixChargePollAttempts < 120 && activePixChargeId === chargeId) {
+      pixChargePollTimer = setTimeout(() => pollPixChargeStatus(chargeId), 5000);
+    }
+  }
+
   async function handlePixChargeCreate(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.pixChargeForm).entries());
@@ -1664,20 +1746,75 @@
       delete payload.description;
     }
     if (!payload.amount) {
-      showToast('Informe o valor do link.', 'error');
+      showToast('Informe o valor da cobran\u00E7a.', 'error');
+      return;
+    }
+    if (!payload.name || !payload.email || !payload.cpf) {
+      showToast('Preencha os dados do pagador.', 'error');
       return;
     }
 
+    const submit = elements.pixChargeForm.querySelector('button[type="submit"]');
+    const originalLabel = submit ? submit.textContent : '';
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = 'Gerando Pix...';
+    }
+    if (elements.pixChargeStatus) {
+      elements.pixChargeStatus.textContent = '';
+    }
+    if (pixChargePollTimer) {
+      clearTimeout(pixChargePollTimer);
+    }
+    pixChargePollAttempts = 0;
+
+    const chargePayload = {
+      amount: payload.amount,
+      description: payload.description
+    };
+    const payerPayload = {
+      name: payload.name,
+      email: payload.email,
+      cpf: payload.cpf,
+      phone: payload.phone
+    };
+
     try {
-      await apiRequest('/v1/charges', {
+      const charge = await apiRequest('/v1/charges', {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: JSON.stringify(chargePayload)
       });
-      elements.pixChargeForm.reset();
+      const chargeId = charge.charge_id;
+      const payUrl = charge.pay_url || `${window.location.origin}/pay/${chargeId}`;
+      const payment = await apiRequest(
+        `/api/public/charges/${encodeURIComponent(chargeId)}/create_payment`,
+        {
+          method: 'POST',
+          body: JSON.stringify(payerPayload)
+        }
+      );
+
+      activePixChargeId = chargeId;
+      updatePixChargeOutput({
+        qrCode: payment.qrCode,
+        qrCodeBase64: payment.qrCodeBase64,
+        ticketUrl: payment.ticketUrl,
+        payUrl
+      });
+      setPixChargeOutputVisible(true);
+      if (elements.pixChargeStatus) {
+        elements.pixChargeStatus.textContent = 'Aguardando confirma\u00E7\u00E3o do pagamento.';
+      }
+      pollPixChargeStatus(chargeId);
       await loadPix();
-      showToast('Link Pix criado');
+      showToast('Cobran\u00E7a Pix gerada');
     } catch (err) {
       showToast(err.message, 'error');
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = originalLabel || 'Gerar cobran\u00E7a Pix';
+      }
     }
   }
 
@@ -1847,6 +1984,18 @@
       if (elements.pixChargeForm.elements.accountId) {
         elements.pixChargeForm.elements.accountId.addEventListener('change', updatePixChargeKeyOptions);
       }
+    }
+    if (elements.pixChargeCopy) {
+      elements.pixChargeCopy.addEventListener('click', async () => {
+        const ok = await copyToClipboard(elements.pixChargeCode ? elements.pixChargeCode.value : '');
+        showToast(ok ? 'C\u00F3digo Pix copiado' : 'N\u00E3o foi poss\u00EDvel copiar o c\u00F3digo', ok ? 'info' : 'error');
+      });
+    }
+    if (elements.pixChargeCopyLink) {
+      elements.pixChargeCopyLink.addEventListener('click', async () => {
+        const ok = await copyToClipboard(elements.pixChargeLink ? elements.pixChargeLink.href : '');
+        showToast(ok ? 'Link copiado' : 'N\u00E3o foi poss\u00EDvel copiar o link', ok ? 'info' : 'error');
+      });
     }
     if (elements.pixChargesList) {
       elements.pixChargesList.addEventListener('click', handlePixChargeAction);
