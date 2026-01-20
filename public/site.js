@@ -349,6 +349,107 @@
     }
   }
 
+  function initPixPaymentLink() {
+    const container = document.querySelector('[data-pix-link]');
+    if (!container) {
+      return;
+    }
+
+    const statusEl = container.querySelector('[data-pix-link-status]');
+    const amountEl = container.querySelector('[data-pix-link-amount]');
+    const descEl = container.querySelector('[data-pix-link-description]');
+    const codeEl = container.querySelector('[data-pix-link-code]');
+    const copyBtn = container.querySelector('[data-pix-link-copy]');
+    const copyUrlBtn = container.querySelector('[data-pix-link-copy-url]');
+    const expiresEl = container.querySelector('[data-pix-link-expires]');
+    const messageEl = container.querySelector('[data-pix-link-message]');
+
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const chargeId = pathParts[pathParts.length - 1];
+    const shareUrl = window.location.href;
+
+    const statusLabels = {
+      pending: 'Pendente',
+      paid: 'Pago',
+      cancelled: 'Cancelado'
+    };
+
+    const formatCurrency = (cents) =>
+      new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format((Number(cents) || 0) / 100);
+
+    const formatDate = (value) =>
+      value ? new Date(value).toLocaleString('pt-BR') : '';
+
+    async function copyText(text, successMessage) {
+      if (!text) {
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        if (messageEl) {
+          messageEl.textContent = successMessage;
+        }
+      } catch (err) {
+        if (messageEl) {
+          messageEl.textContent = 'N\u00E3o foi poss\u00EDvel copiar agora.';
+        }
+      }
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        copyText(codeEl ? codeEl.value : '', 'C\u00F3digo Pix copiado.');
+      });
+    }
+    if (copyUrlBtn) {
+      copyUrlBtn.addEventListener('click', () => {
+        copyText(shareUrl, 'Link copiado.');
+      });
+    }
+
+    if (!chargeId) {
+      if (messageEl) {
+        messageEl.textContent = 'Link inv\u00E1lido.';
+      }
+      return;
+    }
+
+    fetch(`/api/public/pix/charges/${encodeURIComponent(chargeId)}`)
+      .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok || !data.charge) {
+          throw new Error((data && data.error) || 'Link n\u00E3o encontrado.');
+        }
+        const charge = data.charge;
+        if (statusEl) {
+          statusEl.textContent = statusLabels[charge.status] || charge.status;
+        }
+        if (amountEl) {
+          amountEl.textContent = formatCurrency(charge.amountCents);
+        }
+        if (descEl) {
+          descEl.textContent = charge.description || 'Sem descri\u00E7\u00E3o.';
+        }
+        if (codeEl) {
+          codeEl.value = charge.qrPayload || '';
+        }
+        if (expiresEl && charge.expiresAt) {
+          expiresEl.textContent = `Expira em ${formatDate(charge.expiresAt)}`;
+        }
+        if (messageEl && charge.status === 'paid') {
+          messageEl.textContent = 'Pagamento confirmado.';
+        }
+      })
+      .catch((err) => {
+        if (messageEl) {
+          messageEl.textContent = err.message || 'N\u00E3o foi poss\u00EDvel carregar o link.';
+        }
+      });
+  }
+
   initTheme();
   initNav();
   initMenu();
@@ -357,6 +458,7 @@
   initModules();
   initSupportForm();
   initSubscriptionForm();
+  initPixPaymentLink();
 
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {

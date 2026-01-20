@@ -296,7 +296,17 @@
                     <span class="status-pill" id="cardStatusPill">--</span>
                     <span class="tag" id="cardTypeTag">--</span>
                   </div>
-                  <div class="card-actions card-actions--always" id="cardDetailActions"></div>
+                  <div class="card-action-row">
+                    <button class="btn btn-ghost btn-xs" type="button" id="toggleCardNumber" aria-pressed="false">
+                      <span class="btn-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <use id="cardNumberIcon" href="/assets/icons.svg#icon-eye"></use>
+                        </svg>
+                      </span>
+                      <span id="cardNumberLabel">Mostrar n&uacute;mero</span>
+                    </button>
+                    <div class="card-actions card-actions--always" id="cardDetailActions"></div>
+                  </div>
                   <p class="muted" id="cardDetailNotice"></p>
                 </div>
 

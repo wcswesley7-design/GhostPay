@@ -29,6 +29,10 @@ const pix = {
     ensureDockReady();
     return notImplemented();
   },
+  async getChargePublic() {
+    ensureDockReady();
+    return notImplemented();
+  },
   async createCharge() {
     ensureDockReady();
     return notImplemented();

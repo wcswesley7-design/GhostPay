@@ -146,6 +146,28 @@ const pix = {
     }));
   },
 
+  async getChargePublic(chargeId) {
+    const result = await pool.query(
+      'SELECT id, amount_cents, description, status, txid, qr_payload, expires_at, created_at, paid_at FROM pix_charges WHERE id = $1',
+      [chargeId]
+    );
+    const row = result.rows[0];
+    if (!row) {
+      throw makeError(404, 'Charge not found');
+    }
+    return {
+      id: row.id,
+      amountCents: row.amount_cents,
+      description: row.description,
+      status: row.status,
+      txid: row.txid,
+      qrPayload: row.qr_payload,
+      expiresAt: row.expires_at,
+      createdAt: row.created_at,
+      paidAt: row.paid_at
+    };
+  },
+
   async createCharge(userId, payload) {
     const amountCents = parseAmountToCents(payload.amount);
     if (!amountCents || amountCents <= 0) {

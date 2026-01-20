@@ -10,6 +10,7 @@ const accountsRoutes = require('./routes/accounts');
 const transactionsRoutes = require('./routes/transactions');
 const overviewRoutes = require('./routes/overview');
 const pixRoutes = require('./routes/pix');
+const pixPublicRoutes = require('./routes/pixPublic');
 const cardsRoutes = require('./routes/cards');
 const subscriptionsRoutes = require('./routes/subscriptions');
 const webhooksRoutes = require('./routes/webhooks');
@@ -52,6 +53,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
+app.use('/api/public/pix', pixPublicRoutes);
 app.use('/api/accounts', authRequired, accountsRoutes);
 app.use('/api/transactions', authRequired, transactionsRoutes);
 app.use('/api/overview', authRequired, overviewRoutes);
@@ -94,6 +96,10 @@ Object.entries(pageRoutes).forEach(([route, file]) => {
 
 app.get('/console/cartoes/:id', (req, res) => {
   res.sendFile(path.join(publicDir, 'console-card.html'));
+});
+
+app.get('/pix/cobranca/:id', (req, res) => {
+  res.sendFile(path.join(publicDir, 'pix-link.html'));
 });
 
 app.get('*', (req, res) => {

@@ -857,6 +857,12 @@ html[data-theme='light'] .topbar.is-scrolled {
   overflow-wrap: anywhere;
 }
 
+#pixKeysList .pix-key-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 #pixKeysList .btn-danger {
   opacity: 0;
   pointer-events: none;
@@ -869,6 +875,19 @@ html[data-theme='light'] .topbar.is-scrolled {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
+}
+
+.pix-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.pix-link {
+  color: var(--accent);
+  font-size: 0.85rem;
+  word-break: break-all;
 }
 
 #accountsList .btn-danger {
@@ -1142,6 +1161,18 @@ html[data-theme='light'] .topbar.is-scrolled {
   margin-top: 16px;
 }
 
+.card-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.card-action-row .card-actions {
+  margin-top: 0;
+}
+
 .card-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1363,6 +1394,16 @@ html[data-theme='light'] .banner {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
+}
+
+.pix-link-card {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.pix-link-card textarea {
+  min-height: 120px;
+  font-family: var(--font-mono);
 }
 
 @media (max-width: 720px) {

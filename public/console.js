@@ -11,7 +11,9 @@
     transactions: [],
     pixKeys: [],
     pixCharges: [],
-    cards: []
+    cards: [],
+    activeCard: null,
+    cardNumberVisible: false
   };
 
   const elements = {
@@ -56,6 +58,9 @@
     cardDetailSubtitle: document.getElementById('cardDetailSubtitle'),
     cardVisual: document.getElementById('cardVisual'),
     cardVisualNumber: document.getElementById('cardVisualNumber'),
+    toggleCardNumber: document.getElementById('toggleCardNumber'),
+    cardNumberLabel: document.getElementById('cardNumberLabel'),
+    cardNumberIcon: document.getElementById('cardNumberIcon'),
     cardVisualHolder: document.getElementById('cardVisualHolder'),
     cardVisualExpiry: document.getElementById('cardVisualExpiry'),
     cardStatusPill: document.getElementById('cardStatusPill'),
@@ -167,6 +172,33 @@
     setTimeout(() => elements.toast.classList.remove('show'), 2600);
   }
 
+  async function copyToClipboard(value) {
+    if (!value) {
+      return false;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(value);
+        return true;
+      } catch (err) {
+        // fallback below
+      }
+    }
+    try {
+      const temp = document.createElement('textarea');
+      temp.value = value;
+      temp.setAttribute('readonly', '');
+      temp.style.position = 'fixed';
+      temp.style.opacity = '0';
+      document.body.appendChild(temp);
+      temp.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(temp);
+      return ok;
+    } catch (err) {
+      return false;
+    }
+  }
   function setError(message) {
     if (!elements.errorBanner) {
       return;
@@ -702,7 +734,7 @@
       .join('');
   }
 
-  function renderPixKeys(keys) {
+    function renderPixKeys(keys) {
     if (elements.pixKeysList) {
       if (!keys.length) {
         elements.pixKeysList.innerHTML = '<span class="pill">Sem chaves Pix</span>';
@@ -710,17 +742,27 @@
         elements.pixKeysList.innerHTML = keys
           .map((key) => {
             const accountLabel = getAccountLabel(key.accountId);
-            const label = `${key.type.toUpperCase()} ${key.value}`;
+            const label = `${key.type.toUpperCase()}: ${key.value}`;
             return `
               <div class="pix-key">
                 <div class="pix-key-text">
                   <span class="pix-key-title">${key.type.toUpperCase()}: ${key.value}</span>
                   <span class="pix-key-meta">Conta: ${accountLabel}</span>
                 </div>
-                <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="delete-key" data-id="${key.id}" data-label="${label}" aria-label="Remover chave Pix">
-                  <span class="sr-only">Remover</span>
-                  <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
-                </button>
+                <div class="pix-key-actions">
+                  <button class="btn btn-ghost btn-xs btn-icon-only" type="button" data-action="copy-key" data-value="${key.value}" aria-label="Copiar chave Pix">
+                    <span class="sr-only">Copiar</span>
+                    <span class="btn-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-copy"></use>
+                      </svg>
+                    </span>
+                  </button>
+                  <button class="btn btn-ghost btn-xs btn-danger btn-icon-only" type="button" data-action="delete-key" data-id="${key.id}" data-label="${label}" aria-label="Remover chave Pix">
+                    <span class="sr-only">Remover</span>
+                    <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
+                  </button>
+                </div>
               </div>
             `;
           })
@@ -729,6 +771,7 @@
     }
     updatePixChargeKeyOptions();
   }
+
 
   function updatePixChargeKeyOptions() {
     if (!elements.pixChargeForm) {
@@ -772,12 +815,12 @@
     });
   }
 
-  function renderPixCharges(charges) {
+    function renderPixCharges(charges) {
     if (!elements.pixChargesList) {
       return;
     }
     if (!charges.length) {
-      elements.pixChargesList.innerHTML = '<div class="list-item">Nenhuma cobrança Pix criada.</div>';
+      elements.pixChargesList.innerHTML = '<div class="list-item">Nenhum link Pix criado.</div>';
       return;
     }
 
@@ -785,9 +828,10 @@
       .map((charge) => {
         const statusLabel = pixStatusLabels[charge.status] || charge.status;
         const statusClass = charge.status === 'pending' ? 'pending' : charge.status;
+        const paymentLink = `${window.location.origin}/pix/cobranca/${charge.id}`;
         const action =
           charge.status === 'pending'
-            ? `<button class="btn btn-ghost" data-action="pay" data-id="${charge.id}" type="button">Pagar cobrança</button>`
+            ? `<button class="btn btn-ghost btn-xs" data-action="pay" data-id="${charge.id}" type="button">Simular pagamento</button>`
             : '';
         return `
           <div class="list-item">
@@ -795,6 +839,11 @@
             <div class="list-meta">
               <span>${charge.txid}</span>
               <span>${formatDate(charge.createdAt)}</span>
+            </div>
+            <div class="list-meta pix-link-row">
+              <span class="pix-link-label">Link:</span>
+              <a class="pix-link" href="${paymentLink}" target="_blank" rel="noreferrer">${paymentLink}</a>
+              <button class="btn btn-ghost btn-xs" type="button" data-action="copy-link" data-link="${paymentLink}">Copiar link</button>
             </div>
             <div class="list-meta">
               <span class="status-pill ${statusClass}">${statusLabel}</span>
@@ -805,6 +854,7 @@
       })
       .join('');
   }
+
 
   function renderCards(cards) {
     if (!elements.cardsList && !elements.cardTxnForm) {
@@ -826,6 +876,8 @@
         .map((card) => {
           const statusLabel = formatCardStatus(card.status);
           const statusClass = statusClassFor(card.status);
+
+    state.activeCard = card;
           const label = `${card.brand} **** ${card.last4}`;
           return `
             <div class="list-item">
@@ -958,7 +1010,7 @@
         elements.pixKeysList.innerHTML = '<span class="pill">Falha ao carregar Pix</span>';
       }
       if (elements.pixChargesList) {
-        elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar cobranças Pix.</div>';
+        elements.pixChargesList.innerHTML = '<div class="list-item">Falha ao carregar links Pix.</div>';
       }
       showToast(err.message, 'error');
     }
@@ -1044,6 +1096,51 @@
     }
   }
 
+  function maskCardNumber(last4) {
+    const mask = '\u2022\u2022\u2022\u2022';
+    const safeLast4 = String(last4 || '0000').padStart(4, '0');
+    return `${mask} ${mask} ${mask} ${safeLast4}`;
+  }
+
+  function buildCardNumber(card) {
+    const seed = `${card.id || ''}${card.last4 || ''}` || 'ghostpay';
+    let digits = '';
+    for (let i = 0; i < 12; i += 1) {
+      const code = seed.charCodeAt(i % seed.length) || 7;
+      digits += String(code % 10);
+    }
+    const last4 = String(card.last4 || '').padStart(4, '0');
+    const number = `${digits}${last4}`;
+    return number.replace(/(\d{4})(?=\d)/g, '$1 ');
+  }
+
+  function setIconHref(el, href) {
+    if (!el) {
+      return;
+    }
+    el.setAttribute('href', href);
+    el.setAttribute('xlink:href', href);
+  }
+
+  function updateCardNumberDisplay(card) {
+    if (!card || !elements.cardVisualNumber) {
+      return;
+    }
+    const fullNumber = buildCardNumber(card);
+    const masked = maskCardNumber(card.last4);
+    const show = state.cardNumberVisible;
+    elements.cardVisualNumber.textContent = show ? fullNumber : masked;
+    if (elements.cardNumberLabel) {
+      elements.cardNumberLabel.textContent = show ? 'Ocultar n\u00FAmero' : 'Mostrar n\u00FAmero';
+    }
+    if (elements.cardNumberIcon) {
+      setIconHref(elements.cardNumberIcon, show ? '/assets/icons.svg#icon-eye-off' : '/assets/icons.svg#icon-eye');
+    }
+    if (elements.toggleCardNumber) {
+      elements.toggleCardNumber.setAttribute('aria-pressed', show ? 'true' : 'false');
+    }
+  }
+
   function renderCardDetail(card) {
     const label = `${card.brand} **** ${card.last4}`;
     const statusLabel = formatCardStatus(card.status);
@@ -1055,9 +1152,7 @@
     if (elements.cardDetailSubtitle) {
       elements.cardDetailSubtitle.textContent = `${formatCardType(card.type)} · ${statusLabel}`;
     }
-    if (elements.cardVisualNumber) {
-      elements.cardVisualNumber.textContent = `•••• •••• •••• ${card.last4}`;
-    }
+    updateCardNumberDisplay(card);
     if (elements.cardVisualHolder) {
       elements.cardVisualHolder.textContent = state.user && state.user.name ? state.user.name : 'Titular GhostPay';
     }
@@ -1479,9 +1574,19 @@
     }
   }
 
-  async function handlePixKeyAction(event) {
-    const button = event.target.closest('button[data-action="delete-key"]');
+    async function handlePixKeyAction(event) {
+    const button = event.target.closest('button[data-action]');
     if (!button) {
+      return;
+    }
+    const action = button.dataset.action;
+    if (action === 'copy-key') {
+      const value = button.dataset.value || '';
+      const ok = await copyToClipboard(value);
+      showToast(ok ? 'Chave Pix copiada' : 'Não foi possível copiar a chave', ok ? 'info' : 'error');
+      return;
+    }
+    if (action !== 'delete-key') {
       return;
     }
     const keyId = button.dataset.id;
@@ -1507,6 +1612,7 @@
       showToast(err.message, 'error');
     }
   }
+
 
   async function handlePixTransfer(event) {
     event.preventDefault();
@@ -1547,15 +1653,25 @@
       });
       elements.pixChargeForm.reset();
       await loadPix();
-      showToast('Cobrança Pix criada');
+      showToast('Link Pix criado');
     } catch (err) {
       showToast(err.message, 'error');
     }
   }
 
-  async function handlePixChargeAction(event) {
-    const button = event.target.closest('button');
-    if (!button || button.dataset.action !== 'pay') {
+    async function handlePixChargeAction(event) {
+    const button = event.target.closest('button[data-action]');
+    if (!button) {
+      return;
+    }
+    const action = button.dataset.action;
+    if (action === 'copy-link') {
+      const link = button.dataset.link || '';
+      const ok = await copyToClipboard(link);
+      showToast(ok ? 'Link copiado' : 'Não foi possível copiar o link', ok ? 'info' : 'error');
+      return;
+    }
+    if (action !== 'pay') {
       return;
     }
     const chargeId = button.dataset.id;
@@ -1574,6 +1690,7 @@
       showToast(err.message, 'error');
     }
   }
+
 
   async function handleCardCreate(event) {
     event.preventDefault();
@@ -1737,6 +1854,16 @@
     }
     if (elements.cardDetailActions) {
       elements.cardDetailActions.addEventListener('click', handleCardAction);
+    }
+
+    if (elements.toggleCardNumber) {
+      elements.toggleCardNumber.addEventListener('click', () => {
+        if (!state.activeCard) {
+          return;
+        }
+        state.cardNumberVisible = !state.cardNumberVisible;
+        updateCardNumberDisplay(state.activeCard);
+      });
     }
     if (elements.cardTxnForm) {
       elements.cardTxnForm.addEventListener('submit', handleCardTransaction);
