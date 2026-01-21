@@ -102,7 +102,7 @@ router.delete('/:id', async (req, res) => {
       `SELECT
         (SELECT COUNT(*) FROM transactions WHERE user_id = $1 AND (from_account_id = $2 OR to_account_id = $2)) AS transaction_count,
         (SELECT COUNT(*) FROM ledger_entries WHERE account_id = $2) AS ledger_count,
-        (SELECT COUNT(*) FROM pix_keys WHERE account_id = $2) AS pix_key_count,
+        (SELECT COUNT(*) FROM pix_keys WHERE account_id = $2 AND status = 'active') AS pix_key_count,
         (SELECT COUNT(*) FROM pix_charges WHERE account_id = $2) AS pix_charge_count,
         (SELECT COUNT(*) FROM pix_transfers WHERE account_id = $2) AS pix_transfer_count,
         (SELECT COUNT(*) FROM cards WHERE billing_account_id = $2) AS card_count,
@@ -117,6 +117,11 @@ router.delete('/:id', async (req, res) => {
         error: 'Account has linked activity. Clear Pix keys, cards, or transactions before removing.'
       });
     }
+
+    await pool.query(
+      "UPDATE pix_keys SET account_id = NULL WHERE account_id = $1 AND status <> 'active'",
+      [accountId]
+    );
 
     await pool.query('DELETE FROM accounts WHERE id = $1 AND user_id = $2', [
       accountId,
