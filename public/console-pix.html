@@ -253,80 +253,17 @@
               <div class="section-head section-head--inline">
                 <div>
                   <h2>Pix</h2>
-                  <p class="lead">Chaves, transfer&ecirc;ncias e links de pagamento em um s&oacute; lugar.</p>
+                  <p class="lead">Cobran&ccedil;as Pix e acompanhamento em tempo real.</p>
                 </div>
                 <button class="btn btn-ghost" type="button" id="refreshPix">Atualizar</button>
               </div>
-              <div class="grid-3">
+              <div class="grid-2">
                 <div class="card">
                   <div class="card-head">
-                    <h3>Chaves Pix</h3>
-                    <span class="tag">Cadastro</span>
+                    <h3>Cobran&ccedil;a Pix</h3>
+                    <span class="tag">Recebimento</span>
                   </div>
-                  <p class="muted">Cadastre suas chaves para receber Pix.</p>
-                  <div class="pill-row" id="pixKeysList"></div>
-                  <form class="form" id="pixKeyForm">
-                    <label>
-                      Conta vinculada
-                      <select name="accountId" required></select>
-                    </label>
-                    <label>
-                      Tipo de chave
-                      <select name="type">
-                        <option value="random">Aleatória</option>
-                        <option value="email">Email</option>
-                        <option value="phone">Telefone</option>
-                        <option value="cpf">CPF</option>
-                      </select>
-                    </label>
-                    <label>
-                      Valor da chave
-                      <input type="text" name="value" placeholder="Somente email/telefone/cpf" />
-                    </label>
-                    <button class="btn btn-primary" type="submit">Criar chave</button>
-                  </form>
-                </div>
-
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Transfer&ecirc;ncia Pix</h3>
-                    <span class="tag">Envio</span>
-                  </div>
-                  <form class="form" id="pixTransferForm">
-                    <label>
-                      Conta de origem
-                      <select name="accountId" required></select>
-                    </label>
-                    <label>
-                      Tipo da chave
-                      <select name="keyType">
-                        <option value="email">Email</option>
-                        <option value="phone">Telefone</option>
-                        <option value="cpf">CPF</option>
-                        <option value="random">Aleatória</option>
-                      </select>
-                    </label>
-                    <label>
-                      Chave destino
-                      <input type="text" name="keyValue" placeholder="Chave Pix" required />
-                    </label>
-                    <label>
-                      Valor
-                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
-                    </label>
-                    <label>
-                      Descri&ccedil;&atilde;o
-                      <input type="text" name="description" placeholder="Opcional" />
-                    </label>
-                    <button class="btn btn-primary" type="submit">Enviar Pix</button>
-                  </form>
-                </div>
-
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Links de pagamento Pix</h3>
-                    <button class="btn btn-ghost" type="button" id="refreshCharges">Atualizar</button>
-                  </div>
+                  <p class="muted">Gere uma cobran&ccedil;a com QR Code e c&oacute;digo copia e cola.</p>
                   <form class="form" id="pixChargeForm">
                     <label>
                       Valor
@@ -367,13 +304,8 @@
                           C&oacute;digo Pix
                           <textarea id="pixChargeCode" readonly></textarea>
                         </label>
-                        <div class="pix-link-row">
-                          <span class="pix-link-label">Link:</span>
-                          <a class="pix-link" id="pixChargeLink" href="#" target="_blank" rel="noreferrer"></a>
-                        </div>
                         <div class="pix-actions">
                           <button class="btn btn-ghost" type="button" id="pixChargeCopy">Copiar c&oacute;digo</button>
-                          <button class="btn btn-ghost" type="button" id="pixChargeCopyLink">Copiar link</button>
                           <a class="btn btn-primary hidden" id="pixChargeTicket" href="#" target="_blank" rel="noreferrer">
                             Abrir no Mercado Pago
                           </a>
@@ -382,9 +314,16 @@
                       </div>
                     </div>
                   </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Hist&oacute;rico de cobran&ccedil;as</h3>
+                    <button class="btn btn-ghost" type="button" id="refreshCharges">Atualizar</button>
+                  </div>
                   <div class="list" id="pixChargesList"></div>
                 </div>
-              </div>
+              </div></div>
             </section>
           </div>
         </div>

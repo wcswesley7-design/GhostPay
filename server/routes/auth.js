@@ -179,11 +179,9 @@ router.post('/demo', async (req, res) => {
     if (!user) {
       const userId = randomId('usr');
       const primaryId = randomId('acc');
-      const vaultId = randomId('acc');
       const now = new Date().toISOString();
       const passwordHash = bcrypt.hashSync(demoPassword, 12);
       const primaryNum = accountNumber();
-      const vaultNum = accountNumber();
 
       const client = await pool.connect();
       try {
@@ -195,10 +193,6 @@ router.post('/demo', async (req, res) => {
         await client.query(
           'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
           [primaryId, userId, 'Primary Wallet', 'BRL', 125000, primaryNum, now]
-        );
-        await client.query(
-          'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-          [vaultId, userId, 'Vault', 'BRL', 30000, vaultNum, now]
         );
         await client.query(
           'INSERT INTO transactions (id, user_id, type, amount_cents, from_account_id, to_account_id, counterparty, note, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
@@ -230,21 +224,7 @@ router.post('/demo', async (req, res) => {
             now
           ]
         );
-        await client.query(
-          'INSERT INTO transactions (id, user_id, type, amount_cents, from_account_id, to_account_id, counterparty, note, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-          [
-            randomId('txn'),
-            userId,
-            'transfer',
-            30000,
-            primaryId,
-            vaultId,
-            null,
-            'Vault transfer',
-            'completed',
-            now
-          ]
-        );
+        // Single account demo: no internal transfers.
         await client.query('COMMIT');
       } catch (err) {
         await client.query('ROLLBACK');

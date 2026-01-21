@@ -22,9 +22,8 @@ async function seed() {
 
   const userId = randomId('usr');
   const primaryId = randomId('acc');
-  const vaultId = randomId('acc');
 
-const client = await pool.connect();
+  const client = await pool.connect();
   try {
     await client.query('BEGIN');
     await client.query(
@@ -34,10 +33,6 @@ const client = await pool.connect();
     await client.query(
       'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
       [primaryId, userId, 'Primary Wallet', 'BRL', 125000, accountNumber(), now]
-    );
-    await client.query(
-      'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-      [vaultId, userId, 'Vault', 'BRL', 30000, accountNumber(), now]
     );
 
     const pixKeyId = randomId('pix');
@@ -104,21 +99,7 @@ const client = await pool.connect();
       ]
     );
 
-    await client.query(
-      'INSERT INTO transactions (id, user_id, type, amount_cents, from_account_id, to_account_id, counterparty, note, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-      [
-        randomId('txn'),
-        userId,
-        'transfer',
-        30000,
-        primaryId,
-        vaultId,
-        null,
-        'Vault transfer',
-        'completed',
-        now
-      ]
-    );
+    // Single account setup: no internal transfers in seed.
 
     const apiKey = `gpk_${crypto.randomBytes(24).toString('hex')}`;
     const keyHash = crypto.createHash('sha256').update(apiKey).digest('hex');

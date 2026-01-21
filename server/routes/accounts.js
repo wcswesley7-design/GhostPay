@@ -39,11 +39,20 @@ router.get('/', async (req, res) => {
 router.post('/', idempotencyGuard('accounts.create'), validateBody(createAccountSchema), async (req, res) => {
   const name = req.body.name.trim();
   const currency = req.body.currency.trim().toUpperCase();
-  const accountId = randomId('acc');
-  const now = new Date().toISOString();
-  const accountNum = accountNumber();
 
   try {
+    const existing = await pool.query(
+      'SELECT id FROM accounts WHERE user_id = $1 LIMIT 1',
+      [req.user.id]
+    );
+    if (existing.rows[0]) {
+      return res.status(409).json({ error: 'Account already exists' });
+    }
+
+    const accountId = randomId('acc');
+    const now = new Date().toISOString();
+    const accountNum = accountNumber();
+
     await pool.query(
       'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
       [accountId, req.user.id, name, currency, 0, accountNum, now]
@@ -69,6 +78,14 @@ router.delete('/:id', async (req, res) => {
   const accountId = req.params.id;
 
   try {
+    const totalAccounts = await pool.query(
+      'SELECT COUNT(*)::int AS total FROM accounts WHERE user_id = $1',
+      [req.user.id]
+    );
+    if ((totalAccounts.rows[0]?.total || 0) <= 1) {
+      return res.status(400).json({ error: 'Primary account is required' });
+    }
+
     const accountResult = await pool.query(
       'SELECT id, balance_cents FROM accounts WHERE id = $1 AND user_id = $2',
       [accountId, req.user.id]

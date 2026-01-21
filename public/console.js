@@ -57,8 +57,6 @@
     pixChargeQr: document.getElementById('pixChargeQr'),
     pixChargeCode: document.getElementById('pixChargeCode'),
     pixChargeCopy: document.getElementById('pixChargeCopy'),
-    pixChargeLink: document.getElementById('pixChargeLink'),
-    pixChargeCopyLink: document.getElementById('pixChargeCopyLink'),
     pixChargeTicket: document.getElementById('pixChargeTicket'),
     pixChargeStatus: document.getElementById('pixChargeStatus'),
     cardsList: document.getElementById('cardsList'),
@@ -660,18 +658,20 @@
       return;
     }
 
-    if (elements.accountsList) {
-      elements.accountsList.innerHTML = accounts
-        .map((account) => {
-          const canRemove = Number(account.balanceCents) === 0;
-          const title = canRemove
-            ? 'Remover conta'
-            : 'Zere o saldo da conta antes de remover';
-          return `
-            <div class="list-item">
-              <div class="list-row">
-                <strong>${account.name}</strong>
-                <button class="btn btn-ghost btn-sm btn-danger btn-icon-only" type="button" data-action="delete-account" data-id="${
+      if (elements.accountsList) {
+        elements.accountsList.innerHTML = accounts
+          .map((account) => {
+            const canRemove = Number(account.balanceCents) === 0 && accounts.length > 1;
+            const title = canRemove
+              ? 'Remover conta'
+              : accounts.length <= 1
+              ? 'Conta principal obrigatória'
+              : 'Zere o saldo da conta antes de remover';
+            return `
+              <div class="list-item">
+                <div class="list-row">
+                  <strong>${account.name}</strong>
+                  <button class="btn btn-ghost btn-sm btn-danger btn-icon-only" type="button" data-action="delete-account" data-id="${
                   account.id
                 }" ${canRemove ? '' : 'disabled'} title="${title}" aria-label="Remover conta">
                   <span class="sr-only">Remover</span>
@@ -865,18 +865,15 @@
               : charge.status === 'paid'
               ? 'paid'
               : 'failed';
-          const paymentLink = charge.payUrl || `${window.location.origin}/pay/${charge.id}`;
           return `
             <div class="list-item">
               <strong>${formatCents(charge.amountCents, 'BRL')}</strong>
               <div class="list-meta">
-                <span>${charge.txid || charge.id}</span>
+                <span>ID: ${charge.id}</span>
                 <span>${formatDate(charge.createdAt)}</span>
               </div>
-              <div class="list-meta pix-link-row">
-                <span class="pix-link-label">Link:</span>
-                <a class="pix-link" href="${paymentLink}" target="_blank" rel="noreferrer">${paymentLink}</a>
-                <button class="btn btn-ghost btn-xs" type="button" data-action="copy-link" data-link="${paymentLink}">Copiar link</button>
+              <div class="list-meta">
+                <span>${charge.description || 'Sem descri\u00E7\u00E3o'}</span>
               </div>
               <div class="list-meta">
                 <span class="status-pill ${statusClass}">${statusLabel}</span>
@@ -1026,15 +1023,22 @@
         renderSkeleton(elements.pixChargesList, 2);
       }
       try {
-        const [keys, charges] = await Promise.all([
-          apiRequest('/api/pix/keys'),
-          apiRequest('/v1/charges?limit=5')
-        ]);
+        const tasks = [];
+        if (elements.pixKeysList || elements.pixKeyForm) {
+          tasks.push(apiRequest('/api/pix/keys'));
+        } else {
+          tasks.push(Promise.resolve({ keys: [] }));
+        }
+        tasks.push(apiRequest('/v1/charges?limit=5'));
+
+        const [keys, charges] = await Promise.all(tasks);
         state.pixKeys = keys.keys || [];
         state.pixCharges = (charges.charges || [])
           .map(normalizePixCharge)
           .filter(Boolean);
-        renderPixKeys(state.pixKeys);
+        if (elements.pixKeysList) {
+          renderPixKeys(state.pixKeys);
+        }
         renderPixCharges(state.pixCharges);
       } catch (err) {
         if (err && err.status === 401) {
@@ -1484,7 +1488,11 @@
       await loadOverview();
       showToast('Conta adicionada');
     } catch (err) {
-      showToast(err.message, 'error');
+      const messages = {
+        'Account already exists': 'Sua conta principal j\u00E1 foi criada.',
+        'Primary account is required': 'A conta principal \u00E9 obrigat\u00F3ria.'
+      };
+      showToast(messages[err.message] || err.message, 'error');
     }
   }
 
@@ -1686,10 +1694,6 @@
     if (elements.pixChargeCode && payload.qrCode) {
       elements.pixChargeCode.value = payload.qrCode;
     }
-    if (elements.pixChargeLink && payload.payUrl) {
-      elements.pixChargeLink.textContent = payload.payUrl;
-      elements.pixChargeLink.href = payload.payUrl;
-    }
     if (elements.pixChargeTicket) {
       if (payload.ticketUrl) {
         elements.pixChargeTicket.href = payload.ticketUrl;
@@ -1721,8 +1725,7 @@
         updatePixChargeOutput({
           qrCode: data.charge.brCode,
           qrCodeBase64: data.charge.qrCodeBase64,
-          ticketUrl: data.charge.ticketUrl,
-          payUrl: `${window.location.origin}/pay/${data.charge.id}`
+          ticketUrl: data.charge.ticketUrl
         });
         if (status === 'paid') {
           return;
@@ -1753,6 +1756,11 @@
       showToast('Preencha os dados do pagador.', 'error');
       return;
     }
+    const cpfDigits = String(payload.cpf || '').replace(/\D/g, '');
+    if (cpfDigits.length !== 11) {
+      showToast('Informe um CPF v\u00E1lido.', 'error');
+      return;
+    }
 
     const submit = elements.pixChargeForm.querySelector('button[type="submit"]');
     const originalLabel = submit ? submit.textContent : '';
@@ -1775,7 +1783,7 @@
     const payerPayload = {
       name: payload.name,
       email: payload.email,
-      cpf: payload.cpf,
+      cpf: cpfDigits,
       phone: payload.phone
     };
 
@@ -1785,7 +1793,6 @@
         body: JSON.stringify(chargePayload)
       });
       const chargeId = charge.charge_id;
-      const payUrl = charge.pay_url || `${window.location.origin}/pay/${chargeId}`;
       const payment = await apiRequest(
         `/api/public/charges/${encodeURIComponent(chargeId)}/create_payment`,
         {
@@ -1798,8 +1805,7 @@
       updatePixChargeOutput({
         qrCode: payment.qrCode,
         qrCodeBase64: payment.qrCodeBase64,
-        ticketUrl: payment.ticketUrl,
-        payUrl
+        ticketUrl: payment.ticketUrl
       });
       setPixChargeOutputVisible(true);
       if (elements.pixChargeStatus) {
@@ -1809,7 +1815,17 @@
       await loadPix();
       showToast('Cobran\u00E7a Pix gerada');
     } catch (err) {
-      showToast(err.message, 'error');
+      const messages = {
+        mp_not_configured: 'Mercado Pago n\u00E3o configurado. Verifique o token.',
+        charge_payment_failed: 'N\u00E3o foi poss\u00EDvel gerar o Pix agora.',
+        charge_unavailable: 'Cobran\u00E7a expirada ou cancelada.',
+        Unauthorized: 'Sess\u00E3o expirada. Fa\u00E7a login novamente.'
+      };
+      const message = messages[err.message] || err.message;
+      if (elements.pixChargeStatus) {
+        elements.pixChargeStatus.textContent = message;
+      }
+      showToast(message, 'error');
     } finally {
       if (submit) {
         submit.disabled = false;
@@ -1989,12 +2005,6 @@
       elements.pixChargeCopy.addEventListener('click', async () => {
         const ok = await copyToClipboard(elements.pixChargeCode ? elements.pixChargeCode.value : '');
         showToast(ok ? 'C\u00F3digo Pix copiado' : 'N\u00E3o foi poss\u00EDvel copiar o c\u00F3digo', ok ? 'info' : 'error');
-      });
-    }
-    if (elements.pixChargeCopyLink) {
-      elements.pixChargeCopyLink.addEventListener('click', async () => {
-        const ok = await copyToClipboard(elements.pixChargeLink ? elements.pixChargeLink.href : '');
-        showToast(ok ? 'Link copiado' : 'N\u00E3o foi poss\u00EDvel copiar o link', ok ? 'info' : 'error');
       });
     }
     if (elements.pixChargesList) {
