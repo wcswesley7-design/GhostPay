@@ -531,7 +531,13 @@ const cards = {
   },
 
   async requestCancelCard(userId, cardId) {
-    return updateCardStatus(userId, cardId, 'cancel_pending', ['active', 'blocked']);
+    const now = new Date().toISOString();
+    await updateCardStatus(userId, cardId, 'cancel_pending', ['active', 'blocked']);
+    await pool.query(
+      'UPDATE cards SET cancel_requested_at = $1 WHERE id = $2 AND user_id = $3',
+      [now, cardId, userId]
+    );
+    return { id: cardId, status: 'cancel_pending' };
   },
 
   async listCardTransactions(userId, cardId) {

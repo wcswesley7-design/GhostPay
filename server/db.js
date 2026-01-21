@@ -172,6 +172,11 @@ async function initDb() {
       );
     `);
 
+    await client.query('ALTER TABLE cards ADD COLUMN IF NOT EXISTS cancel_requested_at TIMESTAMPTZ;');
+    await client.query('ALTER TABLE cards ADD COLUMN IF NOT EXISTS canceled_at TIMESTAMPTZ;');
+    await client.query('ALTER TABLE cards ADD COLUMN IF NOT EXISTS canceled_by TEXT;');
+    await client.query('ALTER TABLE cards ADD COLUMN IF NOT EXISTS cancel_note TEXT;');
+
     await client.query(`
       CREATE TABLE IF NOT EXISTS card_transactions (
         id TEXT PRIMARY KEY,

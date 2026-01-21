@@ -171,6 +171,7 @@
     active: 'ativo',
     inactive: 'inativo',
     blocked: 'bloqueado',
+    canceled: 'cancelado',
     cancel_pending: 'cancelamento em análise'
   };
 
@@ -1245,13 +1246,16 @@
     if (elements.cardDetailNotice) {
       if (card.status === 'cancel_pending') {
         elements.cardDetailNotice.textContent =
-          'Solicitação em análise. Um especialista revisará sua documentação e contratos.';
+          'Solicitacao em analise. Um especialista revisa sua documentacao e contratos.';
+      } else if (card.status === 'canceled') {
+        elements.cardDetailNotice.textContent =
+          'Cartao cancelado. Para emitir um novo, solicite outra via.';
       } else if (card.status === 'blocked') {
         elements.cardDetailNotice.textContent =
-          'Cartão bloqueado temporariamente. Compras ficam indisponíveis até o desbloqueio.';
+          'Cartao bloqueado temporariamente. Compras ficam indisponiveis ate o desbloqueio.';
       } else {
         elements.cardDetailNotice.textContent =
-          'Alguns dados sensíveis permanecem ocultos por segurança.';
+          'Alguns dados sensiveis permanecem ocultos por seguranca.';
       }
     }
 

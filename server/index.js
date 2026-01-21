@@ -23,6 +23,7 @@ const v1ChargesRoutes = require('./routes/v1Charges');
 const v1BalanceRoutes = require('./routes/v1Balance');
 const v1WithdrawalsRoutes = require('./routes/v1Withdrawals');
 const adminWithdrawalsRoutes = require('./routes/adminWithdrawals');
+const adminCardsRoutes = require('./routes/adminCards');
 const { authRequired } = require('./middleware/auth');
 const { initDb } = require('./db');
 const { startWebhookWorker } = require('./services/webhooks');
@@ -76,6 +77,7 @@ app.use('/v1', v1ChargesRoutes);
 app.use('/v1', v1BalanceRoutes);
 app.use('/v1', v1WithdrawalsRoutes);
 app.use('/admin', adminWithdrawalsRoutes);
+app.use('/admin', adminCardsRoutes);
 
 app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Not found' });
