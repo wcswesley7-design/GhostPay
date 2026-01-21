@@ -16,7 +16,7 @@ const createPaymentSchema = z.object({
   phone: z.string().min(8).max(20).optional()
 });
 
-router.get('/charges/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, amount_cents, description, status, qr_payload, qr_code_base64, ticket_url, provider_payment_id, provider_status, provider,
@@ -51,7 +51,7 @@ router.get('/charges/:id', async (req, res) => {
   }
 });
 
-router.post('/charges/:id/create_payment', validateBody(createPaymentSchema), async (req, res) => {
+router.post('/:id/create_payment', validateBody(createPaymentSchema), async (req, res) => {
   const chargeId = req.params.id;
 
   try {
