@@ -525,6 +525,22 @@ html[data-theme='light'] .topbar.is-scrolled {
   align-items: center;
 }
 
+.nav-group {
+  display: grid;
+  gap: 10px;
+}
+
+.nav-group + .nav-group {
+  margin-top: 6px;
+}
+
+.nav-group-title {
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .console-nav .pill {
   display: inline-flex;
   align-items: center;
@@ -566,6 +582,11 @@ html[data-theme='light'] .topbar.is-scrolled {
   top: 110px;
 }
 
+.console-sidebar .card {
+  background: linear-gradient(160deg, rgba(21, 23, 28, 0.92), rgba(12, 14, 18, 0.94));
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
 .console-main {
   display: grid;
   gap: 30px;
@@ -574,6 +595,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 .console-nav--stacked {
   flex-direction: column;
   align-items: stretch;
+  gap: 12px;
 }
 
 .console-nav--stacked .pill {

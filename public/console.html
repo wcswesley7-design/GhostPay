@@ -17,8 +17,8 @@
         display: grid !important;
       }
     </style>
-    <meta name="description" content="GhostPay área do cliente" />
-    <title>GhostPay | Conta</title>
+    <meta name="description" content="GhostPay Gateway - painel do merchant" />
+    <title>GhostPay | Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -42,14 +42,14 @@
           <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
           <span class="brand-text">
             <span class="brand-name">GhostPay</span>
-            <span class="brand-tag">Conta digital</span>
+            <span class="brand-tag">Gateway de pagamentos</span>
           </span>
         </a>
 
         <nav class="nav" data-nav>
-          <a class="nav-link" href="/">Início</a>
+          <a class="nav-link" href="/">In&iacute;cio</a>
           <a class="nav-link" href="/platform">Plataforma</a>
-          <a class="nav-link" href="/security">Segurança</a>
+          <a class="nav-link" href="/security">Seguran&ccedil;a</a>
           <a class="nav-link" href="/empresa">Empresa</a>
           <a class="nav-link" href="/pricing">Planos</a>
           <a class="nav-link" href="/support">Suporte</a>
@@ -67,23 +67,37 @@
       <section class="hero" id="consoleHero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Conta GhostPay</p>
-            <h1 id="welcomeTitle">Sua conta digital em um painel simples.</h1>
-            <p class="lead">Acompanhe saldo, Pix e cartões em tempo real.</p>
+            <p class="eyebrow">GhostPay Gateway</p>
+            <h1 id="welcomeTitle">O gateway Pix para cobrar, conciliar e sacar em um s&oacute; lugar.</h1>
+            <p class="lead">Crie cobran&ccedil;as Pix, acompanhe vendas e opere seus saques com controle total.</p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="/pricing">Ver planos</a>
+              <a class="btn btn-primary" href="/pricing">Ver plano</a>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
+            </div>
+            <div class="hero-metrics">
+              <div class="metric-card">
+                <span class="metric-label">Pix</span>
+                <strong>Cobran&ccedil;as com QR e copia e cola</strong>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">API</span>
+                <strong>Webhooks e concilia&ccedil;&atilde;o autom&aacute;tica</strong>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">Saques</span>
+                <strong>Fluxo de aprova&ccedil;&atilde;o com controle</strong>
+              </div>
             </div>
           </div>
           <div class="hero-panel">
             <div class="glass-card">
               <div class="card-head">
-                <h3>Resumo rápido</h3>
+                <h3>Resumo do dia</h3>
                 <span class="tag">Ao vivo</span>
               </div>
               <div class="signal-list">
                 <div class="signal-row">
-                  <span>Saldo total</span>
+                  <span>Saldo do gateway</span>
                   <strong id="metricBalance">--</strong>
                 </div>
                 <div class="signal-row">
@@ -91,7 +105,7 @@
                   <strong id="metricIncome">--</strong>
                 </div>
                 <div class="signal-row">
-                  <span>Saídas 30d</span>
+                  <span>Sa&iacute;das 30d</span>
                   <strong id="metricSpend">--</strong>
                 </div>
               </div>
@@ -106,8 +120,8 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-head">
-              <h3>Acesso à conta</h3>
-              <span class="tag">Cliente</span>
+              <h3>Acesso do merchant</h3>
+              <span class="tag">Gateway</span>
             </div>
             <div class="tab-group">
               <button class="tab active" data-tab="login" type="button">Entrar</button>
@@ -127,7 +141,7 @@
             <form class="form hidden" id="registerForm">
               <label>
                 Nome completo
-                <input type="text" name="name" placeholder="João Silva" required />
+                <input type="text" name="name" placeholder="Jo&atilde;o Silva" required />
               </label>
               <label>
                 Email
@@ -135,9 +149,9 @@
               </label>
               <label>
                 Senha
-                <input type="password" name="password" placeholder="Mínimo 8 caracteres" required />
+                <input type="password" name="password" placeholder="M&iacute;nimo 8 caracteres" required />
               </label>
-              
+
               <div class="plan-summary" id="planSummary">
                 <span class="muted">Plano selecionado</span>
                 <strong id="planSummaryLabel">Selecione um plano</strong>
@@ -150,45 +164,45 @@
           </div>
           <div class="card">
             <div class="card-head">
-              <h3>Benefícios da conta</h3>
+              <h3>Recursos do gateway</h3>
               <span class="tag">Infinity</span>
             </div>
             <div class="list">
               <div class="list-item">
-                <strong>Pix instantâneo</strong>
+                <strong>Pix instant&acirc;neo</strong>
                 <div class="list-meta">
-                  <span>Envie e receba 24/7.</span>
+                  <span>Receba 24/7 com confirma&ccedil;&atilde;o r&aacute;pida.</span>
                 </div>
               </div>
               <div class="list-item">
-                <strong>Cartões com controle</strong>
+                <strong>Cart&otilde;es com controle</strong>
                 <div class="list-meta">
-                  <span>Limites e notificações em tempo real.</span>
+                  <span>Limites e notifica&ccedil;&otilde;es em tempo real.</span>
                 </div>
               </div>
               <div class="list-item">
-                <strong>Segurança avançada</strong>
+                <strong>Seguran&ccedil;a avan&ccedil;ada</strong>
                 <div class="list-meta">
-                  <span>Proteção e suporte dedicado.</span>
+                  <span>Prote&ccedil;&atilde;o e suporte dedicado.</span>
                 </div>
               </div>
             </div>
-            <a class="btn btn-ghost" href="/pricing">Ver planos</a>
+            <a class="btn btn-ghost" href="/pricing">Ver plano</a>
           </div>
         </div>
       </section>
 
-            <section class="section hidden" id="dashboardPanel">
+      <section class="section hidden" id="dashboardPanel">
         <div class="console-layout">
           <aside class="console-sidebar" data-reveal>
             <div class="card">
               <div class="card-head">
-                <h3>Conta</h3>
-                <span class="tag">Conta ativa</span>
+                <h3>Merchant</h3>
+                <span class="tag">Gateway ativo</span>
               </div>
               <div class="list">
                 <div class="list-item">
-                  <strong>Usuário</strong>
+                  <strong>Merchant</strong>
                   <div class="list-meta">
                     <span id="sidebarName">--</span>
                   </div>
@@ -196,55 +210,64 @@
                 <div class="list-item">
                   <strong>Status</strong>
                   <div class="list-meta">
-                    <span>Operações disponíveis</span>
+                    <span>Opera&ccedil;&otilde;es ativas</span>
                   </div>
                 </div>
               </div>
             </div>
             <div class="card">
               <div class="card-head">
-                <h3>Atalhos</h3>
-                <span class="tag">Navegação</span>
+                <h3>Menu</h3>
+                <span class="tag">Gateway</span>
               </div>
               <nav class="console-nav console-nav--stacked">
-                <a class="pill" href="/console" aria-current="page">
-                  <span class="pill-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <use href="/assets/icons.svg#icon-monitor"></use>
-                    </svg>
-                  </span>
-                  <span>Visão geral</span>
-                </a>
-                <a class="pill" href="/console/contas">
-                  <span class="pill-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <use href="/assets/icons.svg#icon-wallet"></use>
-                    </svg>
-                  </span>
-                  <span>Contas</span>
-                </a>
-                <a class="pill" href="/console/movimentacoes">
-                  <span class="pill-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <use href="/assets/icons.svg#icon-chart"></use>
-                    </svg>
-                  </span>
-                  <span>Movimentações</span>
-                </a>
-                <a class="pill" href="/console/pix">
-                  <span class="pill-icon pill-icon--pix" aria-hidden="true"></span>
-                  <span>Pix</span>
-                </a>
-                <a class="pill" href="/console/cartoes">
-                  <span class="pill-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <use href="/assets/icons.svg#icon-card"></use>
-                    </svg>
-                  </span>
-                  <span>Cartões</span>
-                </a>
+                <div class="nav-group">
+                  <span class="nav-group-title">Dashboard</span>
+                  <a class="pill" href="/console" aria-current="page">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-monitor"></use>
+                      </svg>
+                    </span>
+                    <span>Vis&atilde;o geral</span>
+                  </a>
+                </div>
+                <div class="nav-group">
+                  <span class="nav-group-title">Financeiro</span>
+                  <a class="pill" href="/console/contas">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-wallet"></use>
+                      </svg>
+                    </span>
+                    <span>Saldo e contas</span>
+                  </a>
+                  <a class="pill" href="/console/movimentacoes">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-chart"></use>
+                      </svg>
+                    </span>
+                    <span>Movimenta&ccedil;&otilde;es</span>
+                  </a>
+                </div>
+                <div class="nav-group">
+                  <span class="nav-group-title">Pagamentos</span>
+                  <a class="pill" href="/console/pix">
+                    <span class="pill-icon pill-icon--pix" aria-hidden="true"></span>
+                    <span>Cobran&ccedil;as Pix</span>
+                  </a>
+                  <a class="pill" href="/console/cartoes">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-card"></use>
+                      </svg>
+                    </span>
+                    <span>Cart&otilde;es</span>
+                  </a>
+                </div>
               </nav>
-              <a class="btn btn-ghost" href="/support">Falar com suporte</a>
+              <a class="btn btn-ghost" href="/support">Suporte</a>
             </div>
           </aside>
 
@@ -252,8 +275,8 @@
             <section class="section" id="overview" data-reveal>
               <div class="section-head section-head--inline">
                 <div>
-                  <h2>Visão geral</h2>
-                  <p class="lead">Saldos e atividade das últimas semanas.</p>
+                  <h2>Dashboard</h2>
+                  <p class="lead">Saldos, cobran&ccedil;as e atividade recente do gateway.</p>
                 </div>
                 <button class="btn btn-ghost" type="button" id="refreshOverview">Atualizar</button>
               </div>
@@ -267,7 +290,7 @@
                   <strong id="metricIncomeFull">--</strong>
                 </div>
                 <div class="metric">
-                  <span class="muted">Saídas 30d</span>
+                  <span class="muted">Sa&iacute;das 30d</span>
                   <strong id="metricSpendFull">--</strong>
                 </div>
                 <div class="metric">
@@ -282,13 +305,13 @@
                       <use href="/assets/icons.svg#icon-chart"></use>
                     </svg>
                   </span>
-                  <span class="quick-title">Nova movimentação</span>
-                  <span class="quick-meta">Transferências e pagamentos</span>
+                  <span class="quick-title">Extrato do dia</span>
+                  <span class="quick-meta">Entradas, sa&iacute;das e taxas</span>
                 </a>
                 <a class="quick-card" href="/console/pix">
                   <span class="quick-icon quick-icon--pix" aria-hidden="true"></span>
-                  <span class="quick-title">Enviar Pix</span>
-                  <span class="quick-meta">Chave, valor e descrição</span>
+                  <span class="quick-title">Cobran&ccedil;as Pix</span>
+                  <span class="quick-meta">QR Code e copia e cola</span>
                 </a>
                 <a class="quick-card" href="/console/cartoes">
                   <span class="quick-icon" aria-hidden="true">
@@ -296,8 +319,8 @@
                       <use href="/assets/icons.svg#icon-card"></use>
                     </svg>
                   </span>
-                  <span class="quick-title">Emitir cartão</span>
-                  <span class="quick-meta">Virtual ou físico</span>
+                  <span class="quick-title">Cart&otilde;es</span>
+                  <span class="quick-meta">Gest&atilde;o de limites e status</span>
                 </a>
               </div>
             </section>
@@ -310,12 +333,12 @@
       <div class="container footer-grid">
         <div>
           <div class="brand-name">GhostPay</div>
-          <small>Banco digital para pessoas e negócios.</small>
+          <small>Gateway Pix com concilia&ccedil;&atilde;o e saques manuais.</small>
         </div>
         <div class="footer-col">
           <strong>Produto</strong>
           <a href="/platform">Plataforma</a>
-          <a href="/security">Segurança</a>
+          <a href="/security">Seguran&ccedil;a</a>
           <a href="/pricing">Planos</a>
         </div>
         <div class="footer-col">
@@ -326,7 +349,7 @@
         </div>
         <div class="footer-col">
           <strong>Conta</strong>
-          <a href="/console">Acessar conta</a>
+          <a href="/console">Acessar painel</a>
           <a href="/pricing#planos">Abrir conta</a>
           <a href="/support">Atendimento</a>
         </div>

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="GhostPay suporte e atendimento" />
+    <meta name="description" content="Suporte GhostPay para integra&ccedil;&otilde;es e opera&ccedil;&otilde;es Pix." />
     <title>GhostPay | Suporte</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,9 +34,9 @@
         </a>
 
         <nav class="nav" data-nav>
-          <a class="nav-link" href="/">Início</a>
+          <a class="nav-link" href="/">In&iacute;cio</a>
           <a class="nav-link" href="/platform">Plataforma</a>
-          <a class="nav-link" href="/security">Segurança</a>
+          <a class="nav-link" href="/security">Seguran&ccedil;a</a>
           <a class="nav-link" href="/empresa">Empresa</a>
           <a class="nav-link" href="/pricing">Planos</a>
           <a class="nav-link" href="/support">Suporte</a>
@@ -44,22 +44,8 @@
 
         <div class="topbar-actions">
           <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
-          <a class="btn btn-ghost" href="/console?tab=login">
-            <span class="btn-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <use href="/assets/icons.svg#icon-user"></use>
-              </svg>
-            </span>
-            Entrar
-          </a>
-          <a class="btn btn-primary" href="/pricing#planos">
-            <span class="btn-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <use href="/assets/icons.svg#icon-user-plus"></use>
-              </svg>
-            </span>
-            Abrir conta
-          </a>
+          <a class="btn btn-ghost" href="/console?tab=login">Entrar</a>
+          <a class="btn btn-primary" href="/assinatura?plan=infinity">Abrir conta</a>
           <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
         </div>
       </div>
@@ -70,8 +56,8 @@
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Suporte GhostPay</p>
-            <h1>Atendimento humano e ágil.</h1>
-            <p class="lead">Estamos prontos para ajudar na abertura da conta e no dia a dia.</p>
+            <h1>Atendimento dedicado para integra&ccedil;&otilde;es Pix.</h1>
+            <p class="lead">Apoio t&eacute;cnico e operacional para onboarding, cobran&ccedil;as e concilia&ccedil;&atilde;o.</p>
           </div>
           <div class="hero-panel">
             <div class="glass-card">
@@ -86,7 +72,7 @@
                 </label>
                 <label>
                   Mensagem
-                  <textarea name="message" placeholder="Descreva o que você precisa" required></textarea>
+                  <textarea name="message" placeholder="Descreva sua solicita&ccedil;&atilde;o" required></textarea>
                 </label>
                 <button class="btn btn-primary" type="submit">Enviar</button>
               </form>
@@ -98,20 +84,20 @@
       <section class="section" data-reveal>
         <div class="section-head">
           <h2>FAQ</h2>
-          <p class="lead">Respostas claras para as dúvidas mais comuns.</p>
+          <p class="lead">Respostas r&aacute;pidas sobre o gateway Pix.</p>
         </div>
         <div class="faq-grid">
           <div class="faq-card">
-            <strong>Como abrir minha conta?</strong>
-            <p class="muted">Preencha o cadastro e aguarde a aprovação da análise.</p>
+            <strong>Como gerar cobran&ccedil;as Pix?</strong>
+            <p class="muted">Crie cobran&ccedil;as no painel ou via API e acompanhe o status em tempo real.</p>
           </div>
           <div class="faq-card">
-            <strong>Como ajustar limites do cartão?</strong>
-            <p class="muted">No painel, ajuste limites e acompanhe os gastos.</p>
+            <strong>Como funciona a confirma&ccedil;&atilde;o?</strong>
+            <p class="muted">Recebemos webhooks e validamos o pagamento no Mercado Pago antes de creditar.</p>
           </div>
           <div class="faq-card">
-            <strong>Como falar com atendimento?</strong>
-            <p class="muted">Use o formulário ou nossos canais oficiais.</p>
+            <strong>Como solicitar saque?</strong>
+            <p class="muted">O merchant solicita o saque e o admin aprova manualmente com registro de comprovante.</p>
           </div>
         </div>
       </section>
@@ -124,41 +110,39 @@
           </div>
           <div class="cta-actions">
             <a class="btn btn-primary" href="#supportForm">Falar com suporte</a>
-            <a class="btn btn-ghost" href="/pricing">Ver planos</a>
+            <a class="btn btn-ghost" href="/developers">Ver APIs</a>
           </div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="container footer-grid">
-        <div>
-          <div class="brand-name">GhostPay</div>
-          <small>Banco digital para pessoas e negócios.</small>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4>GhostPay</h4>
+            <p class="muted">Suporte especializado para opera&ccedil;&otilde;es Pix.</p>
+          </div>
+          <div>
+            <h4>Produto</h4>
+            <a href="/platform">Plataforma</a>
+            <a href="/pricing">Planos</a>
+          </div>
+          <div>
+            <h4>Developers</h4>
+            <a href="/developers">Documenta&ccedil;&atilde;o</a>
+            <a href="/security">Seguran&ccedil;a</a>
+          </div>
+          <div>
+            <h4>Legal</h4>
+            <a href="/lgpd">LGPD</a>
+            <a href="/privacidade">Privacidade</a>
+            <a href="/termos">Termos de uso</a>
+          </div>
         </div>
-        <div class="footer-col">
-          <strong>Produto</strong>
-          <a href="/platform">Plataforma</a>
-          <a href="/security">Segurança</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Empresa</strong>
-          <a href="/empresa">Empresa</a>
-          <a href="/support">Suporte</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Conta</strong>
-          <a href="/console">Acessar conta</a>
-          <a href="/pricing#planos">Abrir conta</a>
-          <a href="/support">Atendimento</a>
-        </div>
-        <div class="footer-col">
-          <strong>Legal</strong>
-          <a class="muted" href="/lgpd">LGPD</a>
-          <a class="muted" href="/privacidade">Privacidade</a>
-          <a class="muted" href="/termos">Termos de uso</a>
+        <div class="footer-bottom">
+          <span>&copy; 2026 GhostPay. Todos os direitos reservados.</span>
+          <span>Gateway Pix Modelo B (cust&oacute;dia).</span>
         </div>
       </div>
     </footer>

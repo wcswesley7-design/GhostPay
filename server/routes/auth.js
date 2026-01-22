@@ -95,10 +95,11 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
         'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
         [accountId, userId, 'Primary Wallet', 'BRL', 0, accountNum, now]
       );
-      await client.query(
-        'UPDATE subscription_sessions SET user_id = $1 WHERE id = $2',
-        [userId, subscriptionSession]
-      );
+      await client.query('UPDATE subscription_sessions SET user_id = $1 WHERE id = $2', [
+        userId,
+        subscriptionSession
+      ]);
+
       await client.query('COMMIT');
     } catch (err) {
       await client.query('ROLLBACK');

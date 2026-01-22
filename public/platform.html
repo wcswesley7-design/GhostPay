@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="GhostPay plataforma completa para sua conta digital" />
+    <meta name="description" content="Plataforma GhostPay para gateway Pix, cobran&ccedil;as e concilia&ccedil;&atilde;o." />
     <title>GhostPay | Plataforma</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,9 +34,9 @@
         </a>
 
         <nav class="nav" data-nav>
-          <a class="nav-link" href="/">Início</a>
+          <a class="nav-link" href="/">In&iacute;cio</a>
           <a class="nav-link" href="/platform">Plataforma</a>
-          <a class="nav-link" href="/security">Segurança</a>
+          <a class="nav-link" href="/security">Seguran&ccedil;a</a>
           <a class="nav-link" href="/empresa">Empresa</a>
           <a class="nav-link" href="/pricing">Planos</a>
           <a class="nav-link" href="/support">Suporte</a>
@@ -52,7 +52,7 @@
             </span>
             Entrar
           </a>
-          <a class="btn btn-primary" href="/pricing#planos">
+          <a class="btn btn-primary" href="/assinatura?plan=infinity">
             <span class="btn-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <use href="/assets/icons.svg#icon-user-plus"></use>
@@ -69,29 +69,29 @@
       <section class="hero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Experiência GhostPay</p>
-            <h1>Uma conta digital que simplifica sua rotina.</h1>
+            <p class="eyebrow">Plataforma GhostPay</p>
+            <h1>Gateway Pix completo para operar cobran&ccedil;as e saldo interno.</h1>
             <p class="lead">
-              Pix, cartões e controle de gastos em um painel claro e rápido.
+              Gerencie cobran&ccedil;as, acompanhe confirma&ccedil;&otilde;es e controle o fluxo financeiro do seu
+              merchant em um painel centralizado.
             </p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="/pricing#planos">Abrir conta</a>
-              <a class="btn btn-ghost" href="/pricing">Ver planos</a>
+              <a class="btn btn-primary" href="/developers">Ver APIs</a>
+              <a class="btn btn-ghost" href="/pricing">Planos</a>
             </div>
           </div>
           <div class="hero-panel">
             <div class="glass-card">
               <div class="card-head">
-                <h3>Recursos que importam</h3>
-                <span class="tag">Conta completa</span>
+                <h3>Opera&ccedil;&atilde;o integrada</h3>
+                <span class="tag">Gateway</span>
               </div>
+              <p class="muted">Cobran&ccedil;as, webhooks, ledger e admin ops no mesmo fluxo.</p>
               <div class="pill-row">
-                <span class="pill">Pix</span>
-                <span class="pill">Cartões</span>
-                <span class="pill">Controle</span>
-                <span class="pill">Atendimento</span>
+                <span class="pill">Cobran&ccedil;as</span>
+                <span class="pill">Carteira</span>
+                <span class="pill">Saques</span>
               </div>
-              <p class="muted">Tudo em um app integrado, com visual elegante e respostas rápidas.</p>
             </div>
           </div>
         </div>
@@ -99,29 +99,35 @@
 
       <section class="section" data-reveal>
         <div class="section-head">
-          <h2>Recursos essenciais</h2>
-          <p class="lead">Movimente, pague e acompanhe seu dinheiro com clareza.</p>
+          <h2>M&oacute;dulos essenciais</h2>
+          <p class="lead">Tudo o que voc&ecirc; precisa para operar um gateway Pix moderno.</p>
         </div>
         <div class="feature-grid">
           <div class="feature-card">
             <div class="icon icon--pix" aria-hidden="true"></div>
-            <h3>Pix instantâneo</h3>
-            <p class="muted">Envio e recebimento 24/7 com confirmação imediata.</p>
+            <h3>Cobran&ccedil;as Pix</h3>
+            <p class="muted">Gera&ccedil;&atilde;o de QR Code, copia e cola e status em tempo real.</p>
           </div>
           <div class="feature-card">
-            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-card"></use></svg></div>
-            <h3>Cartões com controle</h3>
-            <p class="muted">Cartão virtual e físico com limites ajustáveis.</p>
+            <div class="icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-wallet"></use></svg>
+            </div>
+            <h3>Carteira do merchant</h3>
+            <p class="muted">Saldo interno com extrato e hist&oacute;rico de cobran&ccedil;as.</p>
           </div>
           <div class="feature-card">
-            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-sliders"></use></svg></div>
-            <h3>Controle de gastos</h3>
-            <p class="muted">Alertas, categorias e metas no mesmo lugar.</p>
+            <div class="icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-monitor"></use></svg>
+            </div>
+            <h3>Painel operacional</h3>
+            <p class="muted">Dashboards, filtros e vis&atilde;o por merchant.</p>
           </div>
           <div class="feature-card">
-            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-wallet"></use></svg></div>
-            <h3>Conta integrada</h3>
-            <p class="muted">Saldo, extrato e comprovantes sempre visíveis.</p>
+            <div class="icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-shield-check"></use></svg>
+            </div>
+            <h3>Seguran&ccedil;a e compliance</h3>
+            <p class="muted">Webhooks assinados, idempot&ecirc;ncia e LGPD.</p>
           </div>
         </div>
       </section>
@@ -130,39 +136,51 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-head">
-              <h3>Personalização</h3>
-              <span class="tag">Perfil</span>
+              <h3>Integra&ccedil;&atilde;o simples</h3>
+              <span class="tag">API</span>
             </div>
-            <p class="muted">Defina limites, alertas e metas de gasto.</p>
-            <div class="pill-row">
-              <span class="pill">Limites</span>
-              <span class="pill">Alertas</span>
-              <span class="pill">Metas</span>
-            </div>
+            <p class="muted">
+              Crie cobran&ccedil;as Pix via API e acompanhe status pelo webhook ou endpoint de consulta.
+            </p>
+            <pre class="code-block">curl -X POST https://ghostpaybank.com/v1/charges \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 100.00, "description": "Cobran&ccedil;a Pix"}'</pre>
           </div>
           <div class="card">
             <div class="card-head">
-              <h3>Transparência</h3>
-              <span class="tag">Extrato</span>
+              <h3>Confiabilidade</h3>
+              <span class="tag">Operacional</span>
             </div>
-            <p class="muted">Extrato detalhado com comprovantes e categorias.</p>
-            <div class="pill-row">
-              <span class="pill">Extrato</span>
-              <span class="pill">Categorias</span>
-              <span class="pill">Comprovantes</span>
+            <div class="timeline">
+              <div class="timeline-step">
+                <span>01</span>
+                <strong>Cria&ccedil;&atilde;o da cobran&ccedil;a</strong>
+                <p class="muted">Pagamento vinculado ao merchant e ao ledger.</p>
+              </div>
+              <div class="timeline-step">
+                <span>02</span>
+                <strong>Confirma&ccedil;&atilde;o Pix</strong>
+                <p class="muted">Webhook + verifica&ccedil;&atilde;o ativa garantem a confirma&ccedil;&atilde;o.</p>
+              </div>
+              <div class="timeline-step">
+                <span>03</span>
+                <strong>Saldo atualizado</strong>
+                <p class="muted">Ledger com idempot&ecirc;ncia evita cr&eacute;ditos duplicados.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="cta" data-reveal>
-        <div class="cta-card">
+      <section class="section" data-reveal>
+        <div class="cta-card card">
           <div>
-            <h2>Pronto para abrir sua conta?</h2>
-            <p class="lead">Comece agora e tenha controle total.</p>
+            <h3>Quer operar com Pix hoje?</h3>
+            <p class="muted">Ative o plano Infinity e comece a criar cobran&ccedil;as em minutos.</p>
           </div>
           <div class="cta-actions">
-            <a class="btn btn-primary" href="/pricing#planos">Abrir conta</a>
+            <a class="btn btn-primary" href="/assinatura?plan=infinity">Ativar agora</a>
             <a class="btn btn-ghost" href="/support">Falar com suporte</a>
           </div>
         </div>
@@ -170,34 +188,34 @@
     </main>
 
     <footer class="footer">
-      <div class="container footer-grid">
-        <div>
-          <div class="brand-name">GhostPay</div>
-          <small>Banco digital para pessoas e negócios.</small>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4>GhostPay</h4>
+            <p class="muted">Gateway Pix com concilia&ccedil;&atilde;o em tempo real e carteira interna.</p>
+          </div>
+          <div>
+            <h4>Produto</h4>
+            <a href="/platform">Plataforma</a>
+            <a href="/pricing">Planos</a>
+            <a href="/developers">Developers</a>
+          </div>
+          <div>
+            <h4>Empresa</h4>
+            <a href="/empresa">Quem somos</a>
+            <a href="/security">Seguran&ccedil;a</a>
+            <a href="/support">Suporte</a>
+          </div>
+          <div>
+            <h4>Legal</h4>
+            <a href="/lgpd">LGPD</a>
+            <a href="/privacidade">Privacidade</a>
+            <a href="/termos">Termos de uso</a>
+          </div>
         </div>
-        <div class="footer-col">
-          <strong>Produto</strong>
-          <a href="/platform">Plataforma</a>
-          <a href="/security">Segurança</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Empresa</strong>
-          <a href="/empresa">Empresa</a>
-          <a href="/support">Suporte</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Conta</strong>
-          <a href="/console">Acessar conta</a>
-          <a href="/pricing#planos">Abrir conta</a>
-          <a href="/support">Atendimento</a>
-        </div>
-        <div class="footer-col">
-          <strong>Legal</strong>
-          <a class="muted" href="/lgpd">LGPD</a>
-          <a class="muted" href="/privacidade">Privacidade</a>
-          <a class="muted" href="/termos">Termos de uso</a>
+        <div class="footer-bottom">
+          <span>&copy; 2026 GhostPay. Todos os direitos reservados.</span>
+          <span>Gateway Pix Modelo B (cust&oacute;dia).</span>
         </div>
       </div>
     </footer>

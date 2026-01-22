@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="Link de pagamento Pix GhostPay" />
+    <meta name="description" content="Link de pagamento Pix GhostPay." />
     <title>GhostPay | Link Pix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,44 +26,53 @@
     <header class="topbar" data-topbar>
       <div class="container">
         <a class="brand" href="/">
-          <span class="brand-mark"
-            ><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo"
-          /></span>
+          <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
           <span class="brand-text">
             <span class="brand-name">GhostPay</span>
             <span class="brand-tag">Link Pix</span>
           </span>
         </a>
+
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
+        </div>
       </div>
     </header>
 
     <main class="page">
       <section class="section" data-reveal>
-        <div class="container">
-          <div class="card pix-link-card" data-pix-link>
-            <div class="card-head">
-              <h3>Link de pagamento Pix</h3>
-              <span class="tag" data-pix-link-status>--</span>
-            </div>
-            <p class="lead" data-pix-link-amount>--</p>
-            <p class="muted" data-pix-link-description>--</p>
-
-            <label>
-              C&oacute;digo Pix
-              <textarea data-pix-link-code readonly></textarea>
-            </label>
-
-            <div class="pix-actions">
-              <button class="btn btn-ghost" type="button" data-pix-link-copy>Copiar c&oacute;digo</button>
-              <button class="btn btn-primary" type="button" data-pix-link-copy-url>Copiar link</button>
-            </div>
-
-            <div class="muted" data-pix-link-expires></div>
-            <div class="muted" data-pix-link-message></div>
+        <div class="section-head">
+          <h1>Pagamento Pix</h1>
+          <p class="lead">Use o QR Code ou o c&oacute;digo copia e cola para concluir o pagamento.</p>
+        </div>
+        <div class="card pix-link-card" data-pix-link>
+          <div class="card-head">
+            <h3>Detalhes da cobran&ccedil;a</h3>
+            <span class="tag" data-pix-link-status>--</span>
           </div>
+          <p class="lead" data-pix-link-amount>--</p>
+          <p class="muted" data-pix-link-description>--</p>
+          <label>
+            C&oacute;digo Pix
+            <textarea data-pix-link-code readonly></textarea>
+          </label>
+          <div class="pix-actions">
+            <button class="btn btn-ghost" type="button" data-pix-link-copy>Copiar c&oacute;digo</button>
+            <button class="btn btn-primary" type="button" data-pix-link-copy-url>Copiar link</button>
+          </div>
+          <div class="muted" data-pix-link-expires></div>
+          <div class="muted" data-pix-link-message></div>
         </div>
       </section>
     </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <span>&copy; 2026 GhostPay. Todos os direitos reservados.</span>
+        </div>
+      </div>
+    </footer>
 
     <script src="/site.js"></script>
   </body>

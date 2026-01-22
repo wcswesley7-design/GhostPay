@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="Pagamento Pix GhostPay" />
+    <meta name="description" content="Pagamento Pix GhostPay." />
     <title>GhostPay | Pagamento Pix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,6 +32,17 @@
             <span class="brand-tag">Pagamento Pix</span>
           </span>
         </a>
+
+        <nav class="nav" data-nav>
+          <a class="nav-link" href="/">In&iacute;cio</a>
+          <a class="nav-link" href="/platform">Plataforma</a>
+          <a class="nav-link" href="/support">Suporte</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
+          <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
+        </div>
       </div>
     </header>
 
@@ -39,17 +50,18 @@
       <section class="hero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Pix</p>
-            <h1>Pagamento via Pix</h1>
-            <p class="lead" data-charge-description>Carregando detalhes da cobranca...</p>
+            <p class="eyebrow">Pagamento Pix</p>
+            <h1>Finalize seu pagamento com QR Code ou copia e cola.</h1>
+            <p class="lead" data-charge-description>Carregando detalhes da cobran&ccedil;a...</p>
           </div>
           <div class="hero-panel">
             <div class="glass-card">
               <div class="card-head">
-                <h3>Valor</h3>
+                <h3>Resumo da cobran&ccedil;a</h3>
                 <span class="tag" data-charge-status>--</span>
               </div>
               <p class="price" data-charge-amount>--</p>
+              <p class="muted">Pague via Pix e aguarde a confirma&ccedil;&atilde;o.</p>
             </div>
           </div>
         </div>
@@ -69,66 +81,44 @@
               </label>
               <label>
                 Email
-                <input type="email" name="email" placeholder="seu@email.com" autocomplete="email" required />
+                <input type="email" name="email" placeholder="seu@email.com" required />
               </label>
               <label>
                 Celular
-                <input type="tel" name="phone" placeholder="(11) 90000-0000" inputmode="numeric" autocomplete="tel" />
+                <input type="tel" name="phone" placeholder="(11) 90000-0000" required />
               </label>
               <label>
                 CPF
-                <input type="text" name="cpf" placeholder="000.000.000-00" inputmode="numeric" autocomplete="off" required />
+                <input type="text" name="cpf" placeholder="000.000.000-00" required />
               </label>
               <button class="btn btn-primary" type="submit">Gerar Pix</button>
               <div class="muted form-status" data-charge-status-text aria-live="polite"></div>
             </form>
-
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>C&oacute;digo Pix</h3>
+              <span class="tag">QR Code</span>
+            </div>
             <div class="pix-output hidden" data-charge-pix-output>
               <div class="pix-grid">
                 <div class="pix-qr">
                   <img data-charge-qr alt="QR Code Pix" />
                 </div>
-                <div class="pix-details">
+                <div class="pix-code">
                   <label>
-                    Codigo Pix
+                    C&oacute;digo copia e cola
                     <textarea data-charge-code readonly></textarea>
                   </label>
                   <div class="pix-actions">
-                    <button class="btn btn-ghost" type="button" data-charge-copy>Copiar codigo</button>
+                    <button class="btn btn-ghost" type="button" data-charge-copy>Copiar c&oacute;digo</button>
                     <a class="btn btn-primary hidden" data-charge-ticket href="#" target="_blank" rel="noreferrer">
                       Abrir no Mercado Pago
                     </a>
                   </div>
-                  <div class="muted" data-charge-progress></div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-head">
-              <h3>Como funciona</h3>
-              <span class="tag">Etapas</span>
-            </div>
-            <div class="list">
-              <div class="list-item">
-                <strong>1. Gerar Pix</strong>
-                <div class="list-meta">
-                  <span>Mostramos o QR Code e o codigo copia e cola.</span>
-                </div>
-              </div>
-              <div class="list-item">
-                <strong>2. Pagamento</strong>
-                <div class="list-meta">
-                  <span>Efetue o Pix pelo seu banco ou app preferido.</span>
-                </div>
-              </div>
-              <div class="list-item">
-                <strong>3. Confirmacao</strong>
-                <div class="list-meta">
-                  <span>Atualizamos o status automaticamente apos a confirmacao.</span>
-                </div>
-              </div>
+              <div class="muted" data-charge-progress></div>
             </div>
           </div>
         </div>
@@ -136,28 +126,25 @@
     </main>
 
     <footer class="footer">
-      <div class="container footer-grid">
-        <div>
-          <div class="brand-name">GhostPay</div>
-          <small>Banco digital para pessoas e negocios.</small>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4>GhostPay</h4>
+            <p class="muted">Pagamento Pix protegido e confirmado automaticamente.</p>
+          </div>
+          <div>
+            <h4>Suporte</h4>
+            <a href="/support">Atendimento</a>
+            <a href="/security">Seguran&ccedil;a</a>
+          </div>
+          <div>
+            <h4>Legal</h4>
+            <a href="/termos">Termos de uso</a>
+            <a href="/privacidade">Privacidade</a>
+          </div>
         </div>
-        <div class="footer-col">
-          <strong>Produto</strong>
-          <a href="/platform">Plataforma</a>
-          <a href="/security">Seguranca</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Empresa</strong>
-          <a href="/empresa">Empresa</a>
-          <a href="/support">Suporte</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Legal</strong>
-          <a class="muted" href="/lgpd">LGPD</a>
-          <a class="muted" href="/privacidade">Privacidade</a>
-          <a class="muted" href="/termos">Termos de uso</a>
+        <div class="footer-bottom">
+          <span>&copy; 2026 GhostPay. Todos os direitos reservados.</span>
         </div>
       </div>
     </footer>

@@ -1,11 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="GhostPay banco digital com Pix, cartões e experiência segura" />
-    <title>GhostPay</title>
+    <meta
+      name="description"
+      content="GhostPay gateway Pix para cobrar, conciliar e acompanhar pagamentos em tempo real."
+    />
+    <title>GhostPay | Gateway Pix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -29,14 +32,14 @@
           <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
           <span class="brand-text">
             <span class="brand-name">GhostPay</span>
-            <span class="brand-tag">Fintech digital</span>
+            <span class="brand-tag">Gateway Pix</span>
           </span>
         </a>
 
         <nav class="nav" data-nav>
-          <a class="nav-link" href="/">Início</a>
+          <a class="nav-link" href="/">In&iacute;cio</a>
           <a class="nav-link" href="/platform">Plataforma</a>
-          <a class="nav-link" href="/security">Segurança</a>
+          <a class="nav-link" href="/security">Seguran&ccedil;a</a>
           <a class="nav-link" href="/empresa">Empresa</a>
           <a class="nav-link" href="/pricing">Planos</a>
           <a class="nav-link" href="/support">Suporte</a>
@@ -52,7 +55,7 @@
             </span>
             Entrar
           </a>
-          <a class="btn btn-primary" href="/pricing#planos">
+          <a class="btn btn-primary" href="/assinatura?plan=infinity">
             <span class="btn-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <use href="/assets/icons.svg#icon-user-plus"></use>
@@ -69,63 +72,63 @@
       <section class="hero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">GhostPay banco digital</p>
-            <h1>Conta digital para movimentar seu dinheiro com segurança e clareza.</h1>
+            <p class="eyebrow">GhostPay Gateway Pix</p>
+            <h1>Receba Pix com QR Code, concilie e escale seu faturamento.</h1>
             <p class="lead">
-              Pix instantâneo, cartões com controle e atendimento humano em uma experiência simples e transparente.
+              Infraestrutura completa para cobran&ccedil;as Pix, saldo interno e opera&ccedil;&otilde;es seguras em um painel moderno.
             </p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="/pricing#planos">Abrir conta</a>
-              <a class="btn btn-ghost" href="/platform">Explorar plataforma</a>
+              <a class="btn btn-primary" href="/assinatura?plan=infinity">Abrir conta</a>
+              <a class="btn btn-ghost" href="/platform">Ver plataforma</a>
             </div>
             <div class="hero-metrics">
               <div class="metric-card">
-                <span class="metric-label">Pix</span>
-                <strong>Envie e receba 24/7</strong>
+                <span class="metric-label">Cobran&ccedil;as</span>
+                <strong>QR Code e copia e cola em segundos.</strong>
               </div>
               <div class="metric-card">
-                <span class="metric-label">Cartões</span>
-                <strong>Virtual e físico com limites ajustáveis.</strong>
+                <span class="metric-label">Webhooks</span>
+                <strong>Notifica&ccedil;&otilde;es e concilia&ccedil;&atilde;o autom&aacute;tica.</strong>
               </div>
               <div class="metric-card">
-                <span class="metric-label">Atendimento</span>
-                <strong>Atendimento humano e ágil</strong>
+                <span class="metric-label">Saldo</span>
+                <strong>Carteira do merchant com extrato completo.</strong>
               </div>
             </div>
           </div>
           <div class="hero-panel">
             <div class="glass-card">
               <div class="card-head">
-                <h3>Resumo financeiro</h3>
+                <h3>Resumo do gateway</h3>
                 <span class="tag">Hoje</span>
               </div>
               <div class="signal-list">
                 <div class="signal-row">
-                  <span>Saldo consolidado</span>
+                  <span>Cobran&ccedil;as criadas</span>
+                  <strong>128</strong>
+                </div>
+                <div class="signal-row">
+                  <span>Pagamentos confirmados</span>
+                  <strong>94</strong>
+                </div>
+                <div class="signal-row">
+                  <span>Saldo dispon&iacute;vel</span>
                   <strong>R$ 218.400</strong>
-                </div>
-                <div class="signal-row">
-                  <span>Pix recebidos</span>
-                  <strong>72 hoje</strong>
-                </div>
-                <div class="signal-row">
-                  <span>Cartões ativos</span>
-                  <strong>145</strong>
                 </div>
               </div>
             </div>
             <div class="glass-card">
               <div class="card-head">
-                <h3>Segurança e privacidade</h3>
-                <span class="tag">Protegido</span>
+                <h3>Concilia&ccedil;&atilde;o em tempo real</h3>
+                <span class="tag">Live</span>
               </div>
               <p class="muted">
-                Criptografia, monitoramento e LGPD para proteger seus dados.
+                Atualiza&ccedil;&atilde;o autom&aacute;tica com confirma&ccedil;&atilde;o do Mercado Pago e eventos para o merchant.
               </p>
               <div class="pill-row">
-                <span class="pill">LGPD</span>
-                <span class="pill">Criptografia</span>
-                <span class="pill">Suporte</span>
+                <span class="pill">Webhook</span>
+                <span class="pill">Ledger</span>
+                <span class="pill">Logs</span>
               </div>
             </div>
           </div>
@@ -134,29 +137,35 @@
 
       <section class="section" data-reveal>
         <div class="section-head">
-          <h2>Recursos essenciais</h2>
-          <p class="lead">Tudo o que você precisa para controlar suas finanças.</p>
+          <h2>Por que usar GhostPay</h2>
+          <p class="lead">Infraestrutura Pix pensada para performance, seguran&ccedil;a e escala.</p>
         </div>
         <div class="feature-grid">
           <div class="feature-card">
             <div class="icon icon--pix" aria-hidden="true"></div>
-            <h3>Pix instantâneo</h3>
-            <p class="muted">Envio e recebimento com confirmação imediata.</p>
+            <h3>Cobran&ccedil;a Pix instant&acirc;nea</h3>
+            <p class="muted">Gere QR Code e copia e cola com expira&ccedil;&atilde;o controlada.</p>
           </div>
           <div class="feature-card">
-            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-card"></use></svg></div>
-            <h3>Cartões com controle</h3>
-            <p class="muted">Cartões virtuais e físicos com limites ajustáveis.</p>
+            <div class="icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-chart"></use></svg>
+            </div>
+            <h3>Concilia&ccedil;&atilde;o autom&aacute;tica</h3>
+            <p class="muted">Webhooks e verifica&ccedil;&atilde;o ativa para evitar cr&eacute;ditos duplicados.</p>
           </div>
           <div class="feature-card">
-            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-chart"></use></svg></div>
-            <h3>Gestão de gastos</h3>
-            <p class="muted">Categorias, alertas e extrato claro.</p>
+            <div class="icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-wallet"></use></svg>
+            </div>
+            <h3>Saldo do merchant</h3>
+            <p class="muted">Carteira interna com extrato e hist&oacute;rico de cobran&ccedil;as.</p>
           </div>
           <div class="feature-card">
-            <div class="icon" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-shield"></use></svg></div>
-            <h3>Segurança avançada</h3>
-            <p class="muted">Proteção de dados e acompanhamento em tempo real.</p>
+            <div class="icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-shield-check"></use></svg>
+            </div>
+            <h3>Seguran&ccedil;a e compliance</h3>
+            <p class="muted">LGPD, HMAC em webhooks e monitoramento cont&iacute;nuo.</p>
           </div>
         </div>
       </section>
@@ -165,63 +174,63 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-head">
-              <h3>Recursos em foco</h3>
-              <span class="tag">Conta</span>
+              <h3>M&oacute;dulos do gateway</h3>
+              <span class="tag">Plataforma</span>
             </div>
             <div class="module-tabs" data-module-tabs>
-              <button class="tab-pill active" type="button" data-module-target="pix">Pix</button>
-              <button class="tab-pill" type="button" data-module-target="cards">Cartões</button>
-              <button class="tab-pill" type="button" data-module-target="conta">Conta</button>
+              <button class="tab-pill active" type="button" data-module-target="charges">Cobran&ccedil;as</button>
+              <button class="tab-pill" type="button" data-module-target="wallet">Carteira</button>
+              <button class="tab-pill" type="button" data-module-target="webhooks">Webhooks</button>
             </div>
-            <div class="module-panel" data-module-panel="pix">
-              <strong>Pix em tempo real</strong>
-              <p class="muted">Receba e envie Pix com facilidade.</p>
+            <div class="module-panel" data-module-panel="charges">
+              <strong>Cria&ccedil;&atilde;o de cobran&ccedil;as Pix</strong>
+              <p class="muted">QR Code, copia e cola, expira&ccedil;&atilde;o e status em tempo real.</p>
               <div class="pill-row">
-                <span class="pill">Chaves</span>
-                <span class="pill">Transferências</span>
-                <span class="pill">Cobranças</span>
+                <span class="pill">QR Code</span>
+                <span class="pill">BR Code</span>
+                <span class="pill">Status</span>
               </div>
             </div>
-            <div class="module-panel hidden" data-module-panel="cards">
-              <strong>Cartões com controle</strong>
-              <p class="muted">Limites, notificações e segurança.</p>
-              <div class="pill-row">
-                <span class="pill">Virtual</span>
-                <span class="pill">Físico</span>
-                <span class="pill">Limites</span>
-              </div>
-            </div>
-            <div class="module-panel hidden" data-module-panel="conta">
-              <strong>Conta completa</strong>
-              <p class="muted">Saldo, extrato e metas financeiras.</p>
+            <div class="module-panel hidden" data-module-panel="wallet">
+              <strong>Carteira interna do merchant</strong>
+              <p class="muted">Saldo, extratos e solicita&ccedil;&otilde;es de saque com aprova&ccedil;&atilde;o manual.</p>
               <div class="pill-row">
                 <span class="pill">Saldo</span>
-                <span class="pill">Extrato</span>
-                <span class="pill">Metas</span>
+                <span class="pill">Extratos</span>
+                <span class="pill">Saques</span>
+              </div>
+            </div>
+            <div class="module-panel hidden" data-module-panel="webhooks">
+              <strong>Eventos e concilia&ccedil;&atilde;o</strong>
+              <p class="muted">Eventos de pagamento e confirma&ccedil;&atilde;o com idempot&ecirc;ncia.</p>
+              <div class="pill-row">
+                <span class="pill">Webhook</span>
+                <span class="pill">HMAC</span>
+                <span class="pill">Logs</span>
               </div>
             </div>
           </div>
 
           <div class="card">
             <div class="card-head">
-              <h3>Sua jornada</h3>
-              <span class="tag">Início</span>
+              <h3>Fluxo do Pix</h3>
+              <span class="tag">Operacional</span>
             </div>
             <div class="timeline">
               <div class="timeline-step">
                 <span>01</span>
-                <strong>Abra sua conta</strong>
-                <p class="muted">Cadastro simples e rápido.</p>
+                <strong>Criar cobran&ccedil;a</strong>
+                <p class="muted">Defina valor e descri&ccedil;&atilde;o e gere o QR Code.</p>
               </div>
               <div class="timeline-step">
                 <span>02</span>
-                <strong>Personalize limites e cartões</strong>
-                <p class="muted">Defina limites e controle o dia a dia.</p>
+                <strong>Pagamento do pagador</strong>
+                <p class="muted">Pix confirmado no Mercado Pago.</p>
               </div>
               <div class="timeline-step">
                 <span>03</span>
-                <strong>Acompanhe em tempo real</strong>
-                <p class="muted">Notificações e extrato sempre atual.</p>
+                <strong>Saldo atualizado</strong>
+                <p class="muted">Webhook confirma e credita automaticamente no ledger.</p>
               </div>
             </div>
           </div>
@@ -229,80 +238,50 @@
       </section>
 
       <section class="section" data-reveal>
-        <div class="grid-3">
-          <div class="glass-card">
-            <h3>Interface refinada</h3>
-            <p class="muted">Design limpo com tipografia precisa.</p>
-            <div class="pill-row">
-              <span class="pill">Escuro</span>
-              <span class="pill">Claro</span>
-              <span class="pill">Animação</span>
-            </div>
-          </div>
-          <div class="glass-card">
-            <h3>Multi-dispositivo</h3>
-            <p class="muted">Experiência consistente em web e mobile.</p>
-            <div class="pill-row">
-              <span class="pill">Web</span>
-              <span class="pill">Mobile</span>
-              <span class="pill">Desktop</span>
-            </div>
-          </div>
-          <div class="glass-card">
-            <h3>Transparência total</h3>
-            <p class="muted">Tudo visível, sem surpresas no fim do mês.</p>
-            <div class="pill-row">
-              <span class="pill">Extrato</span>
-              <span class="pill">Alertas</span>
-              <span class="pill">Confiança</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="cta" data-reveal>
-        <div class="cta-card">
+        <div class="cta-card card">
           <div>
-            <h2>Pronto para abrir sua conta?</h2>
-            <p class="lead">Abra sua conta ou fale com a equipe.</p>
+            <h3>Pronto para operar com Pix?</h3>
+            <p class="muted">Ative sua conta e tenha cobran&ccedil;as Pix com concilia&ccedil;&atilde;o em tempo real.</p>
           </div>
           <div class="cta-actions">
-            <a class="btn btn-primary" href="/pricing#planos">Abrir conta</a>
-            <a class="btn btn-ghost" href="/support">Falar com suporte</a>
+            <a class="btn btn-primary" href="/assinatura?plan=infinity">Ativar Infinity</a>
+            <a class="btn btn-ghost" href="/support">Falar com especialistas</a>
           </div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="container footer-grid">
-        <div>
-          <div class="brand-name">GhostPay</div>
-          <small>Banco digital para pessoas e negócios.</small>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4>GhostPay</h4>
+            <p class="muted">
+              Gateway Pix com concilia&ccedil;&atilde;o em tempo real, carteira digital e opera&ccedil;&otilde;es seguras.
+            </p>
+          </div>
+          <div>
+            <h4>Produto</h4>
+            <a href="/platform">Plataforma</a>
+            <a href="/pricing">Planos</a>
+            <a href="/developers">Developers</a>
+          </div>
+          <div>
+            <h4>Empresa</h4>
+            <a href="/empresa">Quem somos</a>
+            <a href="/security">Seguran&ccedil;a</a>
+            <a href="/support">Suporte</a>
+          </div>
+          <div>
+            <h4>Legal</h4>
+            <a href="/lgpd">LGPD</a>
+            <a href="/privacidade">Privacidade</a>
+            <a href="/termos">Termos de uso</a>
+          </div>
         </div>
-        <div class="footer-col">
-          <strong>Produto</strong>
-          <a href="/platform">Plataforma</a>
-          <a href="/security">Segurança</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Empresa</strong>
-          <a href="/empresa">Empresa</a>
-          <a href="/support">Suporte</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Conta</strong>
-          <a href="/console">Acessar conta</a>
-          <a href="/pricing#planos">Abrir conta</a>
-          <a href="/support">Atendimento</a>
-        </div>
-        <div class="footer-col">
-          <strong>Legal</strong>
-          <a class="muted" href="/lgpd">LGPD</a>
-          <a class="muted" href="/privacidade">Privacidade</a>
-          <a class="muted" href="/termos">Termos de uso</a>
+        <div class="footer-bottom">
+          <span>&copy; 2026 GhostPay. Todos os direitos reservados.</span>
+          <span>Gateway Pix Modelo B (cust&oacute;dia).</span>
         </div>
       </div>
     </footer>

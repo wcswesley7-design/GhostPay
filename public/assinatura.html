@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="description" content="GhostPay assinatura Infinity via Pix" />
+    <meta name="description" content="Assinatura Infinity GhostPay para ativar o gateway Pix." />
     <title>GhostPay | Assinatura Infinity</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,9 +26,7 @@
     <header class="topbar" data-topbar>
       <div class="container">
         <a class="brand" href="/">
-          <span class="brand-mark"
-            ><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo"
-          /></span>
+          <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
           <span class="brand-text">
             <span class="brand-name">GhostPay</span>
             <span class="brand-tag">Assinatura</span>
@@ -36,9 +34,9 @@
         </a>
 
         <nav class="nav" data-nav>
-          <a class="nav-link" href="/">Início</a>
+          <a class="nav-link" href="/">In&iacute;cio</a>
           <a class="nav-link" href="/platform">Plataforma</a>
-          <a class="nav-link" href="/security">Segurança</a>
+          <a class="nav-link" href="/security">Seguran&ccedil;a</a>
           <a class="nav-link" href="/empresa">Empresa</a>
           <a class="nav-link" href="/pricing">Planos</a>
           <a class="nav-link" href="/support">Suporte</a>
@@ -46,22 +44,8 @@
 
         <div class="topbar-actions">
           <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
-          <a class="btn btn-ghost" href="/console?tab=login">
-            <span class="btn-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <use href="/assets/icons.svg#icon-user"></use>
-              </svg>
-            </span>
-            Entrar
-          </a>
-          <a class="btn btn-primary" href="/pricing#planos">
-            <span class="btn-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <use href="/assets/icons.svg#icon-user-plus"></use>
-              </svg>
-            </span>
-            Ver plano
-          </a>
+          <a class="btn btn-ghost" href="/console?tab=login">Entrar</a>
+          <a class="btn btn-primary" href="/pricing#planos">Ver plano</a>
           <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
         </div>
       </div>
@@ -72,22 +56,22 @@
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Assinatura Infinity</p>
-            <h1>Assinatura via Pix para liberar sua conta.</h1>
+            <h1>Ative seu gateway Pix com pagamento mensal.</h1>
             <p class="lead">
-              Geramos um Pix mensal e liberamos o cadastro assim que o pagamento for confirmado.
+              Ap&oacute;s a confirma&ccedil;&atilde;o do Pix, liberamos o acesso ao painel e &agrave;s APIs.
             </p>
           </div>
           <div class="hero-panel">
             <div class="glass-card">
               <div class="card-head">
                 <h3>Infinity</h3>
-                <span class="tag">R$ 59,90/mês</span>
+                <span class="tag">R$ 59,90/m&ecirc;s</span>
               </div>
-              <p class="muted">Pix ilimitado, cartões e atendimento dedicado.</p>
+              <p class="muted">Gateway Pix com cobran&ccedil;as ilimitadas, concilia&ccedil;&atilde;o e suporte dedicado.</p>
               <div class="pill-row">
-                <span class="pill">Pix</span>
-                <span class="pill">Cartões</span>
-                <span class="pill">Crédito</span>
+                <span class="pill">Cobran&ccedil;as</span>
+                <span class="pill">Webhooks</span>
+                <span class="pill">Saldo</span>
                 <span class="pill">Suporte</span>
               </div>
             </div>
@@ -114,27 +98,9 @@
               </label>
               <label>
                 Celular
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="(11) 90000-0000"
-                  inputmode="numeric"
-                  autocomplete="tel"
-                  required
-                />
+                <input type="tel" name="phone" placeholder="(11) 90000-0000" autocomplete="tel" required />
               </label>
-              <label>
-                CPF
-                <input
-                  type="text"
-                  name="cpf"
-                  placeholder="000.000.000-00"
-                  inputmode="numeric"
-                  autocomplete="off"
-                  required
-                />
-              </label>
-              <button class="btn btn-primary" type="submit">Gerar Pix</button>
+              <button class="btn btn-primary" type="submit">Ir para o pagamento</button>
               <div class="muted form-status" data-subscription-status aria-live="polite"></div>
             </form>
             <div class="pix-output hidden" data-pix-output>
@@ -142,91 +108,69 @@
                 <div class="pix-qr">
                   <img data-pix-qr alt="QR Code Pix" />
                 </div>
-                <div class="pix-details">
+                <div class="pix-code">
                   <label>
-                    Código Pix
+                    C&oacute;digo Pix
                     <textarea data-pix-code readonly></textarea>
                   </label>
                   <div class="pix-actions">
-                    <button class="btn btn-ghost" type="button" data-pix-copy>Copiar código</button>
+                    <button class="btn btn-ghost" type="button" data-pix-copy>Copiar c&oacute;digo</button>
                     <a class="btn btn-primary" data-pix-continue href="/console?tab=register&plan=infinity">
                       Continuar cadastro
                     </a>
+                    <a class="btn btn-ghost hidden" data-pix-ticket href="#" target="_blank" rel="noreferrer">
+                      Abrir no Mercado Pago
+                    </a>
                   </div>
-                  <a
-                    class="btn btn-ghost hidden"
-                    data-pix-ticket
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Abrir no Mercado Pago
-                  </a>
-                  <div class="muted" data-pix-status>Aguardando confirmação do pagamento.</div>
                 </div>
               </div>
+              <div class="muted" data-pix-status>Aguardando confirma&ccedil;&atilde;o do pagamento.</div>
             </div>
           </div>
           <div class="card">
             <div class="card-head">
-              <h3>Como funciona</h3>
-              <span class="tag">Assinatura</span>
+              <h3>O que voc&ecirc; recebe</h3>
+              <span class="tag">Infinity</span>
             </div>
-            <div class="list">
-              <div class="list-item">
-                <strong>1. Gerar Pix</strong>
-                <div class="list-meta">
-                  <span>Mostramos o QR Code e o código copia e cola.</span>
-                </div>
-              </div>
-              <div class="list-item">
-                <strong>2. Aprovação</strong>
-                <div class="list-meta">
-                  <span>Após o pagamento, liberamos o cadastro automaticamente.</span>
-                </div>
-              </div>
-              <div class="list-item">
-                <strong>3. Cadastro</strong>
-                <div class="list-meta">
-                  <span>Finaliza o cadastro e acessa a plataforma.</span>
-                </div>
-              </div>
-            </div>
-            <a class="btn btn-ghost" href="/pricing#planos">Voltar aos planos</a>
+            <ul class="list">
+              <li>Cobran&ccedil;as Pix com QR Code e copia e cola</li>
+              <li>Concilia&ccedil;&atilde;o autom&aacute;tica via webhook</li>
+              <li>Saldo interno e extratos por merchant</li>
+              <li>Solicita&ccedil;&atilde;o de saque com aprova&ccedil;&atilde;o manual</li>
+              <li>Suporte operacional dedicado</li>
+            </ul>
+            <p class="muted">Pagamento mensal via Pix.</p>
           </div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="container footer-grid">
-        <div>
-          <div class="brand-name">GhostPay</div>
-          <small>Banco digital para pessoas e negócios.</small>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4>GhostPay</h4>
+            <p class="muted">Assinatura para ativar o gateway Pix.</p>
+          </div>
+          <div>
+            <h4>Produto</h4>
+            <a href="/platform">Plataforma</a>
+            <a href="/pricing">Planos</a>
+          </div>
+          <div>
+            <h4>Suporte</h4>
+            <a href="/support">Atendimento</a>
+            <a href="/security">Seguran&ccedil;a</a>
+          </div>
+          <div>
+            <h4>Legal</h4>
+            <a href="/termos">Termos de uso</a>
+            <a href="/privacidade">Privacidade</a>
+          </div>
         </div>
-        <div class="footer-col">
-          <strong>Produto</strong>
-          <a href="/platform">Plataforma</a>
-          <a href="/security">Segurança</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Empresa</strong>
-          <a href="/empresa">Empresa</a>
-          <a href="/support">Suporte</a>
-          <a href="/pricing">Planos</a>
-        </div>
-        <div class="footer-col">
-          <strong>Conta</strong>
-          <a href="/console">Acessar conta</a>
-          <a href="/pricing#planos">Abrir conta</a>
-          <a href="/support">Atendimento</a>
-        </div>
-        <div class="footer-col">
-          <strong>Legal</strong>
-          <a class="muted" href="/lgpd">LGPD</a>
-          <a class="muted" href="/privacidade">Privacidade</a>
-          <a class="muted" href="/termos">Termos de uso</a>
+        <div class="footer-bottom">
+          <span>&copy; 2026 GhostPay. Todos os direitos reservados.</span>
+          <span>Gateway Pix Modelo B (cust&oacute;dia).</span>
         </div>
       </div>
     </footer>
