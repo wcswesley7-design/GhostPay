@@ -11,6 +11,7 @@
     transactions: [],
     pixKeys: [],
     pixCharges: [],
+    withdrawals: [],
     cards: [],
     activeCard: null,
     cardNumberVisible: false
@@ -59,6 +60,8 @@
     pixChargeCopy: document.getElementById('pixChargeCopy'),
     pixChargeTicket: document.getElementById('pixChargeTicket'),
     pixChargeStatus: document.getElementById('pixChargeStatus'),
+    withdrawalForm: document.getElementById('withdrawalForm'),
+    withdrawalsList: document.getElementById('withdrawalsList'),
     cardsList: document.getElementById('cardsList'),
     cardForm: document.getElementById('cardForm'),
     cardTxnForm: document.getElementById('cardTxnForm'),
@@ -91,6 +94,7 @@
     refreshTransactions: document.getElementById('refreshTransactions'),
     refreshPix: document.getElementById('refreshPix'),
     refreshCharges: document.getElementById('refreshCharges'),
+    refreshWithdrawals: document.getElementById('refreshWithdrawals'),
     refreshCards: document.getElementById('refreshCards'),
     refreshCardTx: document.getElementById('refreshCardTx'),
     refreshCardDetail: document.getElementById('refreshCardDetail')
@@ -165,6 +169,14 @@
     paid: 'paga',
     expired: 'expirada',
     canceled: 'cancelada'
+  };
+
+  const withdrawalStatusLabels = {
+    requested: 'solicitado',
+    processing: 'em an\u00e1lise',
+    paid: 'pago',
+    failed: 'falhou',
+    canceled: 'cancelado'
   };
 
   const cardStatusLabels = {
@@ -307,6 +319,19 @@
 
   function formatCardStatus(status) {
     return cardStatusLabels[status] || status;
+  }
+
+  function formatPixKeyType(type) {
+    if (type === 'cpf') {
+      return 'CPF';
+    }
+    if (type === 'phone') {
+      return 'Celular';
+    }
+    if (type === 'email') {
+      return 'E-mail';
+    }
+    return 'Chave aleat\u00f3ria';
   }
 
   function statusClassFor(status) {
@@ -882,6 +907,53 @@
             </div>
           `;
         })
+          .join('');
+    }
+
+    function renderWithdrawals(withdrawals) {
+      if (!elements.withdrawalsList) {
+        return;
+      }
+      if (!withdrawals.length) {
+        elements.withdrawalsList.innerHTML = '<div class="list-item">Nenhum saque solicitado.</div>';
+        return;
+      }
+
+      elements.withdrawalsList.innerHTML = withdrawals
+        .map((withdrawal) => {
+          const statusLabel = withdrawalStatusLabels[withdrawal.status] || withdrawal.status;
+          const statusClass =
+            withdrawal.status === 'requested' || withdrawal.status === 'processing'
+              ? 'pending'
+              : withdrawal.status === 'paid'
+              ? 'paid'
+              : 'failed';
+          const keyLabel = `${formatPixKeyType(withdrawal.pix_key_type)}: ${withdrawal.pix_key}`;
+          const note = withdrawal.admin_note
+            ? `<div class="list-meta"><span>Observa\u00e7\u00e3o: ${withdrawal.admin_note}</span></div>`
+            : '';
+          const proof = withdrawal.proof_url
+            ? `<div class="list-meta"><a class="muted" href="${withdrawal.proof_url}" target="_blank" rel="noreferrer">Comprovante</a></div>`
+            : '';
+
+          return `
+              <div class="list-item">
+                <strong>${formatCents(withdrawal.amount_cents, 'BRL')}</strong>
+                <div class="list-meta">
+                  <span>ID: ${withdrawal.id}</span>
+                  <span>${withdrawal.requested_at ? formatDate(withdrawal.requested_at) : '--'}</span>
+                </div>
+                <div class="list-meta">
+                  <span>${keyLabel}</span>
+                </div>
+                <div class="list-meta">
+                  <span class="status-pill ${statusClass}">${statusLabel}</span>
+                </div>
+                ${note}
+                ${proof}
+              </div>
+            `;
+        })
         .join('');
     }
 
@@ -978,6 +1050,28 @@
       .join('');
   }
 
+  async function loadWithdrawals() {
+    if (!elements.withdrawalsList && !elements.withdrawalForm) {
+      return;
+    }
+    if (elements.withdrawalsList) {
+      renderSkeleton(elements.withdrawalsList, 2);
+    }
+    try {
+      const data = await apiRequest('/v1/withdrawals');
+      state.withdrawals = data.withdrawals || [];
+      renderWithdrawals(state.withdrawals);
+    } catch (err) {
+      if (err && err.status === 401) {
+        return;
+      }
+      if (elements.withdrawalsList) {
+        elements.withdrawalsList.innerHTML = '<div class="list-item">Falha ao carregar saques.</div>';
+      }
+      showToast(err.message, 'error');
+    }
+  }
+
 
   async function loadOverview() {
     if (elements.accountsList) {
@@ -1017,7 +1111,15 @@
   }
 
     async function loadPix() {
-      if (!elements.pixKeysList && !elements.pixChargesList && !elements.pixKeyForm && !elements.pixTransferForm && !elements.pixChargeForm) {
+      if (
+        !elements.pixKeysList &&
+        !elements.pixChargesList &&
+        !elements.pixKeyForm &&
+        !elements.pixTransferForm &&
+        !elements.pixChargeForm &&
+        !elements.withdrawalForm &&
+        !elements.withdrawalsList
+      ) {
         return;
       }
       if (elements.pixChargesList) {
@@ -1041,6 +1143,7 @@
           renderPixKeys(state.pixKeys);
         }
         renderPixCharges(state.pixCharges);
+        await loadWithdrawals();
       } catch (err) {
         if (err && err.status === 401) {
           return;
@@ -1306,7 +1409,15 @@
   }
 
   function needsPixData() {
-    return Boolean(elements.pixKeysList || elements.pixChargesList || elements.pixKeyForm || elements.pixTransferForm || elements.pixChargeForm);
+    return Boolean(
+      elements.pixKeysList ||
+      elements.pixChargesList ||
+      elements.pixKeyForm ||
+      elements.pixTransferForm ||
+      elements.pixChargeForm ||
+      elements.withdrawalForm ||
+      elements.withdrawalsList
+    );
   }
 
   function needsCardsData() {
@@ -1853,6 +1964,63 @@
     return;
   }
 
+  async function handleWithdrawalCreate(event) {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(elements.withdrawalForm).entries());
+    if (!payload.amount) {
+      showToast('Informe o valor do saque.', 'error');
+      return;
+    }
+    if (!payload.pix_key) {
+      showToast('Informe a chave Pix.', 'error');
+      return;
+    }
+
+    const pixKeyType = payload.pix_key_type;
+    let pixKey = String(payload.pix_key || '').trim();
+    if (pixKeyType === 'cpf' || pixKeyType === 'phone') {
+      pixKey = pixKey.replace(/\D/g, '');
+    }
+    if (!pixKey) {
+      showToast('Informe uma chave Pix v\u00e1lida.', 'error');
+      return;
+    }
+
+    const submit = elements.withdrawalForm.querySelector('button[type=\"submit\"]');
+    const originalLabel = submit ? submit.textContent : '';
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = 'Enviando...';
+    }
+
+    try {
+      await apiRequest('/v1/withdrawals', {
+        method: 'POST',
+        body: JSON.stringify({
+          amount: payload.amount,
+          pix_key_type: pixKeyType,
+          pix_key: pixKey
+        })
+      });
+      elements.withdrawalForm.reset();
+      await loadWithdrawals();
+      await loadOverview();
+      showToast('Solicita\u00e7\u00e3o de saque enviada');
+    } catch (err) {
+      const messages = {
+        'Insufficient funds': 'Saldo insuficiente para saque.',
+        'Invalid amount': 'Valor inv\u00e1lido.',
+        'Invalid Pix key': 'Chave Pix inv\u00e1lida.'
+      };
+      showToast(messages[err.message] || err.message, 'error');
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = originalLabel || 'Solicitar saque';
+      }
+    }
+  }
+
 
   async function handleCardCreate(event) {
     event.preventDefault();
@@ -2014,6 +2182,9 @@
     if (elements.pixChargesList) {
       elements.pixChargesList.addEventListener('click', handlePixChargeAction);
     }
+    if (elements.withdrawalForm) {
+      elements.withdrawalForm.addEventListener('submit', handleWithdrawalCreate);
+    }
     if (elements.cardForm) {
       elements.cardForm.addEventListener('submit', handleCardCreate);
     }
@@ -2054,6 +2225,9 @@
     }
     if (elements.refreshCharges) {
       elements.refreshCharges.addEventListener('click', loadPix);
+    }
+    if (elements.refreshWithdrawals) {
+      elements.refreshWithdrawals.addEventListener('click', loadWithdrawals);
     }
     if (elements.refreshCards) {
       elements.refreshCards.addEventListener('click', loadCards);
