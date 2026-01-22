@@ -131,6 +131,9 @@ async function initDb() {
     await client.query(
       'ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS provider_status TEXT;'
     );
+    await client.query(
+      'ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS provider_checked_at TIMESTAMPTZ;'
+    );
     await client.query('ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS payer_name TEXT;');
     await client.query('ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS payer_email TEXT;');
     await client.query(

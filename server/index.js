@@ -27,6 +27,7 @@ const adminCardsRoutes = require('./routes/adminCards');
 const { authRequired } = require('./middleware/auth');
 const { initDb } = require('./db');
 const { startWebhookWorker } = require('./services/webhooks');
+const { startMercadoPagoSync } = require('./services/mercadoPagoSync');
 
 const app = express();
 const publicDir = path.join(__dirname, '..', 'public');
@@ -137,6 +138,7 @@ async function start() {
       console.log(`GhostPay running on http://localhost:${port}`);
     });
     startWebhookWorker();
+    startMercadoPagoSync();
   } catch (err) {
     console.error('[ghostpay] Failed to initialize database.', err);
     process.exit(1);
