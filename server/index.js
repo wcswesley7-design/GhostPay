@@ -77,6 +77,11 @@ app.use('/api/keys', authRequired, apiKeysRoutes);
 app.use('/v1', v1ChargesRoutes);
 app.use('/v1', v1BalanceRoutes);
 app.use('/v1', v1WithdrawalsRoutes);
+
+app.get('/admin/saques', (req, res) => {
+  res.sendFile(path.join(publicDir, 'admin-withdrawals.html'));
+});
+
 app.use('/admin', adminWithdrawalsRoutes);
 app.use('/admin', adminCardsRoutes);
 
@@ -101,8 +106,7 @@ const pageRoutes = {
   '/console/contas': 'console-accounts.html',
   '/console/movimentacoes': 'console-movements.html',
   '/console/pix': 'console-pix.html',
-  '/console/cartoes': 'console-cards.html',
-  '/admin/saques': 'admin-withdrawals.html'
+  '/console/cartoes': 'console-cards.html'
 };
 
 Object.entries(pageRoutes).forEach(([route, file]) => {
