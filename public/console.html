@@ -77,7 +77,7 @@
             <div class="hero-metrics">
               <div class="metric-card">
                 <span class="metric-label">Pix</span>
-                <strong>Cobran&ccedil;as com QR e copia e cola</strong>
+                <strong>Links de pagamento com QR e copia e cola</strong>
               </div>
               <div class="metric-card">
                 <span class="metric-label">API</span>
@@ -175,9 +175,9 @@
                 </div>
               </div>
               <div class="list-item">
-                <strong>Cart&otilde;es com controle</strong>
+                <strong>Links de pagamento</strong>
                 <div class="list-meta">
-                  <span>Limites e notifica&ccedil;&otilde;es em tempo real.</span>
+                  <span>Crie cobran&ccedil;as Pix para diferentes produtos.</span>
                 </div>
               </div>
               <div class="list-item">
@@ -240,7 +240,7 @@
                         <use href="/assets/icons.svg#icon-wallet"></use>
                       </svg>
                     </span>
-                    <span>Saldo e contas</span>
+                    <span>Saldo</span>
                   </a>
                   <a class="pill" href="/console/movimentacoes">
                     <span class="pill-icon" aria-hidden="true">
@@ -248,22 +248,14 @@
                         <use href="/assets/icons.svg#icon-chart"></use>
                       </svg>
                     </span>
-                    <span>Movimenta&ccedil;&otilde;es</span>
+                    <span>Transa&ccedil;&otilde;es</span>
                   </a>
                 </div>
                 <div class="nav-group">
                   <span class="nav-group-title">Pagamentos</span>
                   <a class="pill" href="/console/pix">
                     <span class="pill-icon pill-icon--pix" aria-hidden="true"></span>
-                    <span>Cobran&ccedil;as Pix</span>
-                  </a>
-                  <a class="pill" href="/console/cartoes">
-                    <span class="pill-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="/assets/icons.svg#icon-card"></use>
-                      </svg>
-                    </span>
-                    <span>Cart&otilde;es</span>
+                    <span>Link de pagamento</span>
                   </a>
                 </div>
               </nav>
@@ -272,56 +264,110 @@
           </aside>
 
           <div class="console-main">
-            <section class="section" id="overview" data-reveal>
-              <div class="section-head section-head--inline">
+            <section class="section dashboard-section" id="overview" data-reveal>
+              <div class="dashboard-header">
                 <div>
-                  <h2>Dashboard</h2>
-                  <p class="lead">Saldos, cobran&ccedil;as e atividade recente do gateway.</p>
+                  <h2>In&iacute;cio</h2>
+                  <p class="lead">Vis&atilde;o geral das vendas, links Pix e performance do gateway.</p>
                 </div>
-                <button class="btn btn-ghost" type="button" id="refreshOverview">Atualizar</button>
-              </div>
-              <div class="metric-grid">
-                <div class="metric">
-                  <span class="muted">Saldo total</span>
-                  <strong id="metricBalanceFull">--</strong>
-                </div>
-                <div class="metric">
-                  <span class="muted">Entradas 30d</span>
-                  <strong id="metricIncomeFull">--</strong>
-                </div>
-                <div class="metric">
-                  <span class="muted">Sa&iacute;das 30d</span>
-                  <strong id="metricSpendFull">--</strong>
-                </div>
-                <div class="metric">
-                  <span class="muted">Atividade</span>
-                  <strong id="metricCount">--</strong>
+                <div class="dashboard-actions">
+                  <button class="btn btn-ghost btn-sm" type="button" id="refreshOverview">Atualizar</button>
+                  <div class="date-pill">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-calendar"></use>
+                      </svg>
+                    </span>
+                    <span id="overviewRange">--</span>
+                  </div>
                 </div>
               </div>
-              <div class="quick-grid">
-                <a class="quick-card" href="/console/movimentacoes">
-                  <span class="quick-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <use href="/assets/icons.svg#icon-chart"></use>
+
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <span class="stat-label">Vendas</span>
+                  <strong id="metricSales">--</strong>
+                  <span class="stat-meta" id="metricSalesDelta">0% vs m&ecirc;s anterior</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Ticket m&eacute;dio</span>
+                  <strong id="metricTicket">--</strong>
+                  <span class="stat-meta">M&eacute;dia por cobran&ccedil;a paga</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Pix pagos</span>
+                  <strong id="metricPixPaid">--</strong>
+                  <span class="stat-meta">Cobran&ccedil;as confirmadas</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Vendas hoje</span>
+                  <strong id="metricSalesToday">--</strong>
+                  <span class="stat-meta">Atualiza&ccedil;&atilde;o em tempo real</span>
+                </div>
+                <div class="stat-card stat-card--health">
+                  <span class="stat-label">Sa&uacute;de da conta</span>
+                  <strong id="metricHealth">--</strong>
+                  <div class="health-bar"><span id="metricHealthBar"></span></div>
+                  <span class="stat-meta" id="metricHealthPct">--</span>
+                </div>
+              </div>
+
+              <div class="grid-2 dashboard-panels">
+                <div class="card chart-card">
+                  <div class="card-head">
+                    <h3>Receita</h3>
+                    <span class="tag">Atualiza&ccedil;&atilde;o em tempo real</span>
+                  </div>
+                  <div class="chart-wrap">
+                    <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                      <path class="chart-fill" id="salesChartFill"></path>
+                      <path class="chart-line" id="salesChartLine"></path>
                     </svg>
-                  </span>
-                  <span class="quick-title">Extrato do dia</span>
-                  <span class="quick-meta">Entradas, sa&iacute;das e taxas</span>
-                </a>
-                <a class="quick-card" href="/console/pix">
-                  <span class="quick-icon quick-icon--pix" aria-hidden="true"></span>
-                  <span class="quick-title">Cobran&ccedil;as Pix</span>
-                  <span class="quick-meta">QR Code e copia e cola</span>
-                </a>
-                <a class="quick-card" href="/console/cartoes">
-                  <span class="quick-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <use href="/assets/icons.svg#icon-card"></use>
-                    </svg>
-                  </span>
-                  <span class="quick-title">Cart&otilde;es</span>
-                  <span class="quick-meta">Gest&atilde;o de limites e status</span>
-                </a>
+                    <div class="chart-footer">
+                      <div>
+                        <span class="muted">Receita 7 dias</span>
+                        <strong id="metricRevenue">--</strong>
+                      </div>
+                      <div class="chart-legend">
+                        <span class="dot dot-blue"></span>
+                        <span>Pix pagos</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card conversion-card">
+                  <div class="card-head">
+                    <h3>Taxa de convers&atilde;o</h3>
+                    <span class="tag">Pix</span>
+                  </div>
+                  <div class="conversion-grid">
+                    <div class="donut">
+                      <svg viewBox="0 0 36 36" aria-hidden="true">
+                        <path class="donut-bg" d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path class="donut-value" id="conversionDonut" d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0 -31.831" />
+                      </svg>
+                      <div class="donut-center">
+                        <strong id="metricConversion">--</strong>
+                        <span class="muted">Pix pagos</span>
+                      </div>
+                    </div>
+                    <div class="conversion-meta">
+                      <div class="list-item">
+                        <strong id="metricChargeTotal">--</strong>
+                        <span>Total de cobran&ccedil;as</span>
+                      </div>
+                      <div class="list-item">
+                        <strong id="metricChargePaid">--</strong>
+                        <span>Cobran&ccedil;as pagas</span>
+                      </div>
+                      <div class="list-item">
+                        <strong id="metricChargePending">--</strong>
+                        <span>Pendentes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
           </div>

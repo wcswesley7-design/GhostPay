@@ -18,7 +18,7 @@
       }
     </style>
     <meta name="description" content="GhostPay Gateway - saldos e contas" />
-    <title>GhostPay | Saldo e Contas</title>
+    <title>GhostPay | Saldo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -68,8 +68,8 @@
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Gateway GhostPay</p>
-            <h1 id="welcomeTitle">Saldo centralizado e vis&atilde;o unificada das contas.</h1>
-            <p class="lead">Acompanhe o saldo do gateway e organize carteiras operacionais.</p>
+            <h1 id="welcomeTitle">Saldo centralizado e vis&atilde;o unificada do gateway.</h1>
+            <p class="lead">Monitore reservas, bloqueios e o hist&oacute;rico financeiro em um painel &uacute;nico.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="/pricing">Ver plano</a>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
@@ -155,21 +155,21 @@
             </div>
             <div class="list">
               <div class="list-item">
-                <strong>Conta central</strong>
+                <strong>Saldo dispon&iacute;vel</strong>
                 <div class="list-meta">
-                  <span>Uma vis&atilde;o &uacute;nica para o saldo do gateway.</span>
+                  <span>Vis&atilde;o clara do saldo livre, reservado e bloqueado.</span>
                 </div>
               </div>
               <div class="list-item">
-                <strong>Subcontas operacionais</strong>
+                <strong>Saques com controle</strong>
                 <div class="list-meta">
-                  <span>Organize fluxos e metas internas.</span>
+                  <span>Acompanhe solicita&ccedil;&otilde;es e libera&ccedil;&otilde;es.</span>
                 </div>
               </div>
               <div class="list-item">
-                <strong>Auditoria e hist&oacute;rico</strong>
+                <strong>Hist&oacute;rico completo</strong>
                 <div class="list-meta">
-                  <span>Rastreabilidade completa das movimenta&ccedil;&otilde;es.</span>
+                  <span>Transa&ccedil;&otilde;es detalhadas para concilia&ccedil;&atilde;o.</span>
                 </div>
               </div>
             </div>
@@ -226,7 +226,7 @@
                         <use href="/assets/icons.svg#icon-wallet"></use>
                       </svg>
                     </span>
-                    <span>Saldo e contas</span>
+                    <span>Saldo</span>
                   </a>
                   <a class="pill" href="/console/movimentacoes">
                     <span class="pill-icon" aria-hidden="true">
@@ -234,22 +234,14 @@
                         <use href="/assets/icons.svg#icon-chart"></use>
                       </svg>
                     </span>
-                    <span>Movimenta&ccedil;&otilde;es</span>
+                    <span>Transa&ccedil;&otilde;es</span>
                   </a>
                 </div>
                 <div class="nav-group">
                   <span class="nav-group-title">Pagamentos</span>
                   <a class="pill" href="/console/pix">
                     <span class="pill-icon pill-icon--pix" aria-hidden="true"></span>
-                    <span>Cobran&ccedil;as Pix</span>
-                  </a>
-                  <a class="pill" href="/console/cartoes">
-                    <span class="pill-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="/assets/icons.svg#icon-card"></use>
-                      </svg>
-                    </span>
-                    <span>Cart&otilde;es</span>
+                    <span>Link de pagamento</span>
                   </a>
                 </div>
               </nav>
@@ -259,46 +251,56 @@
 
           <div class="console-main">
             <section class="section" id="accounts" data-reveal>
-              <div class="section-head section-head--inline">
+              <div class="dashboard-header">
                 <div>
-                  <h2>Saldo e contas</h2>
-                  <p class="lead">Saldo central do gateway e carteiras operacionais.</p>
+                  <h2>Saldo</h2>
+                  <p class="lead">Saldo dispon&iacute;vel, reservas e fluxo de saques do gateway.</p>
                 </div>
-                <button class="btn btn-ghost" type="button" id="refreshAccounts">Atualizar</button>
+                <div class="dashboard-actions">
+                  <button class="btn btn-ghost btn-sm" type="button" id="refreshAccounts">Atualizar</button>
+                </div>
               </div>
-              <div class="grid-2">
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Carteiras ativas</h3>
-                    <span class="tag">Saldo</span>
-                  </div>
-                  <div class="chip-row" id="accountChips"></div>
-                  <div class="list" id="accountsList"></div>
-                </div>
 
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Conta principal</h3>
-                    <span class="tag">Perfil</span>
+              <div class="stats-grid stats-grid--compact">
+                <div class="stat-card">
+                  <span class="stat-label">Saldo dispon&iacute;vel</span>
+                  <strong id="balanceAvailable">--</strong>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Reserva financeira</span>
+                  <strong id="balanceReserve">--</strong>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Saque pendente</span>
+                  <strong id="balancePending">--</strong>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Saldo bloqueado</span>
+                  <strong id="balanceBlocked">--</strong>
+                </div>
+              </div>
+
+              <div class="balance-actions">
+                <a class="btn btn-ghost btn-sm" href="/console/pix#linkForm">Depositar</a>
+                <a class="btn btn-primary btn-sm" href="/console/pix#withdrawalForm">Solicitar saque</a>
+              </div>
+
+              <div class="card">
+                <div class="table-toolbar">
+                  <div class="table-search">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-search"></use>
+                      </svg>
+                    </span>
+                    <input type="search" placeholder="Buscar transa&ccedil;&atilde;o..." />
                   </div>
-                  <p class="muted">
-                    Cada cadastro possui uma conta central que concentra o saldo do gateway.
-                  </p>
-                  <div class="list">
-                    <div class="list-item">
-                      <strong>Tipo</strong>
-                      <div class="list-meta">
-                        <span>Conta digital de liquida&ccedil;&atilde;o</span>
-                      </div>
-                    </div>
-                    <div class="list-item">
-                      <strong>Status</strong>
-                      <div class="list-meta">
-                        <span>Ativa e pronta para uso</span>
-                      </div>
-                    </div>
+                  <div class="toolbar-actions">
+                    <button class="btn btn-ghost btn-sm" type="button">Filtrar</button>
+                    <button class="btn btn-ghost btn-sm" type="button">Exportar</button>
                   </div>
                 </div>
+                <div class="data-table data-table--transactions" id="transactionsList"></div>
               </div>
             </section>
           </div>

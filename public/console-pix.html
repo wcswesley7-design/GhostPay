@@ -18,7 +18,7 @@
       }
     </style>
     <meta name="description" content="GhostPay Gateway - cobrancas Pix" />
-    <title>GhostPay | Cobran&ccedil;as Pix</title>
+    <title>GhostPay | Link de pagamento</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -68,8 +68,8 @@
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Gateway GhostPay</p>
-            <h1 id="welcomeTitle">Cobran&ccedil;as Pix com QR Code e copia e cola.</h1>
-            <p class="lead">Gere cobran&ccedil;as, acompanhe status em tempo real e solicite saques quando precisar.</p>
+            <h1 id="welcomeTitle">Links de pagamento Pix para vender com rapidez.</h1>
+            <p class="lead">Crie links, acompanhe vendas em tempo real e solicite saques quando precisar.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="/pricing">Ver plano</a>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
@@ -157,7 +157,7 @@
               <div class="list-item">
                 <strong>QR Code din&acirc;mico</strong>
                 <div class="list-meta">
-                  <span>Cobran&ccedil;as com identifica&ccedil;&atilde;o autom&aacute;tica.</span>
+                  <span>Links com identifica&ccedil;&atilde;o autom&aacute;tica.</span>
                 </div>
               </div>
               <div class="list-item">
@@ -226,7 +226,7 @@
                         <use href="/assets/icons.svg#icon-wallet"></use>
                       </svg>
                     </span>
-                    <span>Saldo e contas</span>
+                    <span>Saldo</span>
                   </a>
                   <a class="pill" href="/console/movimentacoes">
                     <span class="pill-icon" aria-hidden="true">
@@ -234,22 +234,14 @@
                         <use href="/assets/icons.svg#icon-chart"></use>
                       </svg>
                     </span>
-                    <span>Movimenta&ccedil;&otilde;es</span>
+                    <span>Transa&ccedil;&otilde;es</span>
                   </a>
                 </div>
                 <div class="nav-group">
                   <span class="nav-group-title">Pagamentos</span>
                   <a class="pill" href="/console/pix" aria-current="page">
                     <span class="pill-icon pill-icon--pix" aria-hidden="true"></span>
-                    <span>Cobran&ccedil;as Pix</span>
-                  </a>
-                  <a class="pill" href="/console/cartoes">
-                    <span class="pill-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="/assets/icons.svg#icon-card"></use>
-                      </svg>
-                    </span>
-                    <span>Cart&otilde;es</span>
+                    <span>Link de pagamento</span>
                   </a>
                 </div>
               </nav>
@@ -259,28 +251,51 @@
 
           <div class="console-main">
             <section class="section" id="pix" data-reveal>
-              <div class="section-head section-head--inline">
+              <div class="dashboard-header">
                 <div>
-                  <h2>Cobran&ccedil;as Pix</h2>
-                  <p class="lead">Gere cobran&ccedil;as, acompanhe status e crie saques.</p>
+                  <h2>Link de pagamento</h2>
+                  <p class="lead">Crie links Pix para seus produtos e acompanhe as vendas em tempo real.</p>
                 </div>
-                <button class="btn btn-ghost" type="button" id="refreshPix">Atualizar</button>
+                <div class="dashboard-actions">
+                  <button class="btn btn-ghost btn-sm" type="button" id="refreshPix">Atualizar</button>
+                  <a class="btn btn-primary btn-sm" href="#linkForm">Novo link</a>
+                </div>
               </div>
-              <div class="grid-2">
+
+              <div class="grid-2 link-layout">
                 <div class="card">
                   <div class="card-head">
-                    <h3>Cobran&ccedil;a Pix</h3>
-                    <span class="tag">Recebimento</span>
+                    <h3>Links de pagamento</h3>
+                    <span class="tag">Pix</span>
                   </div>
-                  <p class="muted">Gere uma cobran&ccedil;a com QR Code e c&oacute;digo copia e cola.</p>
+                  <div class="table-toolbar">
+                    <div class="table-search">
+                      <span class="pill-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <use href="/assets/icons.svg#icon-search"></use>
+                        </svg>
+                      </span>
+                      <input type="search" placeholder="Procurar pelo nome do link" />
+                    </div>
+                    <button class="btn btn-ghost btn-sm" type="button" id="refreshCharges">Atualizar</button>
+                  </div>
+                  <div class="data-table data-table--links" id="pixChargesList"></div>
+                </div>
+
+                <div class="card" id="linkForm">
+                  <div class="card-head">
+                    <h3>Novo link</h3>
+                    <span class="tag">Produto</span>
+                  </div>
+                  <p class="muted">Defina o produto e gere o QR Code com copia e cola.</p>
                   <form class="form" id="pixChargeForm">
                     <label>
-                      Valor
-                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+                      Nome do link
+                      <input type="text" name="description" placeholder="Ex: Assinatura Infinity" />
                     </label>
                     <label>
-                      Descri&ccedil;&atilde;o
-                      <input type="text" name="description" placeholder="Opcional" />
+                      Pre&ccedil;o
+                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
                     </label>
                     <div class="card-subhead">
                       <strong>Dados do pagador</strong>
@@ -301,7 +316,7 @@
                       Celular
                       <input type="tel" name="phone" placeholder="(11) 90000-0000" inputmode="numeric" />
                     </label>
-                    <button class="btn btn-primary" type="submit">Gerar cobran&ccedil;a Pix</button>
+                    <button class="btn btn-primary" type="submit">Gerar link Pix</button>
                   </form>
                   <div class="pix-output hidden" id="pixChargeOutput">
                     <div class="pix-grid">
@@ -312,6 +327,13 @@
                         <label>
                           C&oacute;digo Pix
                           <textarea id="pixChargeCode" readonly></textarea>
+                        </label>
+                        <label>
+                          Link de pagamento
+                          <div class="input-group">
+                            <input id="pixChargeLink" type="text" readonly />
+                            <button class="btn btn-ghost btn-sm" type="button" id="pixChargeLinkCopy">Copiar link</button>
+                          </div>
                         </label>
                         <div class="pix-actions">
                           <button class="btn btn-ghost" type="button" id="pixChargeCopy">Copiar c&oacute;digo</button>
@@ -324,14 +346,9 @@
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Hist&oacute;rico de cobran&ccedil;as</h3>
-                    <button class="btn btn-ghost" type="button" id="refreshCharges">Atualizar</button>
-                  </div>
-                  <div class="list" id="pixChargesList"></div>
-                </div>
+              <div class="grid-2">
                 <div class="card">
                   <div class="card-head">
                     <h3>Solicitar saque</h3>
@@ -363,11 +380,11 @@
                 <div class="card">
                   <div class="card-head">
                     <h3>Hist&oacute;rico de saques</h3>
-                    <button class="btn btn-ghost" type="button" id="refreshWithdrawals">Atualizar</button>
+                    <button class="btn btn-ghost btn-sm" type="button" id="refreshWithdrawals">Atualizar</button>
                   </div>
-                  <div class="list" id="withdrawalsList"></div>
+                  <div class="data-table data-table--withdrawals" id="withdrawalsList"></div>
                 </div>
-              </div></div>
+              </div>
             </section>
           </div>
         </div>

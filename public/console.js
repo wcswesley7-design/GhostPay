@@ -43,6 +43,28 @@
     metricIncomeFull: document.getElementById('metricIncomeFull'),
     metricSpendFull: document.getElementById('metricSpendFull'),
     metricCount: document.getElementById('metricCount'),
+    metricSales: document.getElementById('metricSales'),
+    metricSalesDelta: document.getElementById('metricSalesDelta'),
+    metricTicket: document.getElementById('metricTicket'),
+    metricPixPaid: document.getElementById('metricPixPaid'),
+    metricSalesToday: document.getElementById('metricSalesToday'),
+    metricHealth: document.getElementById('metricHealth'),
+    metricHealthBar: document.getElementById('metricHealthBar'),
+    metricHealthPct: document.getElementById('metricHealthPct'),
+    metricRevenue: document.getElementById('metricRevenue'),
+    metricConversion: document.getElementById('metricConversion'),
+    metricChargeTotal: document.getElementById('metricChargeTotal'),
+    metricChargePaid: document.getElementById('metricChargePaid'),
+    metricChargePending: document.getElementById('metricChargePending'),
+    salesChartLine: document.getElementById('salesChartLine'),
+    salesChartFill: document.getElementById('salesChartFill'),
+    conversionDonut: document.getElementById('conversionDonut'),
+    overviewRange: document.getElementById('overviewRange'),
+    transactionsRange: document.getElementById('transactionsRange'),
+    balanceAvailable: document.getElementById('balanceAvailable'),
+    balanceReserve: document.getElementById('balanceReserve'),
+    balancePending: document.getElementById('balancePending'),
+    balanceBlocked: document.getElementById('balanceBlocked'),
     sidebarName: document.getElementById('sidebarName'),
     accountChips: document.getElementById('accountChips'),
     accountsList: document.getElementById('accountsList'),
@@ -58,6 +80,8 @@
     pixChargeQr: document.getElementById('pixChargeQr'),
     pixChargeCode: document.getElementById('pixChargeCode'),
     pixChargeCopy: document.getElementById('pixChargeCopy'),
+    pixChargeLink: document.getElementById('pixChargeLink'),
+    pixChargeLinkCopy: document.getElementById('pixChargeLinkCopy'),
     pixChargeTicket: document.getElementById('pixChargeTicket'),
     pixChargeStatus: document.getElementById('pixChargeStatus'),
     withdrawalForm: document.getElementById('withdrawalForm'),
@@ -248,6 +272,60 @@
 
   function formatDate(value) {
     return new Date(value).toLocaleString('pt-BR');
+  }
+
+  function formatShortDate(value) {
+    return new Date(value).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  function formatPercent(value, digits = 0) {
+    if (!Number.isFinite(value)) {
+      return '0%';
+    }
+    return `${value.toFixed(digits)}%`;
+  }
+
+  function startOfDay(value) {
+    const date = new Date(value);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+
+  function isSameDay(a, b) {
+    return startOfDay(a).getTime() === startOfDay(b).getTime();
+  }
+
+  function buildLinePath(values) {
+    if (!values.length) {
+      return '';
+    }
+    const maxValue = Math.max(...values, 1);
+    const step = values.length > 1 ? 100 / (values.length - 1) : 100;
+    return values
+      .map((value, index) => {
+        const x = step * index;
+        const y = 100 - (value / maxValue) * 100;
+        return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+      })
+      .join(' ');
+  }
+
+  function updateLineChart(values) {
+    if (!elements.salesChartLine || !elements.salesChartFill) {
+      return;
+    }
+    const path = buildLinePath(values);
+    if (!path) {
+      elements.salesChartLine.setAttribute('d', '');
+      elements.salesChartFill.setAttribute('d', '');
+      return;
+    }
+    elements.salesChartLine.setAttribute('d', path);
+    elements.salesChartFill.setAttribute('d', `${path} L 100 100 L 0 100 Z`);
   }
 
   function setPlanSelection(plan) {
@@ -670,6 +748,151 @@
     }
   }
 
+  function renderGatewayMetrics(charges) {
+    if (!charges || (!elements.metricSales && !elements.metricTicket && !elements.metricPixPaid)) {
+      return;
+    }
+
+    const now = new Date();
+    const start30 = new Date(now);
+    start30.setDate(start30.getDate() - 30);
+    const startPrev = new Date(now);
+    startPrev.setDate(startPrev.getDate() - 60);
+    const start7 = new Date(now);
+    start7.setDate(start7.getDate() - 6);
+    start7.setHours(0, 0, 0, 0);
+
+    const totalCharges = charges.length;
+    const paidCharges = charges.filter((charge) => charge.status === 'paid');
+    const pendingCharges = charges.filter((charge) =>
+      ['created', 'waiting_payment'].includes(charge.status)
+    );
+
+    const getChargeDate = (charge) => new Date(charge.paidAt || charge.createdAt || now);
+
+    const paidAmount30 = paidCharges.reduce((sum, charge) => {
+      const paidAt = getChargeDate(charge);
+      return paidAt >= start30 ? sum + Number(charge.amountCents || 0) : sum;
+    }, 0);
+    const prevAmount30 = paidCharges.reduce((sum, charge) => {
+      const paidAt = getChargeDate(charge);
+      return paidAt >= startPrev && paidAt < start30 ? sum + Number(charge.amountCents || 0) : sum;
+    }, 0);
+
+    const totalPaidAmount = paidCharges.reduce((sum, charge) => sum + Number(charge.amountCents || 0), 0);
+    const ticketAverage = paidCharges.length ? totalPaidAmount / paidCharges.length : 0;
+
+    const salesToday = paidCharges.reduce((sum, charge) => {
+      const paidAt = getChargeDate(charge);
+      return isSameDay(paidAt, now) ? sum + Number(charge.amountCents || 0) : sum;
+    }, 0);
+
+    const conversionPct = totalCharges ? (paidCharges.length / totalCharges) * 100 : 0;
+    const healthPct = Math.round(conversionPct);
+    const healthLabel =
+      healthPct >= 80 ? 'Excelente' : healthPct >= 60 ? 'Bom' : healthPct >= 40 ? 'Atenção' : 'Crítico';
+
+    const series = Array.from({ length: 7 }).map((_, index) => {
+      const day = new Date(start7);
+      day.setDate(start7.getDate() + index);
+      return paidCharges.reduce((sum, charge) => {
+        const paidAt = getChargeDate(charge);
+        return isSameDay(paidAt, day) ? sum + Number(charge.amountCents || 0) : sum;
+      }, 0);
+    });
+    const revenue7d = series.reduce((sum, value) => sum + value, 0);
+
+    if (elements.metricSales) {
+      elements.metricSales.textContent = formatCents(paidAmount30, 'BRL');
+    }
+    if (elements.metricSalesDelta) {
+      const delta =
+        prevAmount30 > 0 ? ((paidAmount30 - prevAmount30) / prevAmount30) * 100 : paidAmount30 > 0 ? 100 : 0;
+      const formatted = `${delta >= 0 ? '+' : ''}${delta.toFixed(0)}% vs mês anterior`;
+      elements.metricSalesDelta.textContent = formatted;
+    }
+    if (elements.metricTicket) {
+      elements.metricTicket.textContent = formatCents(ticketAverage, 'BRL');
+    }
+    if (elements.metricPixPaid) {
+      elements.metricPixPaid.textContent = paidCharges.length;
+    }
+    if (elements.metricSalesToday) {
+      elements.metricSalesToday.textContent = formatCents(salesToday, 'BRL');
+    }
+    if (elements.metricHealth) {
+      elements.metricHealth.textContent = healthLabel;
+    }
+    if (elements.metricHealthBar) {
+      elements.metricHealthBar.style.width = `${Math.min(100, Math.max(0, healthPct))}%`;
+    }
+    if (elements.metricHealthPct) {
+      elements.metricHealthPct.textContent = `${formatPercent(healthPct)} de pagamentos confirmados`;
+    }
+    if (elements.metricRevenue) {
+      elements.metricRevenue.textContent = formatCents(revenue7d, 'BRL');
+    }
+    if (elements.metricConversion) {
+      elements.metricConversion.textContent = formatPercent(healthPct);
+    }
+    if (elements.metricChargeTotal) {
+      elements.metricChargeTotal.textContent = totalCharges;
+    }
+    if (elements.metricChargePaid) {
+      elements.metricChargePaid.textContent = paidCharges.length;
+    }
+    if (elements.metricChargePending) {
+      elements.metricChargePending.textContent = pendingCharges.length;
+    }
+    if (elements.conversionDonut) {
+      const donutPct = Math.min(100, Math.max(0, Math.round(conversionPct)));
+      elements.conversionDonut.setAttribute('stroke-dasharray', `${donutPct} ${100 - donutPct}`);
+    }
+
+    updateLineChart(series);
+
+    if (elements.overviewRange) {
+      elements.overviewRange.textContent = `${formatShortDate(start30)} - ${formatShortDate(now)}`;
+    }
+    if (elements.transactionsRange) {
+      elements.transactionsRange.textContent = `${formatShortDate(start30)} - ${formatShortDate(now)}`;
+    }
+  }
+
+  function renderBalanceSummary(balance, withdrawals) {
+    if (!balance || (!elements.balanceAvailable && !elements.balanceReserve)) {
+      return;
+    }
+    const totalCents = Number(balance.total_cents ?? 0);
+    const availableCents =
+      balance.available_cents != null ? Number(balance.available_cents) : totalCents - Number(balance.hold_cents || 0);
+    const holdCents = Number(balance.hold_cents || 0);
+    const pendingInCents = Number(balance.pending_in_cents || 0);
+    const pendingOutCents =
+      Array.isArray(withdrawals) && withdrawals.length
+        ? withdrawals.reduce((sum, item) => {
+            if (item.status === 'requested' || item.status === 'processing') {
+              return sum + Number(item.amount_cents || 0);
+            }
+            return sum;
+          }, 0)
+        : holdCents;
+    const reserveCents = Math.max(0, holdCents - pendingOutCents);
+
+    if (elements.balanceAvailable) {
+      elements.balanceAvailable.textContent = formatCents(availableCents, 'BRL');
+    }
+    if (elements.balanceReserve) {
+      elements.balanceReserve.textContent = formatCents(reserveCents, 'BRL');
+    }
+    if (elements.balancePending) {
+      elements.balancePending.textContent = formatCents(pendingOutCents, 'BRL');
+    }
+    if (elements.balanceBlocked) {
+      elements.balanceBlocked.textContent = formatCents(pendingInCents, 'BRL');
+    }
+  }
+
   function renderAccounts(accounts) {
     if (!elements.accountsList && !elements.accountChips) {
       return;
@@ -684,26 +907,12 @@
       return;
     }
 
-      if (elements.accountsList) {
-        elements.accountsList.innerHTML = accounts
-          .map((account) => {
-            const canRemove = Number(account.balanceCents) === 0 && accounts.length > 1;
-            const title = canRemove
-              ? 'Remover conta'
-              : accounts.length <= 1
-              ? 'Conta principal obrigatória'
-              : 'Zere o saldo da conta antes de remover';
-            return `
-              <div class="list-item">
-                <div class="list-row">
-                  <strong>${account.name}</strong>
-                  <button class="btn btn-ghost btn-sm btn-danger btn-icon-only" type="button" data-action="delete-account" data-id="${
-                  account.id
-                }" ${canRemove ? '' : 'disabled'} title="${title}" aria-label="Remover conta">
-                  <span class="sr-only">Remover</span>
-                  <span class="btn-icon" aria-hidden="true">${trashIcon}</span>
-                </button>
-              </div>
+    if (elements.accountsList) {
+      elements.accountsList.innerHTML = accounts
+        .map((account) => {
+          return `
+            <div class="list-item">
+              <strong>${account.name}</strong>
               <div class="list-meta">
                 <span>${account.currency} - ${account.accountNumber}</span>
                 <strong>${formatCents(account.balanceCents, account.currency)}</strong>
@@ -726,55 +935,105 @@
       return;
     }
     if (!transactions.length) {
-      elements.transactionsList.innerHTML = '<div class="list-item">Nenhuma movimentação recente.</div>';
+      elements.transactionsList.innerHTML = '<div class="list-item">Nenhuma transação encontrada.</div>';
       return;
     }
 
-    elements.transactionsList.innerHTML = transactions
+    const fullView = elements.transactionsList.dataset.full === 'true';
+    const header = fullView
+      ? `
+        <div class="table-row table-header">
+          <span>Cliente</span>
+          <span>Pagamento</span>
+          <span>External ID / E2E</span>
+          <span>Gerada/Paga</span>
+          <span>Status</span>
+        </div>
+      `
+      : `
+        <div class="table-row table-header">
+          <span>Transação</span>
+          <span>Tipo</span>
+          <span>Valor</span>
+          <span>Data/Hora</span>
+          <span>Status</span>
+        </div>
+      `;
+
+    const rows = transactions
       .map((transaction) => {
         const label = labels[transaction.type] || transaction.type;
         const amount = formatCents(transaction.amountCents, 'BRL');
+        const status = String(transaction.status || 'completed');
+        const normalized = status.toLowerCase();
+        const statusClass =
+          normalized === 'completed' || normalized === 'paid'
+            ? 'paid'
+            : normalized === 'pending' || normalized === 'processing'
+            ? 'pending'
+            : 'failed';
+        const statusLabel =
+          normalized === 'completed' || normalized === 'paid'
+            ? 'Pago'
+            : normalized === 'pending' || normalized === 'processing'
+            ? 'Pendente'
+            : status;
+
+        if (fullView) {
+          const clientLabel = transaction.counterparty || 'Não informado';
+          const externalId =
+            (transaction.metadata && transaction.metadata.externalIdentifier) ||
+            (transaction.metadata && transaction.metadata.externalDocument) ||
+            transaction.id;
+          return `
+            <div class="table-row">
+              <span data-label="Cliente">
+                <strong>${clientLabel}</strong>
+                ${transaction.note ? `<span class="muted">${transaction.note}</span>` : ''}
+              </span>
+              <span data-label="Pagamento">
+                <strong>${amount}</strong>
+                <span class="muted">${label}</span>
+              </span>
+              <span data-label="External ID / E2E">
+                <strong>${externalId}</strong>
+                <span class="muted">Ref ${transaction.id}</span>
+              </span>
+              <span data-label="Gerada/Paga">${formatDate(transaction.createdAt)}</span>
+              <span data-label="Status"><span class="status-pill ${statusClass}">${statusLabel}</span></span>
+            </div>
+          `;
+        }
+
         const detailParts = [];
         if (transaction.counterparty) {
-          detailParts.push(`Contraparte: ${transaction.counterparty}`);
+          detailParts.push(transaction.counterparty);
         }
         if (transaction.note) {
-          detailParts.push(`Nota: ${transaction.note}`);
+          detailParts.push(transaction.note);
         }
-        const detailsLine = detailParts.join(' · ');
-
-        const metadata = transaction.metadata || {};
-        const metadataParts = [];
-        if (metadata.externalInstitution) {
-          metadataParts.push(`Banco: ${metadata.externalInstitution}`);
-        }
-        if (metadata.externalDocument) {
-          metadataParts.push(`Documento: ${metadata.externalDocument}`);
-        }
-        if (metadata.externalIdentifier) {
-          metadataParts.push(`Identificador: ${metadata.externalIdentifier}`);
-        }
-        const metadataLine = metadataParts.join(' · ');
+        const detailsLine = detailParts.join(' | ');
+        const title = transaction.counterparty || label;
 
         return `
-          <div class="list-item">
-            <strong>${label}</strong>
-            <div class="list-meta">
-              <span>${formatDate(transaction.createdAt)}</span>
-              <span>${amount}</span>
-            </div>
-            <div class="list-meta">
-              <span>Status: ${transaction.status}</span>
-            </div>
-            ${detailsLine ? `<div class="list-meta"><span>${detailsLine}</span></div>` : ''}
-            ${metadataLine ? `<div class="list-meta"><span>${metadataLine}</span></div>` : ''}
+          <div class="table-row">
+            <span data-label="Transação">
+              <strong>${title}</strong>
+              ${detailsLine ? `<span class="muted">${detailsLine}</span>` : ''}
+            </span>
+            <span data-label="Tipo">${label}</span>
+            <span data-label="Valor">${amount}</span>
+            <span data-label="Data/Hora">${formatDate(transaction.createdAt)}</span>
+            <span data-label="Status"><span class="status-pill ${statusClass}">${statusLabel}</span></span>
           </div>
         `;
       })
       .join('');
+
+    elements.transactionsList.innerHTML = header + rows;
   }
 
-    function renderPixKeys(keys) {
+function renderPixKeys(keys) {
     if (elements.pixKeysList) {
       if (!keys.length) {
         elements.pixKeysList.innerHTML = '<span class="pill">Sem chaves Pix</span>';
@@ -858,59 +1117,76 @@
     });
   }
 
-    function normalizePixCharge(raw) {
-      if (!raw) {
-        return null;
-      }
-      return {
-        id: raw.charge_id || raw.id,
-        amountCents: raw.amount_cents ?? raw.amountCents,
-        description: raw.description || '',
-        status: raw.status,
-        createdAt: raw.created_at || raw.createdAt,
-        txid: raw.txid || null,
-        payUrl: raw.pay_url || raw.payUrl || null
-      };
+  function normalizePixCharge(raw) {
+    if (!raw) {
+      return null;
+    }
+    return {
+      id: raw.charge_id || raw.id,
+      amountCents: raw.amount_cents ?? raw.amountCents,
+      description: raw.description || '',
+      status: raw.status,
+      createdAt: raw.created_at || raw.createdAt,
+      paidAt: raw.paid_at || raw.paidAt || null,
+      txid: raw.txid || null,
+      payUrl: raw.pay_url || raw.payUrl || null
+    };
+  }
+
+  function renderPixCharges(charges) {
+    if (!elements.pixChargesList) {
+      return;
+    }
+    if (!charges.length) {
+      elements.pixChargesList.innerHTML = '<div class="list-item">Nenhum link de pagamento criado.</div>';
+      return;
     }
 
-    function renderPixCharges(charges) {
-      if (!elements.pixChargesList) {
-        return;
-      }
-      if (!charges.length) {
-        elements.pixChargesList.innerHTML = '<div class="list-item">Nenhum link Pix criado.</div>';
-        return;
-      }
+    const header = `
+      <div class="table-row table-header">
+        <span>Nome do link</span>
+        <span>Preço</span>
+        <span>Vendas</span>
+        <span>Status</span>
+        <span>Ações</span>
+      </div>
+    `;
 
-      elements.pixChargesList.innerHTML = charges
-        .map((charge) => {
-          const statusLabel = pixStatusLabels[charge.status] || charge.status;
-          const statusClass =
-            charge.status === 'created' || charge.status === 'waiting_payment'
-              ? 'pending'
-              : charge.status === 'paid'
-              ? 'paid'
-              : 'failed';
-          return `
-            <div class="list-item">
-              <strong>${formatCents(charge.amountCents, 'BRL')}</strong>
-              <div class="list-meta">
-                <span>ID: ${charge.id}</span>
-                <span>${formatDate(charge.createdAt)}</span>
-              </div>
-              <div class="list-meta">
-                <span>${charge.description || 'Sem descri\u00E7\u00E3o'}</span>
-              </div>
-              <div class="list-meta">
-                <span class="status-pill ${statusClass}">${statusLabel}</span>
-              </div>
-            </div>
-          `;
-        })
-          .join('');
-    }
+    const rows = charges
+      .map((charge) => {
+        const statusLabel = pixStatusLabels[charge.status] || charge.status;
+        const statusClass =
+          charge.status === 'created' || charge.status === 'waiting_payment'
+            ? 'pending'
+            : charge.status === 'paid'
+            ? 'paid'
+            : 'failed';
+        const name = charge.description ? charge.description : 'Link sem nome';
+        const salesCount = charge.status === 'paid' ? 1 : 0;
+        const payUrl = charge.payUrl || '';
+        const actionMarkup = payUrl
+          ? `<button class="btn btn-ghost btn-sm" type="button" data-action="copy-link" data-link="${payUrl}">Copiar</button>`
+          : '<span class="muted">--</span>';
 
-    function renderWithdrawals(withdrawals) {
+        return `
+          <div class="table-row">
+            <span data-label="Nome do link">
+              <strong>${name}</strong>
+              <span class="muted">ID ${charge.id}</span>
+            </span>
+            <span data-label="Preço">${formatCents(charge.amountCents, 'BRL')}</span>
+            <span data-label="Vendas">${salesCount}</span>
+            <span data-label="Status"><span class="status-pill ${statusClass}">${statusLabel}</span></span>
+            <span data-label="Ações">${actionMarkup}</span>
+          </div>
+        `;
+      })
+      .join('');
+
+    elements.pixChargesList.innerHTML = header + rows;
+  }
+
+  function renderWithdrawals(withdrawals) {
       if (!elements.withdrawalsList) {
         return;
       }
@@ -919,7 +1195,16 @@
         return;
       }
 
-      elements.withdrawalsList.innerHTML = withdrawals
+      const header = `
+        <div class="table-row table-header">
+          <span>Valor</span>
+          <span>Chave Pix</span>
+          <span>Solicitado em</span>
+          <span>Status</span>
+        </div>
+      `;
+
+      const rows = withdrawals
         .map((withdrawal) => {
           const statusLabel = withdrawalStatusLabels[withdrawal.status] || withdrawal.status;
           const statusClass =
@@ -928,37 +1213,39 @@
               : withdrawal.status === 'paid'
               ? 'paid'
               : 'failed';
-          const keyLabel = `${formatPixKeyType(withdrawal.pix_key_type)}: ${withdrawal.pix_key}`;
-          const note = withdrawal.admin_note
-            ? `<div class="list-meta"><span>Observa\u00e7\u00e3o: ${withdrawal.admin_note}</span></div>`
-            : '';
+          const keyTypeLabel = formatPixKeyType(withdrawal.pix_key_type);
+          const requestedAt = withdrawal.requested_at ? formatDate(withdrawal.requested_at) : '--';
+          const note = withdrawal.admin_note ? `<span class="muted">Obs: ${withdrawal.admin_note}</span>` : '';
           const proof = withdrawal.proof_url
-            ? `<div class="list-meta"><a class="muted" href="${withdrawal.proof_url}" target="_blank" rel="noreferrer">Comprovante</a></div>`
+            ? `<a class="muted" href="${withdrawal.proof_url}" target="_blank" rel="noreferrer">Comprovante</a>`
             : '';
 
           return `
-              <div class="list-item">
+            <div class="table-row">
+              <span data-label="Valor">
                 <strong>${formatCents(withdrawal.amount_cents, 'BRL')}</strong>
-                <div class="list-meta">
-                  <span>ID: ${withdrawal.id}</span>
-                  <span>${withdrawal.requested_at ? formatDate(withdrawal.requested_at) : '--'}</span>
-                </div>
-                <div class="list-meta">
-                  <span>${keyLabel}</span>
-                </div>
-                <div class="list-meta">
-                  <span class="status-pill ${statusClass}">${statusLabel}</span>
-                </div>
+                <span class="muted">ID ${withdrawal.id}</span>
+              </span>
+              <span data-label="Chave Pix">
+                <strong>${keyTypeLabel}</strong>
+                <span class="muted">${withdrawal.pix_key}</span>
+              </span>
+              <span data-label="Solicitado em">${requestedAt}</span>
+              <span data-label="Status">
+                <span class="status-pill ${statusClass}">${statusLabel}</span>
                 ${note}
                 ${proof}
-              </div>
-            `;
+              </span>
+            </div>
+          `;
         })
         .join('');
+
+      elements.withdrawalsList.innerHTML = header + rows;
     }
 
 
-  function renderCards(cards) {
+function renderCards(cards) {
     if (!elements.cardsList && !elements.cardTxnForm) {
       return;
     }
@@ -1080,14 +1367,66 @@
     if (elements.transactionsList) {
       renderSkeleton(elements.transactionsList, 3);
     }
+
+    const needsBalanceSummary = Boolean(
+      elements.balanceAvailable ||
+        elements.balanceReserve ||
+        elements.balancePending ||
+        elements.balanceBlocked
+    );
+    const needsChargeMetrics = Boolean(
+      elements.metricSales ||
+        elements.metricTicket ||
+        elements.metricPixPaid ||
+        elements.metricRevenue ||
+        elements.metricConversion ||
+        elements.metricChargeTotal ||
+        elements.metricChargePaid ||
+        elements.metricChargePending ||
+        elements.salesChartLine
+    );
+    const needsFullTransactions = Boolean(
+      elements.transactionsList && elements.transactionsList.dataset.full === 'true'
+    );
+
     try {
-      const data = await apiRequest('/api/overview');
+      const overviewPromise = apiRequest('/api/overview');
+      const balancePromise = needsBalanceSummary
+        ? apiRequest('/v1/balance').catch(() => null)
+        : Promise.resolve(null);
+      const chargesPromise = needsChargeMetrics
+        ? apiRequest('/v1/charges?limit=50').catch(() => null)
+        : Promise.resolve(null);
+      const transactionsPromise = needsFullTransactions
+        ? apiRequest('/api/transactions?limit=50').catch(() => null)
+        : Promise.resolve(null);
+
+      const [data, balanceData, chargesData, transactionsData] = await Promise.all([
+        overviewPromise,
+        balancePromise,
+        chargesPromise,
+        transactionsPromise
+      ]);
+
       state.accounts = data.accounts || [];
-      state.transactions = data.recentTransactions || [];
+      state.transactions = needsFullTransactions && transactionsData
+        ? transactionsData.transactions || []
+        : data.recentTransactions || [];
+
       updateAccountSelects();
       renderAccounts(state.accounts);
       renderTransactions(state.transactions);
       renderMetrics(data.metrics || {});
+
+      if (chargesData && chargesData.charges) {
+        const normalized = chargesData.charges.map(normalizePixCharge).filter(Boolean);
+        renderGatewayMetrics(normalized);
+      }
+
+      if (balanceData && balanceData.balance) {
+        renderBalanceSummary(balanceData.balance, state.withdrawals);
+      }
+
       if (elements.pixKeysList && state.pixKeys.length) {
         renderPixKeys(state.pixKeys);
       } else {
@@ -1110,7 +1449,7 @@
     }
   }
 
-    async function loadPix() {
+async function loadPix() {
       if (
         !elements.pixKeysList &&
         !elements.pixChargesList &&
@@ -1132,7 +1471,7 @@
         } else {
           tasks.push(Promise.resolve({ keys: [] }));
         }
-        tasks.push(apiRequest('/v1/charges?limit=5'));
+        tasks.push(apiRequest('/v1/charges?limit=50'));
 
         const [keys, charges] = await Promise.all(tasks);
         state.pixKeys = keys.keys || [];
@@ -1402,6 +1741,22 @@
         elements.metricIncomeFull ||
         elements.metricSpendFull ||
         elements.metricCount ||
+        elements.metricSales ||
+        elements.metricTicket ||
+        elements.metricPixPaid ||
+        elements.metricSalesToday ||
+        elements.metricHealth ||
+        elements.metricRevenue ||
+        elements.metricConversion ||
+        elements.metricChargeTotal ||
+        elements.metricChargePaid ||
+        elements.metricChargePending ||
+        elements.overviewRange ||
+        elements.transactionsRange ||
+        elements.balanceAvailable ||
+        elements.balanceReserve ||
+        elements.balancePending ||
+        elements.balanceBlocked ||
         elements.pixTransferForm ||
         elements.pixChargeForm ||
         elements.cardForm
@@ -1809,6 +2164,13 @@
     if (elements.pixChargeCode && payload.qrCode) {
       elements.pixChargeCode.value = payload.qrCode;
     }
+    if (elements.pixChargeLink) {
+      const payUrl = payload.payUrl || '';
+      elements.pixChargeLink.value = payUrl;
+      if (elements.pixChargeLinkCopy) {
+        elements.pixChargeLinkCopy.disabled = !payUrl;
+      }
+    }
     if (elements.pixChargeTicket) {
       if (payload.ticketUrl) {
         elements.pixChargeTicket.href = payload.ticketUrl;
@@ -1864,7 +2226,7 @@
       delete payload.description;
     }
     if (!payload.amount) {
-      showToast('Informe o valor da cobran\u00E7a.', 'error');
+      showToast('Informe o valor do link.', 'error');
       return;
     }
     if (!payload.name || !payload.email || !payload.cpf) {
@@ -1908,6 +2270,7 @@
         body: JSON.stringify(chargePayload)
       });
       const chargeId = charge.charge_id;
+      const payUrl = charge.pay_url || charge.payUrl || `${window.location.origin}/pay/${chargeId}`;
       const payment = await apiRequest(
         `/api/public/charges/${encodeURIComponent(chargeId)}/create_payment`,
         {
@@ -1920,7 +2283,8 @@
       updatePixChargeOutput({
         qrCode: payment.qrCode,
         qrCodeBase64: payment.qrCodeBase64,
-        ticketUrl: payment.ticketUrl
+        ticketUrl: payment.ticketUrl,
+        payUrl
       });
       setPixChargeOutputVisible(true);
       if (elements.pixChargeStatus) {
@@ -1928,7 +2292,7 @@
       }
       pollPixChargeStatus(chargeId);
       await loadPix();
-      showToast('Cobran\u00E7a Pix gerada');
+      showToast('Link Pix gerado');
     } catch (err) {
       const messages = {
         mp_not_configured: 'Mercado Pago n\u00E3o configurado. Verifique o token.',
@@ -1944,12 +2308,12 @@
     } finally {
       if (submit) {
         submit.disabled = false;
-        submit.textContent = originalLabel || 'Gerar cobran\u00E7a Pix';
+        submit.textContent = originalLabel || 'Gerar link Pix';
       }
     }
   }
 
-    async function handlePixChargeAction(event) {
+  async function handlePixChargeAction(event) {
     const button = event.target.closest('button[data-action]');
     if (!button) {
       return;
@@ -2177,6 +2541,12 @@
       elements.pixChargeCopy.addEventListener('click', async () => {
         const ok = await copyToClipboard(elements.pixChargeCode ? elements.pixChargeCode.value : '');
         showToast(ok ? 'C\u00F3digo Pix copiado' : 'N\u00E3o foi poss\u00EDvel copiar o c\u00F3digo', ok ? 'info' : 'error');
+      });
+    }
+    if (elements.pixChargeLinkCopy) {
+      elements.pixChargeLinkCopy.addEventListener('click', async () => {
+        const ok = await copyToClipboard(elements.pixChargeLink ? elements.pixChargeLink.value : '');
+        showToast(ok ? 'Link copiado' : 'N\u00E3o foi poss\u00EDvel copiar o link', ok ? 'info' : 'error');
       });
     }
     if (elements.pixChargesList) {

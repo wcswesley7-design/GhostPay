@@ -18,7 +18,7 @@
       }
     </style>
     <meta name="description" content="GhostPay Gateway - movimentacoes" />
-    <title>GhostPay | Movimenta&ccedil;&otilde;es</title>
+    <title>GhostPay | Transa&ccedil;&otilde;es</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -68,8 +68,8 @@
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Gateway GhostPay</p>
-            <h1 id="welcomeTitle">Movimenta&ccedil;&otilde;es e extratos em tempo real.</h1>
-            <p class="lead">Registre transfer&ecirc;ncias internas e acompanhe cada entrada e sa&iacute;da.</p>
+            <h1 id="welcomeTitle">Transa&ccedil;&otilde;es e extratos em tempo real.</h1>
+            <p class="lead">Acompanhe cobran&ccedil;as Pix, taxas e saques processados no gateway.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="/pricing">Ver plano</a>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
@@ -226,7 +226,7 @@
                         <use href="/assets/icons.svg#icon-wallet"></use>
                       </svg>
                     </span>
-                    <span>Saldo e contas</span>
+                    <span>Saldo</span>
                   </a>
                   <a class="pill" href="/console/movimentacoes" aria-current="page">
                     <span class="pill-icon" aria-hidden="true">
@@ -234,22 +234,14 @@
                         <use href="/assets/icons.svg#icon-chart"></use>
                       </svg>
                     </span>
-                    <span>Movimenta&ccedil;&otilde;es</span>
+                    <span>Transa&ccedil;&otilde;es</span>
                   </a>
                 </div>
                 <div class="nav-group">
                   <span class="nav-group-title">Pagamentos</span>
                   <a class="pill" href="/console/pix">
                     <span class="pill-icon pill-icon--pix" aria-hidden="true"></span>
-                    <span>Cobran&ccedil;as Pix</span>
-                  </a>
-                  <a class="pill" href="/console/cartoes">
-                    <span class="pill-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="/assets/icons.svg#icon-card"></use>
-                      </svg>
-                    </span>
-                    <span>Cart&otilde;es</span>
+                    <span>Link de pagamento</span>
                   </a>
                 </div>
               </nav>
@@ -259,64 +251,39 @@
 
           <div class="console-main">
             <section class="section" id="movements" data-reveal>
-              <div class="section-head section-head--inline">
+              <div class="dashboard-header">
                 <div>
-                  <h2>Movimenta&ccedil;&otilde;es</h2>
-                  <p class="lead">Registre transfer&ecirc;ncias internas e acompanhe os extratos.</p>
+                  <h2>Transa&ccedil;&otilde;es</h2>
+                  <p class="lead">Hist&oacute;rico de cobran&ccedil;as, taxas e saques do gateway.</p>
                 </div>
-                <button class="btn btn-ghost" type="button" id="refreshTransactions">Atualizar lista</button>
+                <div class="dashboard-actions">
+                  <button class="btn btn-ghost btn-sm" type="button" id="refreshTransactions">Atualizar</button>
+                  <div class="date-pill">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-calendar"></use>
+                      </svg>
+                    </span>
+                    <span id="transactionsRange">--</span>
+                  </div>
+                </div>
               </div>
-              <div class="grid-2">
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Nova movimenta&ccedil;&atilde;o</h3>
-                    <span class="tag">Opera&ccedil;&atilde;o</span>
+              <div class="card">
+                <div class="table-toolbar">
+                  <div class="table-search">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-search"></use>
+                      </svg>
+                    </span>
+                    <input type="search" placeholder="Buscar transa&ccedil;&atilde;o..." />
                   </div>
-                  <p class="muted">Registre transfer&ecirc;ncias internas e pagamentos. Para Pix, use a se&ccedil;&atilde;o Pix.</p>
-                  <form class="form" id="transactionForm">
-                    <label>
-                      Tipo
-                      <select name="type" required>
-                        <option value="deposit">Dep&oacute;sito</option>
-                        <option value="transfer">Transfer&ecirc;ncia</option>
-                        <option value="payment">Pagamento</option>
-                      </select>
-                    </label>
-                    <label>
-                      Valor
-                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
-                    </label>
-                    <label>
-                      Conta de d&eacute;bito
-                      <select name="fromAccountId"></select>
-                    </label>
-                    <label>
-                      Conta de cr&eacute;dito
-                      <select name="toAccountId"></select>
-                    </label>
-                    <label>
-                      Benefici&aacute;rio
-                      <input type="text" name="counterparty" placeholder="Nome do benefici&aacute;rio" />
-                    </label>
-                    <label>
-                      Identificador do pagamento (linha digit&aacute;vel/ID)
-                      <input type="text" name="externalIdentifier" placeholder="Ex: 23793.38127..." />
-                    </label>
-                    <label>
-                      Descri&ccedil;&atilde;o
-                      <input type="text" name="note" placeholder="Opcional" />
-                    </label>
-                    <button class="btn btn-primary" type="submit">Enviar</button>
-                  </form>
-                </div>
-
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Extratos</h3>
-                    <span class="tag">Resumo</span>
+                  <div class="toolbar-actions">
+                    <button class="btn btn-ghost btn-sm" type="button">Filtrar</button>
+                    <button class="btn btn-ghost btn-sm" type="button">Exportar</button>
                   </div>
-                  <div class="list" id="transactionsList"></div>
                 </div>
+                <div class="data-table data-table--transactions" id="transactionsList" data-full="true"></div>
               </div>
             </section>
           </div>
