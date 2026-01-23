@@ -1117,6 +1117,11 @@ html[data-theme='light'] .topbar.is-scrolled {
   grid-template-columns: var(--table-cols);
 }
 
+.data-table--links .table-row > :last-child,
+.data-table--links .table-header > :last-child {
+  justify-self: end;
+}
+
 .table-cell {
   font-size: 0.9rem;
   color: var(--text);
@@ -1124,6 +1129,29 @@ html[data-theme='light'] .topbar.is-scrolled {
 
 .table-cell .muted {
   font-size: 0.78rem;
+}
+
+.link-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.link-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.16);
+  color: var(--accent);
+}
+
+.link-icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 .input-group {
@@ -1965,6 +1993,19 @@ html[data-theme='light'] .banner {
   gap: 12px;
   transform: translateY(8px) scale(0.98);
   transition: transform 0.2s ease;
+}
+
+.modal--wide {
+  width: min(720px, 94vw);
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .modal-backdrop.is-visible .modal {

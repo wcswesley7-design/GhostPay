@@ -69,7 +69,7 @@
           <div class="hero-copy">
             <p class="eyebrow">Gateway GhostPay</p>
             <h1 id="welcomeTitle">Links de pagamento Pix para vender com rapidez.</h1>
-            <p class="lead">Crie links, acompanhe vendas em tempo real e solicite saques quando precisar.</p>
+            <p class="lead">Crie links, acompanhe vendas em tempo real e organize seus recebimentos.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="/pricing">Ver plano</a>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
@@ -167,9 +167,9 @@
                 </div>
               </div>
               <div class="list-item">
-                <strong>Saques sob controle</strong>
+                <strong>Repasses organizados</strong>
                 <div class="list-meta">
-                  <span>Fluxo de aprova&ccedil;&atilde;o para opera&ccedil;&otilde;es.</span>
+                  <span>Fluxo claro para seus recebimentos.</span>
                 </div>
               </div>
             </div>
@@ -257,139 +257,112 @@
                   <p class="lead">Crie links Pix para seus produtos e acompanhe as vendas em tempo real.</p>
                 </div>
                 <div class="dashboard-actions">
-                  <button class="btn btn-ghost btn-sm" type="button" id="refreshPix">Atualizar</button>
-                  <a class="btn btn-primary btn-sm" href="#linkForm">Novo link</a>
+                  <button class="btn btn-primary btn-sm" type="button" id="openLinkModal">
+                    <span class="btn-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-plus"></use>
+                      </svg>
+                    </span>
+                    Novo Link
+                  </button>
                 </div>
               </div>
 
-              <div class="grid-2 link-layout">
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Links de pagamento</h3>
-                    <span class="tag">Pix</span>
-                  </div>
-                  <div class="table-toolbar">
-                    <div class="table-search">
-                      <span class="pill-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <use href="/assets/icons.svg#icon-search"></use>
-                        </svg>
-                      </span>
-                      <input type="search" placeholder="Procurar pelo nome do link" />
-                    </div>
-                    <button class="btn btn-ghost btn-sm" type="button" id="refreshCharges">Atualizar</button>
-                  </div>
-                  <div class="data-table data-table--links" id="pixChargesList"></div>
+              <div class="card">
+                <div class="card-head">
+                  <h3>Links de pagamento</h3>
                 </div>
-
-                <div class="card" id="linkForm">
-                  <div class="card-head">
-                    <h3>Novo link</h3>
-                    <span class="tag">Produto</span>
-                  </div>
-                  <p class="muted">Defina o produto e gere o QR Code com copia e cola.</p>
-                  <form class="form" id="pixChargeForm">
-                    <label>
-                      Nome do link
-                      <input type="text" name="description" placeholder="Ex: Assinatura Infinity" />
-                    </label>
-                    <label>
-                      Pre&ccedil;o
-                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
-                    </label>
-                    <div class="card-subhead">
-                      <strong>Dados do pagador</strong>
-                    </div>
-                    <label>
-                      Nome completo
-                      <input type="text" name="name" placeholder="Nome e sobrenome" required />
-                    </label>
-                    <label>
-                      Email
-                      <input type="email" name="email" placeholder="seu@email.com" required />
-                    </label>
-                    <label>
-                      CPF
-                      <input type="text" name="cpf" placeholder="000.000.000-00" inputmode="numeric" required />
-                    </label>
-                    <label>
-                      Celular
-                      <input type="tel" name="phone" placeholder="(11) 90000-0000" inputmode="numeric" />
-                    </label>
-                    <button class="btn btn-primary" type="submit">Gerar link Pix</button>
-                  </form>
-                  <div class="pix-output hidden" id="pixChargeOutput">
-                    <div class="pix-grid">
-                      <div class="pix-qr">
-                        <img id="pixChargeQr" alt="QR Code Pix" />
-                      </div>
-                      <div class="pix-details">
-                        <label>
-                          C&oacute;digo Pix
-                          <textarea id="pixChargeCode" readonly></textarea>
-                        </label>
-                        <label>
-                          Link de pagamento
-                          <div class="input-group">
-                            <input id="pixChargeLink" type="text" readonly />
-                            <button class="btn btn-ghost btn-sm" type="button" id="pixChargeLinkCopy">Copiar link</button>
-                          </div>
-                        </label>
-                        <div class="pix-actions">
-                          <button class="btn btn-ghost" type="button" id="pixChargeCopy">Copiar c&oacute;digo</button>
-                          <a class="btn btn-primary hidden" id="pixChargeTicket" href="#" target="_blank" rel="noreferrer">
-                            Abrir no Mercado Pago
-                          </a>
-                        </div>
-                        <div class="muted" id="pixChargeStatus"></div>
-                      </div>
-                    </div>
+                <div class="table-toolbar">
+                  <div class="table-search">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-search"></use>
+                      </svg>
+                    </span>
+                    <input type="search" placeholder="Procurar pelo nome do link" />
                   </div>
                 </div>
-              </div>
-
-              <div class="grid-2">
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Solicitar saque</h3>
-                    <span class="tag">Sa&iacute;da</span>
-                  </div>
-                  <p class="muted">Informe a chave Pix do titular para receber o valor.</p>
-                  <form class="form" id="withdrawalForm">
-                    <label>
-                      Valor
-                      <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
-                    </label>
-                    <label>
-                      Tipo de chave
-                      <select name="pix_key_type" required>
-                        <option value="cpf">CPF</option>
-                        <option value="email">E-mail</option>
-                        <option value="phone">Celular</option>
-                        <option value="random">Chave aleat&oacute;ria</option>
-                      </select>
-                    </label>
-                    <label>
-                      Chave Pix
-                      <input type="text" name="pix_key" placeholder="Informe a chave" required />
-                    </label>
-                    <button class="btn btn-primary" type="submit">Solicitar saque</button>
-                  </form>
-                  <div class="muted">Saques s&atilde;o processados manualmente ap&oacute;s an&aacute;lise.</div>
-                </div>
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Hist&oacute;rico de saques</h3>
-                    <button class="btn btn-ghost btn-sm" type="button" id="refreshWithdrawals">Atualizar</button>
-                  </div>
-                  <div class="data-table data-table--withdrawals" id="withdrawalsList"></div>
-                </div>
+                <div class="data-table data-table--links" id="pixChargesList"></div>
               </div>
             </section>
           </div>
         </div>
       </section>
     </main>
+
+    <div class="modal-backdrop" id="linkModal" aria-hidden="true">
+      <div class="modal modal--wide" role="dialog" aria-modal="true" aria-labelledby="linkModalTitle">
+        <div class="modal-header">
+          <h3 class="modal-title" id="linkModalTitle">Novo link</h3>
+          <button class="btn btn-ghost btn-icon-only" type="button" data-link-modal-close aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <use href="/assets/icons.svg#icon-close"></use>
+            </svg>
+          </button>
+        </div>
+        <p class="muted">Defina o produto e gere o QR Code com copia e cola.</p>
+        <form class="form" id="pixChargeForm">
+          <label>
+            Nome do link
+            <input type="text" name="description" placeholder="Ex: Assinatura Infinity" />
+          </label>
+          <label>
+            Pre&ccedil;o
+            <input type="number" name="amount" placeholder="0.00" min="0" step="0.01" required />
+          </label>
+          <div class="card-subhead">
+            <strong>Dados do pagador</strong>
+          </div>
+          <label>
+            Nome completo
+            <input type="text" name="name" placeholder="Nome e sobrenome" required />
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" placeholder="seu@email.com" required />
+          </label>
+          <label>
+            CPF
+            <input type="text" name="cpf" placeholder="000.000.000-00" inputmode="numeric" required />
+          </label>
+          <label>
+            Celular
+            <input type="tel" name="phone" placeholder="(11) 90000-0000" inputmode="numeric" />
+          </label>
+          <button class="btn btn-primary" type="submit">Gerar link Pix</button>
+        </form>
+        <div class="pix-output hidden" id="pixChargeOutput">
+          <div class="pix-grid">
+            <div class="pix-qr">
+              <img id="pixChargeQr" alt="QR Code Pix" />
+            </div>
+            <div class="pix-details">
+              <label>
+                C&oacute;digo Pix
+                <textarea id="pixChargeCode" readonly></textarea>
+              </label>
+              <label>
+                Link de pagamento
+                <div class="input-group">
+                  <input id="pixChargeLink" type="text" readonly />
+                  <button class="btn btn-ghost btn-sm" type="button" id="pixChargeLinkCopy">Copiar link</button>
+                </div>
+              </label>
+              <div class="pix-actions">
+                <button class="btn btn-ghost" type="button" id="pixChargeCopy">Copiar c&oacute;digo</button>
+                <a class="btn btn-primary hidden" id="pixChargeTicket" href="#" target="_blank" rel="noreferrer">
+                  Abrir no Mercado Pago
+                </a>
+              </div>
+              <div class="muted" id="pixChargeStatus"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-link-modal-close>Fechar</button>
+        </div>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="container footer-grid">

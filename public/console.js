@@ -84,6 +84,8 @@
     pixChargeLinkCopy: document.getElementById('pixChargeLinkCopy'),
     pixChargeTicket: document.getElementById('pixChargeTicket'),
     pixChargeStatus: document.getElementById('pixChargeStatus'),
+    linkModal: document.getElementById('linkModal'),
+    openLinkModal: document.getElementById('openLinkModal'),
     withdrawalForm: document.getElementById('withdrawalForm'),
     withdrawalsList: document.getElementById('withdrawalsList'),
     cardsList: document.getElementById('cardsList'),
@@ -609,6 +611,28 @@
       cancelModal.resolve(result);
       cancelModal.resolve = null;
     }
+  }
+
+  function openLinkModal() {
+    if (!elements.linkModal) {
+      return;
+    }
+    if (elements.pixChargeOutput) {
+      elements.pixChargeOutput.classList.add('hidden');
+    }
+    if (elements.pixChargeStatus) {
+      elements.pixChargeStatus.textContent = '';
+    }
+    elements.linkModal.classList.add('is-visible');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeLinkModal() {
+    if (!elements.linkModal) {
+      return;
+    }
+    elements.linkModal.classList.remove('is-visible');
+    document.body.classList.remove('modal-open');
   }
 
   async function apiRequest(path, options = {}) {
@@ -1145,10 +1169,10 @@ function renderPixKeys(keys) {
     const header = `
       <div class="table-row table-header">
         <span>Nome do link</span>
-        <span>Preço</span>
+        <span>Pre&ccedil;o</span>
         <span>Vendas</span>
         <span>Status</span>
-        <span>Ações</span>
+        <span></span>
       </div>
     `;
 
@@ -1165,19 +1189,29 @@ function renderPixKeys(keys) {
         const salesCount = charge.status === 'paid' ? 1 : 0;
         const payUrl = charge.payUrl || '';
         const actionMarkup = payUrl
-          ? `<button class="btn btn-ghost btn-sm" type="button" data-action="copy-link" data-link="${payUrl}">Copiar</button>`
+          ? `<button class="btn btn-ghost btn-icon-only" type="button" data-action="copy-link" data-link="${payUrl}" aria-label="Copiar link">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <use href="/assets/icons.svg#icon-more"></use>
+              </svg>
+            </button>`
           : '<span class="muted">--</span>';
 
         return `
           <div class="table-row">
             <span data-label="Nome do link">
-              <strong>${name}</strong>
-              <span class="muted">ID ${charge.id}</span>
+              <span class="link-name">
+                <span class="link-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="/assets/icons.svg#icon-link"></use>
+                  </svg>
+                </span>
+                <span>${name}</span>
+              </span>
             </span>
-            <span data-label="Preço">${formatCents(charge.amountCents, 'BRL')}</span>
+            <span data-label="Pre&ccedil;o">${formatCents(charge.amountCents, 'BRL')}</span>
             <span data-label="Vendas">${salesCount}</span>
             <span data-label="Status"><span class="status-pill ${statusClass}">${statusLabel}</span></span>
-            <span data-label="Ações">${actionMarkup}</span>
+            <span data-label="A&ccedil;&otilde;es">${actionMarkup}</span>
           </div>
         `;
       })
@@ -2552,6 +2586,19 @@ async function loadPix() {
     if (elements.pixChargesList) {
       elements.pixChargesList.addEventListener('click', handlePixChargeAction);
     }
+    if (elements.openLinkModal) {
+      elements.openLinkModal.addEventListener('click', openLinkModal);
+    }
+    if (elements.linkModal) {
+      elements.linkModal.addEventListener('click', (event) => {
+        if (event.target === elements.linkModal) {
+          closeLinkModal();
+        }
+      });
+      elements.linkModal.querySelectorAll('[data-link-modal-close]').forEach((button) => {
+        button.addEventListener('click', closeLinkModal);
+      });
+    }
     if (elements.withdrawalForm) {
       elements.withdrawalForm.addEventListener('submit', handleWithdrawalCreate);
     }
@@ -2655,6 +2702,9 @@ async function loadPix() {
 
     updateTransactionFields();
     updatePixKeyField();
+    if (window.location.hash === '#linkForm') {
+      openLinkModal();
+    }
 
     if (state.token) {
       const decoded = decodeToken(state.token);

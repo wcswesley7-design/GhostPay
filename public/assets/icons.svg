@@ -117,4 +117,29 @@
       <path d="M3 9h18" />
     </g>
   </symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14" />
+      <path d="M5 12h14" />
+    </g>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 6l12 12" />
+      <path d="M18 6l-12 12" />
+    </g>
+  </symbol>
+  <symbol id="icon-more" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="6" r="1.5" />
+      <circle cx="12" cy="12" r="1.5" />
+      <circle cx="12" cy="18" r="1.5" />
+    </g>
+  </symbol>
+  <symbol id="icon-link" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 13a4 4 0 0 1 0-6l2-2a4 4 0 1 1 6 6l-1.5 1.5" />
+      <path d="M14 11a4 4 0 0 1 0 6l-2 2a4 4 0 1 1-6-6l1.5-1.5" />
+    </g>
+  </symbol>
 </svg>
