@@ -94,7 +94,7 @@ const pageRoutes = {
   '/platform': 'platform.html',
   '/security': 'security.html',
   '/empresa': 'empresa.html',
-  '/developers': 'empresa.html',
+  '/developers': 'developers.html',
   '/pricing': 'pricing.html',
   '/assinatura': 'assinatura.html',
   '/support': 'support.html',

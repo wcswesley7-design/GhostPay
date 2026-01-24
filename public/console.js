@@ -2247,38 +2247,6 @@ async function loadPix() {
     }
   }
 
-  async function handleAccountAction(event) {
-    const button = event.target.closest('button[data-action="delete-account"]');
-    if (!button) {
-      return;
-    }
-    const accountId = button.dataset.id;
-    if (!accountId) {
-      return;
-    }
-    const account = state.accounts.find((item) => item.id === accountId);
-    const accountName = account ? account.name : 'esta conta';
-    const confirmed = await openConfirmModal({
-      title: 'Remover conta',
-      message: `Remover ${accountName}? Esta ação não pode ser desfeita.`,
-      confirmText: 'Remover',
-      cancelText: 'Cancelar'
-    });
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      await apiRequest(`/api/accounts/${accountId}`, {
-        method: 'DELETE'
-      });
-      await loadOverview();
-      showToast('Conta removida');
-    } catch (err) {
-      showToast(err.message, 'error');
-    }
-  }
-
   async function handleTransaction(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.transactionForm).entries());
@@ -2905,9 +2873,6 @@ async function loadPix() {
     }
     if (elements.accountForm) {
       elements.accountForm.addEventListener('submit', handleAccountCreate);
-    }
-    if (elements.accountsList) {
-      elements.accountsList.addEventListener('click', handleAccountAction);
     }
     if (elements.transactionForm) {
       elements.transactionForm.addEventListener('submit', handleTransaction);

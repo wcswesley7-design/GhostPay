@@ -47,7 +47,7 @@ Set `NODE_ENV=development` to keep demo and sandbox endpoints enabled.
 Set `DOCK_MODE=local` to keep the local sandbox. When you receive Dock credentials, set `DOCK_MODE=dock`
 and fill the `DOCK_*` variables in `.env`.
 Set `APP_BASE_URL` to your public domain when running in production (used for Mercado Pago return URLs).
-Set `MP_ACCESS_TOKEN` to enable Mercado Pago subscription checkout.
+Set `MP_ACCESS_TOKEN` to enable Mercado Pago Pix checkout for subscription activation.
 Set `MP_WEBHOOK_SECRET` to enable Mercado Pago webhook signature validation.
 Set `ADMIN_API_KEY` to allow admin operations on manual withdrawals.
 

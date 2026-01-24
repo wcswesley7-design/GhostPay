@@ -193,7 +193,7 @@ router.post('/demo', async (req, res) => {
         );
         await client.query(
           'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-          [primaryId, userId, 'Primary Wallet', 'BRL', 125000, primaryNum, now]
+          [primaryId, userId, 'Primary Wallet', 'BRL', 155000, primaryNum, now]
         );
         await client.query(
           'INSERT INTO transactions (id, user_id, type, amount_cents, from_account_id, to_account_id, counterparty, note, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',

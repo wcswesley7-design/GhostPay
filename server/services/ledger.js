@@ -8,6 +8,10 @@ async function getAccountForUpdate(client, accountId, userId) {
   return result.rows[0] || null;
 }
 
+function getAvailableBalance(account) {
+  return Number(account.balance_cents || 0) - Number(account.hold_cents || 0);
+}
+
 async function insertLedgerEntry(client, entry) {
   await client.query(
     `INSERT INTO ledger_entries (
@@ -170,7 +174,7 @@ async function recordTransaction(client, payload) {
       transactionId,
       direction: 'debit',
       amountCents,
-      balanceAfterCents: updatedFrom.balance_cents,
+      balanceAfterCents: getAvailableBalance(updatedFrom),
       memo: note || null,
       createdAt: now
     });
@@ -184,7 +188,7 @@ async function recordTransaction(client, payload) {
       transactionId,
       direction: 'credit',
       amountCents,
-      balanceAfterCents: updatedTo.balance_cents,
+      balanceAfterCents: getAvailableBalance(updatedTo),
       memo: note || null,
       createdAt: now
     });
