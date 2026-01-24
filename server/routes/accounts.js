@@ -103,7 +103,7 @@ router.delete('/:id', async (req, res) => {
         (SELECT COUNT(*) FROM transactions WHERE user_id = $1 AND (from_account_id = $2 OR to_account_id = $2)) AS transaction_count,
         (SELECT COUNT(*) FROM ledger_entries WHERE account_id = $2) AS ledger_count,
         (SELECT COUNT(*) FROM pix_keys WHERE account_id = $2 AND status = 'active') AS pix_key_count,
-        (SELECT COUNT(*) FROM pix_charges WHERE account_id = $2) AS pix_charge_count,
+        (SELECT COUNT(*) FROM pix_charges WHERE account_id = $2 AND archived_at IS NULL) AS pix_charge_count,
         (SELECT COUNT(*) FROM pix_transfers WHERE account_id = $2) AS pix_transfer_count,
         (SELECT COUNT(*) FROM cards WHERE billing_account_id = $2) AS card_count,
         (SELECT COUNT(*) FROM card_transactions WHERE account_id = $2) AS card_txn_count`,

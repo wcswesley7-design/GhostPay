@@ -18,6 +18,15 @@ const createChargeSchema = z.object({
   description: z.string().max(140).optional()
 });
 
+const updateChargeSchema = z
+  .object({
+    amount: z.union([z.string(), z.number()]).optional(),
+    description: z.string().max(140).optional()
+  })
+  .refine((data) => data.amount != null || data.description != null, {
+    message: 'Nothing to update'
+  });
+
 function buildPayUrl(chargeId) {
   const baseUrl = config.appBaseUrl.replace(/\/+$/, '');
   return `${baseUrl}/pay/${chargeId}`;
@@ -32,7 +41,7 @@ router.get('/charges', async (req, res) => {
       `SELECT id, amount_cents, description, status, provider_payment_id, provider_status,
               qr_payload, qr_code_base64, ticket_url, paid_at, expires_at, created_at
        FROM pix_charges
-       WHERE user_id = $1 AND provider = 'mercadopago'
+       WHERE user_id = $1 AND provider = 'mercadopago' AND archived_at IS NULL
        ORDER BY created_at DESC
        LIMIT $2`,
       [req.user.id, limit]
@@ -119,7 +128,7 @@ router.get('/charges/:id', async (req, res) => {
       `SELECT id, amount_cents, description, status, provider_payment_id, provider_status,
               qr_payload, qr_code_base64, ticket_url, paid_at, expires_at, created_at
        FROM pix_charges
-       WHERE id = $1 AND user_id = $2`,
+       WHERE id = $1 AND user_id = $2 AND archived_at IS NULL`,
       [req.params.id, req.user.id]
     );
     const charge = result.rows[0];
@@ -146,6 +155,120 @@ router.get('/charges/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Unable to load charge' });
+  }
+});
+
+router.patch('/charges/:id', validateBody(updateChargeSchema), async (req, res) => {
+  const chargeId = req.params.id;
+  const updates = {};
+
+  if (req.body.amount != null) {
+    const amountCents = parseAmountToCents(req.body.amount);
+    if (!amountCents || amountCents <= 0) {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
+    updates.amount_cents = amountCents;
+  }
+
+  if (req.body.description != null) {
+    const trimmed = String(req.body.description).trim();
+    updates.description = trimmed ? trimmed : null;
+  }
+
+  try {
+    const chargeResult = await pool.query(
+      `SELECT id, status, provider_payment_id, amount_cents, description
+       FROM pix_charges
+       WHERE id = $1 AND user_id = $2 AND archived_at IS NULL`,
+      [chargeId, req.user.id]
+    );
+    const charge = chargeResult.rows[0];
+    if (!charge) {
+      return res.status(404).json({ error: 'Charge not found' });
+    }
+    if (charge.status === 'paid' || charge.provider_payment_id) {
+      return res.status(409).json({ error: 'Charge cannot be edited' });
+    }
+
+    const nextAmount = updates.amount_cents != null ? updates.amount_cents : charge.amount_cents;
+    const nextDescription = Object.prototype.hasOwnProperty.call(updates, 'description')
+      ? updates.description
+      : charge.description;
+
+    const updateResult = await pool.query(
+      `UPDATE pix_charges
+       SET amount_cents = $1,
+           description = $2
+       WHERE id = $3 AND user_id = $4 AND archived_at IS NULL
+       RETURNING id, amount_cents, description, status, created_at`,
+      [nextAmount, nextDescription, chargeId, req.user.id]
+    );
+
+    const updated = updateResult.rows[0];
+    return res.json({
+      charge: {
+        charge_id: updated.id,
+        amount_cents: updated.amount_cents,
+        description: updated.description,
+        status: updated.status,
+        created_at: updated.created_at,
+        pay_url: buildPayUrl(updated.id)
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Unable to update charge' });
+  }
+});
+
+router.post('/charges/:id/inactivate', async (req, res) => {
+  const chargeId = req.params.id;
+  try {
+    const chargeResult = await pool.query(
+      `SELECT id, status
+       FROM pix_charges
+       WHERE id = $1 AND user_id = $2 AND archived_at IS NULL`,
+      [chargeId, req.user.id]
+    );
+    const charge = chargeResult.rows[0];
+    if (!charge) {
+      return res.status(404).json({ error: 'Charge not found' });
+    }
+    if (charge.status === 'paid') {
+      return res.status(409).json({ error: 'Charge cannot be inactivated' });
+    }
+
+    const result = await pool.query(
+      `UPDATE pix_charges
+       SET status = 'canceled'
+       WHERE id = $1 AND user_id = $2 AND archived_at IS NULL
+       RETURNING id, status`,
+      [chargeId, req.user.id]
+    );
+    return res.json({ charge: { charge_id: result.rows[0].id, status: result.rows[0].status } });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Unable to inactivate charge' });
+  }
+});
+
+router.delete('/charges/:id', async (req, res) => {
+  const chargeId = req.params.id;
+  try {
+    const result = await pool.query(
+      `UPDATE pix_charges
+       SET archived_at = NOW()
+       WHERE id = $1 AND user_id = $2 AND archived_at IS NULL
+       RETURNING id`,
+      [chargeId, req.user.id]
+    );
+    if (!result.rows[0]) {
+      return res.status(404).json({ error: 'Charge not found' });
+    }
+    return res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Unable to delete charge' });
   }
 });
 

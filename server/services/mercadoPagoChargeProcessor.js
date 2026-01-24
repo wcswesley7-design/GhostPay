@@ -31,6 +31,7 @@ async function updateChargeFromPayment(payment) {
       `SELECT *
        FROM pix_charges
        WHERE provider = 'mercadopago'
+         AND archived_at IS NULL
          AND (id = $1 OR external_reference = $1 OR provider_payment_id = $2)
        FOR UPDATE`,
       [externalReference, paymentId]

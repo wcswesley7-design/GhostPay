@@ -22,7 +22,7 @@ router.get('/:id', async (req, res) => {
       `SELECT id, amount_cents, description, status, qr_payload, qr_code_base64, ticket_url, provider_payment_id, provider_status, provider,
               expires_at, created_at, paid_at
        FROM pix_charges
-       WHERE id = $1`,
+       WHERE id = $1 AND archived_at IS NULL`,
       [req.params.id]
     );
     const charge = result.rows[0];
@@ -58,7 +58,7 @@ router.post('/:id/create_payment', validateBody(createPaymentSchema), async (req
     const chargeResult = await pool.query(
       `SELECT id, user_id, account_id, amount_cents, description, status, provider_payment_id, qr_payload, qr_code_base64, ticket_url, provider
        FROM pix_charges
-       WHERE id = $1`,
+       WHERE id = $1 AND archived_at IS NULL`,
       [chargeId]
     );
     const charge = chargeResult.rows[0];

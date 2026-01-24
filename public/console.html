@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
@@ -17,7 +17,7 @@
         display: grid !important;
       }
     </style>
-    <meta name="description" content="GhostPay Gateway - painel do merchant" />
+    <meta name="description" content="GhostPay Gateway - painel do Conta" />
     <title>GhostPay | Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -56,7 +56,6 @@
         </nav>
 
         <div class="topbar-actions">
-          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
           <button class="btn btn-ghost hidden" type="button" id="logoutBtn">Sair</button>
           <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
         </div>
@@ -120,7 +119,7 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-head">
-              <h3>Acesso do merchant</h3>
+              <h3>Acesso da conta</h3>
               <span class="tag">Gateway</span>
             </div>
             <div class="tab-group">
@@ -197,12 +196,12 @@
           <aside class="console-sidebar" data-reveal>
             <div class="card">
               <div class="card-head">
-                <h3>Merchant</h3>
+                <h3>Conta</h3>
                 <span class="tag">Gateway ativo</span>
               </div>
               <div class="list">
                 <div class="list-item">
-                  <strong>Merchant</strong>
+                  <strong>Conta</strong>
                   <div class="list-meta">
                     <span id="sidebarName">--</span>
                   </div>
@@ -256,6 +255,17 @@
                   <a class="pill" href="/console/pix">
                     <span class="pill-icon pill-icon--pix" aria-hidden="true"></span>
                     <span>Link de pagamento</span>
+                  </a>
+                </div>
+                <div class="nav-group">
+                  <span class="nav-group-title">Conta</span>
+                  <a class="pill" href="/console/perfil">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-user"></use>
+                      </svg>
+                    </span>
+                    <span>Perfil</span>
                   </a>
                 </div>
               </nav>
@@ -323,18 +333,40 @@
                       <path class="chart-fill" id="salesChartFill"></path>
                       <path class="chart-line" id="salesChartLine"></path>
                     </svg>
-                    <div class="chart-footer">
-                      <div>
-                        <span class="muted">Receita 7 dias</span>
-                        <strong id="metricRevenue">--</strong>
-                      </div>
-                      <div class="chart-legend">
-                        <span class="dot dot-blue"></span>
-                        <span>Pix pagos</span>
-                      </div>
+                  <div class="chart-footer">
+                    <div>
+                      <span class="muted">Receita 7 dias</span>
+                      <strong id="metricRevenue">--</strong>
+                    </div>
+                    <div class="chart-legend">
+                      <span class="dot dot-blue"></span>
+                      <span>Pix pagos</span>
                     </div>
                   </div>
+                  <div class="chart-metrics">
+                    <div class="chart-metric">
+                      <span>Maior dia</span>
+                      <strong id="metricRevenueMax">--</strong>
+                    </div>
+                    <div class="chart-metric">
+                      <span>M&iacute;nimo</span>
+                      <strong id="metricRevenueMin">--</strong>
+                    </div>
+                  <div class="chart-metric">
+                    <span>M&eacute;dia di&aacute;ria</span>
+                    <strong id="metricRevenueAvg">--</strong>
+                  </div>
+                  <div class="chart-metric">
+                    <span>Ticket m&aacute;ximo</span>
+                    <strong id="metricTicketMax">--</strong>
+                  </div>
+                  <div class="chart-metric">
+                    <span>Ticket m&iacute;nimo</span>
+                    <strong id="metricTicketMin">--</strong>
+                  </div>
                 </div>
+              </div>
+            </div>
 
                 <div class="card conversion-card">
                   <div class="card-head">
@@ -364,6 +396,18 @@
                       <div class="list-item">
                         <strong id="metricChargePending">--</strong>
                         <span>Pendentes</span>
+                      </div>
+                      <div class="list-item">
+                        <strong id="metricChargePendingValue">--</strong>
+                        <span>Valor pendente</span>
+                      </div>
+                      <div class="list-item">
+                        <strong id="metricChargeFailed">--</strong>
+                        <span>Canceladas</span>
+                      </div>
+                      <div class="list-item">
+                        <strong id="metricChargeRevenue">--</strong>
+                        <span>Receita confirmada</span>
                       </div>
                     </div>
                   </div>
@@ -414,3 +458,5 @@
     <script src="/console.js"></script>
   </body>
 </html>
+
+

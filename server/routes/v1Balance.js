@@ -18,7 +18,7 @@ router.get('/balance', async (req, res) => {
     const pendingResult = await pool.query(
       `SELECT COALESCE(SUM(amount_cents), 0) AS total
        FROM pix_charges
-       WHERE user_id = $1 AND status IN ('created', 'waiting_payment')`,
+       WHERE user_id = $1 AND status IN ('created', 'waiting_payment') AND archived_at IS NULL`,
       [req.user.id]
     );
     const pendingInCents = Number(pendingResult.rows[0].total || 0);

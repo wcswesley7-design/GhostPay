@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
@@ -56,7 +56,6 @@
         </nav>
 
         <div class="topbar-actions">
-          <button class="btn btn-ghost" type="button" data-theme-toggle>Modo claro</button>
           <button class="btn btn-ghost hidden" type="button" id="logoutBtn">Sair</button>
           <button class="btn btn-ghost menu-toggle" type="button" data-menu-toggle>Menu</button>
         </div>
@@ -106,7 +105,7 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-head">
-              <h3>Acesso do merchant</h3>
+              <h3>Acesso da conta</h3>
               <span class="tag">Gateway</span>
             </div>
             <div class="tab-group">
@@ -183,12 +182,12 @@
           <aside class="console-sidebar" data-reveal>
             <div class="card">
               <div class="card-head">
-                <h3>Merchant</h3>
+                <h3>Conta</h3>
                 <span class="tag">Gateway ativo</span>
               </div>
               <div class="list">
                 <div class="list-item">
-                  <strong>Merchant</strong>
+                  <strong>Conta</strong>
                   <div class="list-meta">
                     <span id="sidebarName">--</span>
                   </div>
@@ -244,6 +243,17 @@
                     <span>Link de pagamento</span>
                   </a>
                 </div>
+                <div class="nav-group">
+                  <span class="nav-group-title">Conta</span>
+                  <a class="pill" href="/console/perfil">
+                    <span class="pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-user"></use>
+                      </svg>
+                    </span>
+                    <span>Perfil</span>
+                  </a>
+                </div>
               </nav>
               <a class="btn btn-ghost" href="/support">Suporte</a>
             </div>
@@ -269,9 +279,6 @@
               </div>
 
               <div class="card">
-                <div class="card-head">
-                  <h3>Links de pagamento</h3>
-                </div>
                 <div class="table-toolbar">
                   <div class="table-search">
                     <span class="pill-icon" aria-hidden="true">
@@ -364,6 +371,66 @@
       </div>
     </div>
 
+    <div class="modal-backdrop" id="editLinkModal" aria-hidden="true">
+      <div class="modal modal--wide" role="dialog" aria-modal="true" aria-labelledby="editLinkTitle">
+        <div class="modal-header">
+          <h3 class="modal-title" id="editLinkTitle">Editar link</h3>
+          <button class="btn btn-ghost btn-icon-only" type="button" data-edit-modal-close aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <use href="/assets/icons.svg#icon-close"></use>
+            </svg>
+          </button>
+        </div>
+        <p class="muted">Atualize o nome do link e o valor do ticket. As mudan&ccedil;as entram em vigor imediatamente.</p>
+        <form class="form" id="editLinkForm">
+          <input type="hidden" name="id" id="editLinkIdField" />
+          <label>
+            Nome do link
+            <input type="text" name="description" id="editLinkName" placeholder="Ex: Assinatura Infinity" required />
+          </label>
+          <label>
+            Pre&ccedil;o
+            <input type="number" name="amount" id="editLinkAmount" placeholder="0.00" min="0" step="0.01" required />
+          </label>
+          <button class="btn btn-primary" type="submit">Salvar altera&ccedil;&otilde;es</button>
+        </form>
+        <div class="card link-summary">
+          <div class="card-head">
+            <h4>Resumo do link</h4>
+            <span class="tag" id="editLinkStatus">--</span>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span>ID</span>
+              <strong id="editLinkId">--</strong>
+            </div>
+            <div class="summary-item">
+              <span>Vendas</span>
+              <strong id="editLinkSales">--</strong>
+            </div>
+            <div class="summary-item">
+              <span>Pre&ccedil;o</span>
+              <strong id="editLinkPrice">--</strong>
+            </div>
+            <div class="summary-item">
+              <span>Criado em</span>
+              <strong id="editLinkCreated">--</strong>
+            </div>
+          </div>
+          <label>
+            Link de pagamento
+            <div class="input-group">
+              <input id="editLinkUrl" type="text" readonly />
+              <button class="btn btn-ghost btn-sm" type="button" id="editLinkCopy">Copiar link</button>
+            </div>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-edit-modal-close>Fechar</button>
+        </div>
+      </div>
+    </div>
+
     <footer class="footer">
       <div class="container footer-grid">
         <div>
@@ -403,3 +470,5 @@
     <script src="/console.js"></script>
   </body>
 </html>
+
+

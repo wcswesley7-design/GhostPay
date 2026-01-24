@@ -115,6 +115,7 @@ async function initDb() {
         payer_document TEXT,
         payer_phone TEXT,
         external_reference TEXT,
+        archived_at TIMESTAMPTZ,
         expires_at TIMESTAMPTZ NOT NULL,
         created_at TIMESTAMPTZ NOT NULL,
         paid_at TIMESTAMPTZ
@@ -143,6 +144,7 @@ async function initDb() {
     await client.query(
       'ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS external_reference TEXT;'
     );
+    await client.query('ALTER TABLE pix_charges ADD COLUMN IF NOT EXISTS archived_at TIMESTAMPTZ;');
     await client.query('ALTER TABLE pix_charges ALTER COLUMN qr_payload DROP NOT NULL;');
 
     await client.query(`
@@ -359,6 +361,9 @@ async function initDb() {
     );
     await client.query(
       "CREATE INDEX IF NOT EXISTS idx_pix_charges_status ON pix_charges(user_id, status);"
+    );
+    await client.query(
+      'CREATE INDEX IF NOT EXISTS idx_pix_charges_active ON pix_charges(user_id, created_at DESC) WHERE archived_at IS NULL;'
     );
     await client.query(
       'CREATE UNIQUE INDEX IF NOT EXISTS idx_pix_charges_provider_payment ON pix_charges(provider_payment_id) WHERE provider_payment_id IS NOT NULL;'

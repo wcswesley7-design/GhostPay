@@ -1,7 +1,5 @@
 (() => {
-  const themeKey = 'ghostpay_theme';
   const root = document.documentElement;
-  const themeToggle = document.querySelector('[data-theme-toggle]');
   const menuToggle = document.querySelector('[data-menu-toggle]');
   const nav = document.querySelector('[data-nav]');
   const topbar = document.querySelector('[data-topbar]');
@@ -19,20 +17,10 @@
 
   function setTheme(theme) {
     root.dataset.theme = theme;
-    localStorage.setItem(themeKey, theme);
-    if (themeToggle) {
-      themeToggle.textContent = theme === 'dark' ? 'Modo claro' : 'Modo escuro';
-    }
   }
 
   function initTheme() {
-    const saved = localStorage.getItem(themeKey);
-    if (saved) {
-      setTheme(saved);
-      return;
-    }
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setTheme(prefersDark ? 'dark' : 'light');
+    setTheme('dark');
   }
 
   function initNav() {
@@ -656,10 +644,4 @@
   initPixPaymentLink();
   initPublicChargePayment();
 
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const current = root.dataset.theme || 'dark';
-      setTheme(current === 'dark' ? 'light' : 'dark');
-    });
-  }
 })();

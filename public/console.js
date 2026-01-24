@@ -52,10 +52,18 @@
     metricHealthBar: document.getElementById('metricHealthBar'),
     metricHealthPct: document.getElementById('metricHealthPct'),
     metricRevenue: document.getElementById('metricRevenue'),
+    metricRevenueMax: document.getElementById('metricRevenueMax'),
+    metricRevenueMin: document.getElementById('metricRevenueMin'),
+    metricRevenueAvg: document.getElementById('metricRevenueAvg'),
+    metricTicketMax: document.getElementById('metricTicketMax'),
+    metricTicketMin: document.getElementById('metricTicketMin'),
     metricConversion: document.getElementById('metricConversion'),
     metricChargeTotal: document.getElementById('metricChargeTotal'),
     metricChargePaid: document.getElementById('metricChargePaid'),
     metricChargePending: document.getElementById('metricChargePending'),
+    metricChargePendingValue: document.getElementById('metricChargePendingValue'),
+    metricChargeFailed: document.getElementById('metricChargeFailed'),
+    metricChargeRevenue: document.getElementById('metricChargeRevenue'),
     salesChartLine: document.getElementById('salesChartLine'),
     salesChartFill: document.getElementById('salesChartFill'),
     conversionDonut: document.getElementById('conversionDonut'),
@@ -86,6 +94,18 @@
     pixChargeStatus: document.getElementById('pixChargeStatus'),
     linkModal: document.getElementById('linkModal'),
     openLinkModal: document.getElementById('openLinkModal'),
+    editLinkModal: document.getElementById('editLinkModal'),
+    editLinkForm: document.getElementById('editLinkForm'),
+    editLinkName: document.getElementById('editLinkName'),
+    editLinkAmount: document.getElementById('editLinkAmount'),
+    editLinkIdField: document.getElementById('editLinkIdField'),
+    editLinkId: document.getElementById('editLinkId'),
+    editLinkStatus: document.getElementById('editLinkStatus'),
+    editLinkSales: document.getElementById('editLinkSales'),
+    editLinkPrice: document.getElementById('editLinkPrice'),
+    editLinkCreated: document.getElementById('editLinkCreated'),
+    editLinkUrl: document.getElementById('editLinkUrl'),
+    editLinkCopy: document.getElementById('editLinkCopy'),
     withdrawalForm: document.getElementById('withdrawalForm'),
     withdrawalsList: document.getElementById('withdrawalsList'),
     cardsList: document.getElementById('cardsList'),
@@ -115,6 +135,15 @@
     cardInfoAccount: document.getElementById('cardInfoAccount'),
     cardInfoCreated: document.getElementById('cardInfoCreated'),
     cardDetailTransactionsList: document.getElementById('cardDetailTransactionsList'),
+    profileName: document.getElementById('profileName'),
+    profileInitials: document.getElementById('profileInitials'),
+    profileAccountId: document.getElementById('profileAccountId'),
+    profileCreatedAt: document.getElementById('profileCreatedAt'),
+    profileFullName: document.getElementById('profileFullName'),
+    profileEmail: document.getElementById('profileEmail'),
+    profileCpf: document.getElementById('profileCpf'),
+    profilePhone: document.getElementById('profilePhone'),
+    profilePixKey: document.getElementById('profilePixKey'),
     refreshAccounts: document.getElementById('refreshAccounts'),
     refreshOverview: document.getElementById('refreshOverview'),
     refreshTransactions: document.getElementById('refreshTransactions'),
@@ -289,6 +318,64 @@
       return '0%';
     }
     return `${value.toFixed(digits)}%`;
+  }
+
+  function getInitials(name) {
+    if (!name) {
+      return '--';
+    }
+    const parts = String(name)
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+    if (!parts.length) {
+      return '--';
+    }
+    const first = parts[0][0] || '';
+    const last = parts.length > 1 ? parts[parts.length - 1][0] || '' : '';
+    return `${first}${last}`.toUpperCase();
+  }
+
+  function renderProfile() {
+    if (!elements.profileName && !elements.profileAccountId) {
+      return;
+    }
+    const user = state.user || {};
+    const name = user.name || 'Conta GhostPay';
+    const email = user.email || '--';
+    const account = state.accounts[0];
+    const accountId = (account && (account.accountNumber || account.id)) || user.id || '--';
+    const createdAt = account && account.createdAt ? formatDate(account.createdAt) : '--';
+    const cpfKey = state.pixKeys.find((key) => key.type === 'cpf') || state.pixKeys[0];
+    const pixKeyValue = cpfKey ? cpfKey.value : '--';
+
+    if (elements.profileName) {
+      elements.profileName.textContent = name;
+    }
+    if (elements.profileInitials) {
+      elements.profileInitials.textContent = getInitials(name);
+    }
+    if (elements.profileAccountId) {
+      elements.profileAccountId.textContent = accountId;
+    }
+    if (elements.profileCreatedAt) {
+      elements.profileCreatedAt.textContent = createdAt;
+    }
+    if (elements.profileFullName) {
+      elements.profileFullName.textContent = name;
+    }
+    if (elements.profileEmail) {
+      elements.profileEmail.textContent = email;
+    }
+    if (elements.profileCpf) {
+      elements.profileCpf.textContent = user.cpf || '--';
+    }
+    if (elements.profilePhone) {
+      elements.profilePhone.textContent = user.phone || '--';
+    }
+    if (elements.profilePixKey) {
+      elements.profilePixKey.textContent = pixKeyValue || '--';
+    }
   }
 
   function startOfDay(value) {
@@ -635,6 +722,87 @@
     document.body.classList.remove('modal-open');
   }
 
+  function closeActionMenus() {
+    document.querySelectorAll('.actions-menu.is-open').forEach((menu) => {
+      menu.classList.remove('is-open');
+    });
+  }
+
+  function toggleActionMenu(button) {
+    const menu = button.closest('.actions-menu');
+    if (!menu) {
+      return;
+    }
+    const isOpen = menu.classList.contains('is-open');
+    closeActionMenus();
+    if (!isOpen) {
+      menu.classList.add('is-open');
+    }
+  }
+
+  function openEditLinkModal(charge) {
+    if (!elements.editLinkModal || !elements.editLinkForm) {
+      return;
+    }
+    if (elements.editLinkIdField) {
+      elements.editLinkIdField.value = charge.id;
+    }
+    if (elements.editLinkName) {
+      elements.editLinkName.value = charge.description || '';
+    }
+    if (elements.editLinkAmount) {
+      elements.editLinkAmount.value = (Number(charge.amountCents || 0) / 100).toFixed(2);
+    }
+    if (elements.editLinkId) {
+      elements.editLinkId.textContent = charge.id || '--';
+    }
+    if (elements.editLinkStatus) {
+      const label = pixStatusLabels[charge.status] || charge.status || '--';
+      elements.editLinkStatus.textContent = label;
+    }
+    if (elements.editLinkSales) {
+      elements.editLinkSales.textContent = charge.status === 'paid' ? '1' : '0';
+    }
+    if (elements.editLinkPrice) {
+      elements.editLinkPrice.textContent = formatCents(charge.amountCents || 0, 'BRL');
+    }
+    if (elements.editLinkCreated) {
+      elements.editLinkCreated.textContent = charge.createdAt ? formatShortDate(charge.createdAt) : '--';
+    }
+    if (elements.editLinkUrl) {
+      elements.editLinkUrl.value = charge.payUrl || '';
+    }
+    elements.editLinkModal.classList.add('is-visible');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeEditLinkModal() {
+    if (!elements.editLinkModal) {
+      return;
+    }
+    elements.editLinkModal.classList.remove('is-visible');
+    document.body.classList.remove('modal-open');
+  }
+
+  function initModuleTabs() {
+    document.querySelectorAll('[data-module-scope]').forEach((scope) => {
+      const tabs = scope.querySelectorAll('[data-module-tabs] .tab-pill');
+      const panels = scope.querySelectorAll('[data-panel]');
+      if (!tabs.length || !panels.length) {
+        return;
+      }
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const target = tab.dataset.panelTarget;
+          tabs.forEach((item) => item.classList.toggle('active', item === tab));
+          panels.forEach((panel) => {
+            panel.classList.toggle('is-active', panel.dataset.panel === target);
+          });
+        });
+      });
+    });
+  }
+
   async function apiRequest(path, options = {}) {
     const headers = {
       'Content-Type': 'application/json',
@@ -791,13 +959,12 @@
     const pendingCharges = charges.filter((charge) =>
       ['created', 'waiting_payment'].includes(charge.status)
     );
+    const failedCharges = charges.filter((charge) => ['canceled', 'expired'].includes(charge.status));
 
     const getChargeDate = (charge) => new Date(charge.paidAt || charge.createdAt || now);
 
-    const paidAmount30 = paidCharges.reduce((sum, charge) => {
-      const paidAt = getChargeDate(charge);
-      return paidAt >= start30 ? sum + Number(charge.amountCents || 0) : sum;
-    }, 0);
+    const paidCharges30 = paidCharges.filter((charge) => getChargeDate(charge) >= start30);
+    const paidAmount30 = paidCharges30.reduce((sum, charge) => sum + Number(charge.amountCents || 0), 0);
     const prevAmount30 = paidCharges.reduce((sum, charge) => {
       const paidAt = getChargeDate(charge);
       return paidAt >= startPrev && paidAt < start30 ? sum + Number(charge.amountCents || 0) : sum;
@@ -805,6 +972,12 @@
 
     const totalPaidAmount = paidCharges.reduce((sum, charge) => sum + Number(charge.amountCents || 0), 0);
     const ticketAverage = paidCharges.length ? totalPaidAmount / paidCharges.length : 0;
+    const ticketMax = paidCharges30.length
+      ? Math.max(...paidCharges30.map((charge) => Number(charge.amountCents || 0)))
+      : 0;
+    const ticketMin = paidCharges30.length
+      ? Math.min(...paidCharges30.map((charge) => Number(charge.amountCents || 0)))
+      : 0;
 
     const salesToday = paidCharges.reduce((sum, charge) => {
       const paidAt = getChargeDate(charge);
@@ -825,6 +998,10 @@
       }, 0);
     });
     const revenue7d = series.reduce((sum, value) => sum + value, 0);
+    const revenueMax = series.length ? Math.max(...series) : 0;
+    const revenueMin = series.length ? Math.min(...series) : 0;
+    const revenueAvg = series.length ? revenue7d / series.length : 0;
+    const pendingAmount = pendingCharges.reduce((sum, charge) => sum + Number(charge.amountCents || 0), 0);
 
     if (elements.metricSales) {
       elements.metricSales.textContent = formatCents(paidAmount30, 'BRL');
@@ -856,6 +1033,21 @@
     if (elements.metricRevenue) {
       elements.metricRevenue.textContent = formatCents(revenue7d, 'BRL');
     }
+    if (elements.metricRevenueMax) {
+      elements.metricRevenueMax.textContent = formatCents(revenueMax, 'BRL');
+    }
+    if (elements.metricRevenueMin) {
+      elements.metricRevenueMin.textContent = formatCents(revenueMin, 'BRL');
+    }
+    if (elements.metricRevenueAvg) {
+      elements.metricRevenueAvg.textContent = formatCents(revenueAvg, 'BRL');
+    }
+    if (elements.metricTicketMax) {
+      elements.metricTicketMax.textContent = formatCents(ticketMax, 'BRL');
+    }
+    if (elements.metricTicketMin) {
+      elements.metricTicketMin.textContent = formatCents(ticketMin, 'BRL');
+    }
     if (elements.metricConversion) {
       elements.metricConversion.textContent = formatPercent(healthPct);
     }
@@ -867,6 +1059,15 @@
     }
     if (elements.metricChargePending) {
       elements.metricChargePending.textContent = pendingCharges.length;
+    }
+    if (elements.metricChargePendingValue) {
+      elements.metricChargePendingValue.textContent = formatCents(pendingAmount, 'BRL');
+    }
+    if (elements.metricChargeFailed) {
+      elements.metricChargeFailed.textContent = failedCharges.length;
+    }
+    if (elements.metricChargeRevenue) {
+      elements.metricChargeRevenue.textContent = formatCents(paidAmount30, 'BRL');
     }
     if (elements.conversionDonut) {
       const donutPct = Math.min(100, Math.max(0, Math.round(conversionPct)));
@@ -887,7 +1088,7 @@
     if (!balance || (!elements.balanceAvailable && !elements.balanceReserve)) {
       return;
     }
-    const totalCents = Number(balance.total_cents ?? 0);
+    const totalCents = Number(balance.total_cents ? 0);
     const availableCents =
       balance.available_cents != null ? Number(balance.available_cents) : totalCents - Number(balance.hold_cents || 0);
     const holdCents = Number(balance.hold_cents || 0);
@@ -1147,7 +1348,7 @@ function renderPixKeys(keys) {
     }
     return {
       id: raw.charge_id || raw.id,
-      amountCents: raw.amount_cents ?? raw.amountCents,
+      amountCents: raw.amount_cents != null ? raw.amount_cents : raw.amountCents,
       description: raw.description || '',
       status: raw.status,
       createdAt: raw.created_at || raw.createdAt,
@@ -1189,11 +1390,40 @@ function renderPixKeys(keys) {
         const salesCount = charge.status === 'paid' ? 1 : 0;
         const payUrl = charge.payUrl || '';
         const actionMarkup = payUrl
-          ? `<button class="btn btn-ghost btn-icon-only" type="button" data-action="copy-link" data-link="${payUrl}" aria-label="Copiar link">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <use href="/assets/icons.svg#icon-more"></use>
-              </svg>
-            </button>`
+          ? `
+            <div class="actions-menu" data-menu>
+              <button class="btn btn-ghost btn-icon-only" type="button" data-action="toggle-menu" data-id="${charge.id}" aria-label="Ações">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="/assets/icons.svg#icon-more"></use>
+                </svg>
+              </button>
+              <div class="actions-menu__dropdown" role="menu">
+                <button class="actions-menu__item" type="button" data-action="edit-link" data-id="${charge.id}">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="/assets/icons.svg#icon-pencil"></use>
+                  </svg>
+                  Editar
+                </button>
+                <button class="actions-menu__item danger" type="button" data-action="delete-link" data-id="${charge.id}">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="/assets/icons.svg#icon-trash"></use>
+                  </svg>
+                  Deletar
+                </button>
+                <button class="actions-menu__item" type="button" data-action="inactivate-link" data-id="${charge.id}">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="/assets/icons.svg#icon-ban"></use>
+                  </svg>
+                  Inativar
+                </button>
+                <button class="actions-menu__item" type="button" data-action="open-link" data-link="${payUrl}" data-id="${charge.id}">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="/assets/icons.svg#icon-folder"></use>
+                  </svg>
+                  Link
+                </button>
+              </div>
+            </div>`
           : '<span class="muted">--</span>';
 
         return `
@@ -1451,6 +1681,7 @@ function renderCards(cards) {
       renderAccounts(state.accounts);
       renderTransactions(state.transactions);
       renderMetrics(data.metrics || {});
+      renderProfile();
 
       if (chargesData && chargesData.charges) {
         const normalized = chargesData.charges.map(normalizePixCharge).filter(Boolean);
@@ -1466,6 +1697,7 @@ function renderCards(cards) {
       } else {
         updatePixChargeKeyOptions();
       }
+      renderProfile();
       if (state.user) {
         elements.welcomeTitle.textContent = `Bem-vindo, ${state.user.name}`;
         if (elements.sidebarName) {
@@ -1516,7 +1748,10 @@ async function loadPix() {
           renderPixKeys(state.pixKeys);
         }
         renderPixCharges(state.pixCharges);
-        await loadWithdrawals();
+        if (elements.withdrawalForm || elements.withdrawalsList) {
+          await loadWithdrawals();
+        }
+        renderProfile();
       } catch (err) {
         if (err && err.status === 401) {
           return;
@@ -1781,10 +2016,18 @@ async function loadPix() {
         elements.metricSalesToday ||
         elements.metricHealth ||
         elements.metricRevenue ||
+        elements.metricRevenueMax ||
+        elements.metricRevenueMin ||
+        elements.metricRevenueAvg ||
+        elements.metricTicketMax ||
+        elements.metricTicketMin ||
         elements.metricConversion ||
         elements.metricChargeTotal ||
         elements.metricChargePaid ||
         elements.metricChargePending ||
+        elements.metricChargePendingValue ||
+        elements.metricChargeFailed ||
+        elements.metricChargeRevenue ||
         elements.overviewRange ||
         elements.transactionsRange ||
         elements.balanceAvailable ||
@@ -1793,7 +2036,10 @@ async function loadPix() {
         elements.balanceBlocked ||
         elements.pixTransferForm ||
         elements.pixChargeForm ||
-        elements.cardForm
+        elements.cardForm ||
+        elements.profileName ||
+        elements.profileAccountId ||
+        elements.profileFullName
     );
   }
 
@@ -1805,7 +2051,8 @@ async function loadPix() {
       elements.pixTransferForm ||
       elements.pixChargeForm ||
       elements.withdrawalForm ||
-      elements.withdrawalsList
+      elements.withdrawalsList ||
+      elements.profilePixKey
     );
   }
 
@@ -2353,13 +2600,123 @@ async function loadPix() {
       return;
     }
     const action = button.dataset.action;
-    if (action === 'copy-link') {
-      const link = button.dataset.link || '';
-      const ok = await copyToClipboard(link);
-      showToast(ok ? 'Link copiado' : 'Não foi possível copiar o link', ok ? 'info' : 'error');
+    if (action === 'toggle-menu') {
+      event.stopPropagation();
+      toggleActionMenu(button);
       return;
     }
-    return;
+
+    const chargeId = button.dataset.id;
+    const charge = state.pixCharges.find((item) => item.id === chargeId);
+    if (!charge) {
+      showToast('Link não encontrado', 'error');
+      return;
+    }
+
+    if (action === 'open-link') {
+      const link = button.dataset.link || charge.payUrl || '';
+      if (!link) {
+        showToast('Link indisponível', 'error');
+        return;
+      }
+      const ok = await copyToClipboard(link);
+      window.open(link, '_blank', 'noopener');
+      showToast(ok ? 'Link copiado' : 'Não foi possível copiar o link', ok ? 'info' : 'error');
+      closeActionMenus();
+      return;
+    }
+
+    if (action === 'edit-link') {
+      openEditLinkModal(charge);
+      closeActionMenus();
+      return;
+    }
+
+    if (action === 'inactivate-link') {
+      const confirmed = await openConfirmModal({
+        title: 'Inativar link',
+        message: 'Deseja inativar este link de pagamento? O QR Code não poderá mais ser usado.',
+        confirmText: 'Inativar',
+        cancelText: 'Cancelar'
+      });
+      if (!confirmed) {
+        return;
+      }
+      try {
+        await apiRequest(`/v1/charges/${chargeId}/inactivate`, { method: 'POST' });
+        await loadPix();
+        showToast('Link inativado');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+      closeActionMenus();
+      return;
+    }
+
+    if (action === 'delete-link') {
+      const confirmed = await openConfirmModal({
+        title: 'Deletar link',
+        message: 'Deseja remover este link do painel? Essa ação não pode ser desfeita.',
+        confirmText: 'Deletar',
+        cancelText: 'Cancelar'
+      });
+      if (!confirmed) {
+        return;
+      }
+      try {
+        await apiRequest(`/v1/charges/${chargeId}`, { method: 'DELETE' });
+        await loadPix();
+        showToast('Link removido');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+      closeActionMenus();
+    }
+  }
+
+  async function handleEditLinkSubmit(event) {
+    event.preventDefault();
+    if (!elements.editLinkForm) {
+      return;
+    }
+    const payload = Object.fromEntries(new FormData(elements.editLinkForm).entries());
+    const chargeId = payload.id;
+    if (!chargeId) {
+      showToast('Link n\u00e3o identificado.', 'error');
+      return;
+    }
+    const amount = Number(payload.amount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      showToast('Informe um valor v\u00e1lido.', 'error');
+      return;
+    }
+
+    const submit = elements.editLinkForm.querySelector('button[type="submit"]');
+    const originalLabel = submit ? submit.textContent : '';
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = 'Salvando...';
+    }
+
+    try {
+      await apiRequest(`/v1/charges/${encodeURIComponent(chargeId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          amount,
+          description: payload.description ? String(payload.description).trim() : ''
+        })
+      });
+      await loadPix();
+      closeEditLinkModal();
+      showToast('Link atualizado');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = originalLabel || 'Salvar altera\u00e7\u00f5es';
+      }
+    }
   }
 
   async function handleWithdrawalCreate(event) {
@@ -2533,6 +2890,7 @@ async function loadPix() {
   }
 
   async function initialize() {
+    initModuleTabs();
     if (elements.tabs.length) {
       elements.tabs.forEach((tab) => {
         tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
@@ -2589,6 +2947,25 @@ async function loadPix() {
     if (elements.openLinkModal) {
       elements.openLinkModal.addEventListener('click', openLinkModal);
     }
+    if (elements.editLinkForm) {
+      elements.editLinkForm.addEventListener('submit', handleEditLinkSubmit);
+    }
+    if (elements.editLinkCopy) {
+      elements.editLinkCopy.addEventListener('click', async () => {
+        const ok = await copyToClipboard(elements.editLinkUrl ? elements.editLinkUrl.value : '');
+        showToast(ok ? 'Link copiado' : 'N\u00e3o foi poss\u00edvel copiar o link', ok ? 'info' : 'error');
+      });
+    }
+    if (elements.editLinkModal) {
+      elements.editLinkModal.addEventListener('click', (event) => {
+        if (event.target === elements.editLinkModal) {
+          closeEditLinkModal();
+        }
+      });
+      elements.editLinkModal.querySelectorAll('[data-edit-modal-close]').forEach((button) => {
+        button.addEventListener('click', closeEditLinkModal);
+      });
+    }
     if (elements.linkModal) {
       elements.linkModal.addEventListener('click', (event) => {
         if (event.target === elements.linkModal) {
@@ -2599,6 +2976,11 @@ async function loadPix() {
         button.addEventListener('click', closeLinkModal);
       });
     }
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.actions-menu')) {
+        closeActionMenus();
+      }
+    });
     if (elements.withdrawalForm) {
       elements.withdrawalForm.addEventListener('submit', handleWithdrawalCreate);
     }
@@ -2714,8 +3096,11 @@ async function loadPix() {
         setAuthUI(false);
         return;
       }
-      if (decoded.name) {
-        state.user = { name: decoded.name };
+      if (decoded.name || decoded.email) {
+        state.user = {
+          name: decoded.name || 'Conta GhostPay',
+          email: decoded.email || ''
+        };
       }
       try {
         await loadPageData();

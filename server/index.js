@@ -106,7 +106,8 @@ const pageRoutes = {
   '/console/contas': 'console-accounts.html',
   '/console/movimentacoes': 'console-movements.html',
   '/console/pix': 'console-pix.html',
-  '/console/cartoes': 'console-cards.html'
+  '/console/cartoes': 'console-cards.html',
+  '/console/perfil': 'console-profile.html'
 };
 
 Object.entries(pageRoutes).forEach(([route, file]) => {

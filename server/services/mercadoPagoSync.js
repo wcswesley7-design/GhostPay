@@ -16,6 +16,7 @@ async function syncPendingCharges() {
       `SELECT id, provider_payment_id
        FROM pix_charges
        WHERE provider = 'mercadopago'
+         AND archived_at IS NULL
          AND status IN ('created', 'waiting_payment')
          AND provider_payment_id IS NOT NULL
          AND (provider_checked_at IS NULL OR provider_checked_at < (NOW() - INTERVAL '60 seconds'))

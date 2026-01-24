@@ -128,7 +128,10 @@ const pix = {
 
   async listCharges(userId) {
     const result = await pool.query(
-      'SELECT id, account_id, key_id, amount_cents, description, status, txid, qr_payload, expires_at, created_at, paid_at FROM pix_charges WHERE user_id = $1 ORDER BY created_at DESC',
+      `SELECT id, account_id, key_id, amount_cents, description, status, txid, qr_payload, expires_at, created_at, paid_at
+       FROM pix_charges
+       WHERE user_id = $1 AND archived_at IS NULL
+       ORDER BY created_at DESC`,
       [userId]
     );
     return result.rows.map((row) => ({
@@ -148,7 +151,9 @@ const pix = {
 
   async getChargePublic(chargeId) {
     const result = await pool.query(
-      'SELECT id, amount_cents, description, status, txid, qr_payload, expires_at, created_at, paid_at FROM pix_charges WHERE id = $1',
+      `SELECT id, amount_cents, description, status, txid, qr_payload, expires_at, created_at, paid_at
+       FROM pix_charges
+       WHERE id = $1 AND archived_at IS NULL`,
       [chargeId]
     );
     const row = result.rows[0];
