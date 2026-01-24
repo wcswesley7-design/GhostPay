@@ -18,12 +18,16 @@ async function initDb() {
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
+        cpf TEXT,
         password_hash TEXT NOT NULL,
         plan TEXT NOT NULL DEFAULT 'infinity',
         created_at TIMESTAMPTZ NOT NULL
       );
     `);
 
+    await client.query(
+      'ALTER TABLE users ADD COLUMN IF NOT EXISTS cpf TEXT;'
+    );
     await client.query(
       "ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'infinity';"
     );
@@ -409,6 +413,9 @@ async function initDb() {
     );
     await client.query(
       'CREATE INDEX IF NOT EXISTS idx_api_keys_user ON api_keys(user_id);'
+    );
+    await client.query(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cpf ON users(cpf) WHERE cpf IS NOT NULL;'
     );
     await client.query('COMMIT');
   } catch (err) {

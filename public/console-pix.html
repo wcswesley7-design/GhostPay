@@ -17,7 +17,7 @@
         display: grid !important;
       }
     </style>
-    <meta name="description" content="GhostPay Gateway - cobrancas Pix" />
+    <meta name="description" content="GhostPay - cobran&ccedil;as Pix" />
     <title>GhostPay | Link de pagamento</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,7 +25,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=20260124-2" />
+    <link rel="stylesheet" href="/styles.css?v=20260124-3" />
   </head>
   <body class="gateway-console">
     <div class="ambient" aria-hidden="true">
@@ -42,7 +42,7 @@
           <span class="brand-mark"><img src="/assets/ghostpay-logo.png" alt="GhostPay" class="brand-logo" /></span>
           <span class="brand-text">
             <span class="brand-name">GhostPay</span>
-            <span class="brand-tag">Gateway de pagamentos</span>
+            <span class="brand-tag">Pagamentos Pix</span>
           </span>
         </a>
 
@@ -66,7 +66,7 @@
       <section class="hero" id="consoleHero" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Gateway GhostPay</p>
+            <p class="eyebrow">Painel GhostPay</p>
             <h1 id="welcomeTitle">Links de pagamento Pix para vender com rapidez.</h1>
             <p class="lead">Crie links, acompanhe vendas em tempo real e organize seus recebimentos.</p>
             <div class="hero-actions">
@@ -106,7 +106,7 @@
           <div class="card">
             <div class="card-head">
               <h3>Acesso da conta</h3>
-              <span class="tag">Gateway</span>
+              <span class="tag">Conta</span>
             </div>
             <div class="tab-group">
               <button class="tab active" data-tab="login" type="button">Entrar</button>
@@ -129,6 +129,10 @@
                 <input type="text" name="name" placeholder="Jo&atilde;o Silva" required />
               </label>
               <label>
+                CPF
+                <input type="text" name="cpf" inputmode="numeric" placeholder="000.000.000-00" required />
+              </label>
+              <label>
                 Email
                 <input type="email" name="email" placeholder="seu@email.com" required />
               </label>
@@ -149,7 +153,7 @@
           </div>
           <div class="card">
             <div class="card-head">
-              <h3>Recursos do gateway</h3>
+              <h3>Recursos da conta</h3>
               <span class="tag">Infinity</span>
             </div>
             <div class="list">
@@ -183,7 +187,7 @@
             <div class="card">
               <div class="card-head">
                 <h3>Conta</h3>
-                <span class="tag">Gateway ativo</span>
+                <span class="tag">Conta ativa</span>
               </div>
               <div class="list">
                 <div class="list-item">
@@ -203,7 +207,7 @@
             <div class="card">
               <div class="card-head">
                 <h3>Menu</h3>
-                <span class="tag">Gateway</span>
+                <span class="tag">Menu</span>
               </div>
               <nav class="console-nav console-nav--stacked">
                 <div class="nav-group">
@@ -435,7 +439,7 @@
       <div class="container footer-grid">
         <div>
           <div class="brand-name">GhostPay</div>
-          <small>Gateway Pix com concilia&ccedil;&atilde;o e saques manuais.</small>
+          <small>Pix com concilia&ccedil;&atilde;o e saques manuais.</small>
         </div>
         <div class="footer-col">
           <strong>Produto</strong>
@@ -466,8 +470,8 @@
 
     <div class="toast" id="toast"></div>
 
-    <script src="/site.js?v=20260124-2"></script>
-    <script src="/console.js?v=20260124-2"></script>
+    <script src="/site.js?v=20260124-3"></script>
+    <script src="/console.js?v=20260124-3"></script>
   </body>
 </html>
 

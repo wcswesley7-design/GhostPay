@@ -372,6 +372,14 @@
     return `${value.toFixed(digits)}%`;
   }
 
+  function formatCpf(value) {
+    const digits = String(value || '').replace(/\D/g, '');
+    if (digits.length !== 11) {
+      return value || '--';
+    }
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+  }
+
   function getInitials(name) {
     if (!name) {
       return '--';
@@ -420,7 +428,7 @@
       elements.profileEmail.textContent = email;
     }
     if (elements.profileCpf) {
-      elements.profileCpf.textContent = user.cpf || '--';
+      elements.profileCpf.textContent = formatCpf(user.cpf);
     }
     if (elements.profilePhone) {
       elements.profilePhone.textContent = user.phone || '--';
@@ -2245,6 +2253,7 @@ async function loadPix() {
   async function handleRegister(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.registerForm).entries());
+    payload.cpf = String(payload.cpf || '').replace(/\D/g, '');
 
     if (!payload.plan) {
       setPlanSelection('');
@@ -2253,6 +2262,10 @@ async function loadPix() {
     }
     if (!payload.subscriptionSession) {
       showToast('Finalize a assinatura Infinity antes de criar a conta.', 'error');
+      return;
+    }
+    if (payload.cpf.length !== 11) {
+      showToast('Informe um CPF válido.', 'error');
       return;
     }
 
@@ -2271,7 +2284,9 @@ async function loadPix() {
         subscription_required: 'Finalize a assinatura Infinity antes de criar a conta.',
         subscription_not_approved: 'Pagamento ainda não aprovado. Aguarde a confirmação.',
         subscription_plan_mismatch: 'Plano inválido para esta assinatura.',
-        subscription_already_used: 'Assinatura já utilizada.'
+        subscription_already_used: 'Assinatura já utilizada.',
+        invalid_cpf: 'Informe um CPF válido.',
+        cpf_in_use: 'CPF já cadastrado.'
       };
       showToast(messages[err.message] || err.message, 'error');
     }
@@ -3138,7 +3153,8 @@ async function loadPix() {
       if (decoded.name || decoded.email) {
         state.user = {
           name: decoded.name || 'Conta GhostPay',
-          email: decoded.email || ''
+          email: decoded.email || '',
+          cpf: decoded.cpf || ''
         };
       }
       try {

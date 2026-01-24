@@ -13,6 +13,7 @@ const router = express.Router();
 const registerSchema = z.object({
   name: z.string().min(2).max(80),
   email: z.string().email().max(120),
+  cpf: z.string().min(11).max(20),
   password: z.string().min(8).max(128),
   plan: z.enum(['infinity']),
   subscriptionSession: z.string().min(1)
@@ -28,7 +29,8 @@ function issueToken(user) {
     {
       sub: user.id,
       email: user.email,
-      name: user.name
+      name: user.name,
+      cpf: user.cpf
     },
     JWT_SECRET,
     { expiresIn: '12h' }
@@ -37,23 +39,36 @@ function issueToken(user) {
 
 async function findUserByEmail(email) {
   const result = await pool.query(
-    'SELECT id, name, email, password_hash, plan FROM users WHERE email = $1',
+    'SELECT id, name, email, cpf, password_hash, plan FROM users WHERE email = $1',
     [email]
   );
+  return result.rows[0];
+}
+
+async function findUserByCpf(cpf) {
+  const result = await pool.query('SELECT id FROM users WHERE cpf = $1', [cpf]);
   return result.rows[0];
 }
 
 router.post('/register', validateBody(registerSchema), async (req, res) => {
   const name = req.body.name.trim();
   const email = req.body.email.trim().toLowerCase();
+  const cpf = String(req.body.cpf || '').replace(/\D/g, '');
   const password = req.body.password;
   const plan = req.body.plan;
   const subscriptionSession = req.body.subscriptionSession;
 
   try {
+    if (cpf.length !== 11) {
+      return res.status(400).json({ error: 'invalid_cpf' });
+    }
     const existing = await findUserByEmail(email);
     if (existing) {
       return res.status(409).json({ error: 'Email already in use' });
+    }
+    const existingCpf = await findUserByCpf(cpf);
+    if (existingCpf) {
+      return res.status(409).json({ error: 'cpf_in_use' });
     }
 
     const userId = randomId('usr');
@@ -88,8 +103,8 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
       }
 
       await client.query(
-        'INSERT INTO users (id, name, email, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
-        [userId, name, email, passwordHash, plan, now]
+        'INSERT INTO users (id, name, email, cpf, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [userId, name, email, cpf, passwordHash, plan, now]
       );
       await client.query(
         'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
@@ -108,11 +123,11 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
       client.release();
     }
 
-    const token = issueToken({ id: userId, email, name });
+    const token = issueToken({ id: userId, email, name, cpf });
 
     return res.status(201).json({
       token,
-      user: { id: userId, name, email, plan },
+      user: { id: userId, name, email, cpf, plan },
       accounts: [
         {
           id: accountId,
@@ -125,6 +140,9 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
     });
   } catch (err) {
     if (err.code === '23505') {
+      if (err.constraint === 'idx_users_cpf') {
+        return res.status(409).json({ error: 'cpf_in_use' });
+      }
       return res.status(409).json({ error: 'Email already in use' });
     }
     console.error(err);
@@ -155,6 +173,7 @@ router.post('/login', validateBody(loginSchema), async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        cpf: user.cpf,
         plan: user.plan
       }
     });
@@ -173,6 +192,7 @@ router.post('/demo', async (req, res) => {
   const demoName = 'Demo User';
   const demoPassword = 'ghostpay-demo';
   const demoPlan = 'infinity';
+  const demoCpf = '11122233344';
 
   try {
     let user = await findUserByEmail(demoEmail);
@@ -188,8 +208,8 @@ router.post('/demo', async (req, res) => {
       try {
         await client.query('BEGIN');
         await client.query(
-          'INSERT INTO users (id, name, email, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
-          [userId, demoName, demoEmail, passwordHash, demoPlan, now]
+          'INSERT INTO users (id, name, email, cpf, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          [userId, demoName, demoEmail, demoCpf, passwordHash, demoPlan, now]
         );
         await client.query(
           'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
@@ -245,6 +265,7 @@ router.post('/demo', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        cpf: user.cpf,
         plan: user.plan || demoPlan
       }
     });

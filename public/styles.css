@@ -1260,11 +1260,17 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .module-panel {
+  margin-top: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+[data-module-scope] .module-panel {
   display: none;
 }
 
-.module-panel.is-active {
-  display: block;
+[data-module-scope] .module-panel.is-active {
+  display: grid;
 }
 
 .profile-shell {
@@ -1457,12 +1463,6 @@ html[data-theme='light'] .topbar.is-scrolled {
   border-color: rgba(215, 178, 92, 0.4);
   color: var(--text);
   background: rgba(215, 178, 92, 0.1);
-}
-
-.module-panel {
-  margin-top: 16px;
-  display: grid;
-  gap: 10px;
 }
 
 .timeline {
