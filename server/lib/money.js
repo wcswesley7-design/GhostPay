@@ -8,7 +8,29 @@ function parseAmountToCents(input) {
     return null;
   }
 
-  const normalized = raw.replace(',', '.');
+  const dotCount = (raw.match(/\./g) || []).length;
+  const commaCount = (raw.match(/,/g) || []).length;
+  let normalized = raw;
+
+  if (dotCount > 0 || commaCount > 0) {
+    if (dotCount > 0 && commaCount > 0) {
+      const lastDot = raw.lastIndexOf('.');
+      const lastComma = raw.lastIndexOf(',');
+      if (lastComma > lastDot) {
+        normalized = raw.replace(/\./g, '').replace(',', '.');
+      } else {
+        normalized = raw.replace(/,/g, '');
+      }
+    } else if (commaCount > 1) {
+      normalized = raw.replace(/,/g, '');
+    } else if (dotCount > 1) {
+      normalized = raw.replace(/\./g, '');
+    } else if (commaCount === 1) {
+      normalized = raw.replace(',', '.');
+    }
+  }
+
+  normalized = normalized.replace(/[^\d.-]/g, '');
   const value = Number(normalized);
   if (!Number.isFinite(value)) {
     return null;

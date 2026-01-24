@@ -301,6 +301,58 @@
     }).format(value);
   }
 
+  function parseAmountInput(value) {
+    if (value === null || value === undefined) {
+      return null;
+    }
+    const raw = String(value).trim();
+    if (!raw) {
+      return null;
+    }
+    const dotCount = (raw.match(/\./g) || []).length;
+    const commaCount = (raw.match(/,/g) || []).length;
+    let normalized = raw;
+    if (dotCount > 0 || commaCount > 0) {
+      if (dotCount > 0 && commaCount > 0) {
+        const lastDot = raw.lastIndexOf('.');
+        const lastComma = raw.lastIndexOf(',');
+        if (lastComma > lastDot) {
+          normalized = raw.replace(/\./g, '').replace(',', '.');
+        } else {
+          normalized = raw.replace(/,/g, '');
+        }
+      } else if (commaCount > 1) {
+        normalized = raw.replace(/,/g, '');
+      } else if (dotCount > 1) {
+        normalized = raw.replace(/\./g, '');
+      } else if (commaCount === 1) {
+        normalized = raw.replace(',', '.');
+      }
+    }
+    normalized = normalized.replace(/[^\d.-]/g, '');
+    const amount = Number(normalized);
+    if (!Number.isFinite(amount)) {
+      return null;
+    }
+    return amount;
+  }
+
+  function normalizePayUrl(url, chargeId) {
+    const fallback = chargeId ? `${window.location.origin}/pay/${chargeId}` : '';
+    if (!url) {
+      return fallback;
+    }
+    try {
+      const parsed = new URL(url, window.location.origin);
+      if (parsed.hostname === 'localhost' && window.location.hostname !== 'localhost') {
+        return fallback;
+      }
+      return parsed.toString();
+    } catch (err) {
+      return fallback;
+    }
+  }
+
   function formatDate(value) {
     return new Date(value).toLocaleString('pt-BR');
   }
@@ -751,7 +803,8 @@
       elements.editLinkName.value = charge.description || '';
     }
     if (elements.editLinkAmount) {
-      elements.editLinkAmount.value = (Number(charge.amountCents || 0) / 100).toFixed(2);
+      const amountValue = (Number(charge.amountCents || 0) / 100).toFixed(2);
+      elements.editLinkAmount.value = amountValue.replace('.', ',');
     }
     if (elements.editLinkId) {
       elements.editLinkId.textContent = charge.id || '--';
@@ -1346,15 +1399,16 @@ function renderPixKeys(keys) {
     if (!raw) {
       return null;
     }
+    const chargeId = raw.charge_id || raw.id;
     return {
-      id: raw.charge_id || raw.id,
+      id: chargeId,
       amountCents: raw.amount_cents != null ? raw.amount_cents : raw.amountCents,
       description: raw.description || '',
       status: raw.status,
       createdAt: raw.created_at || raw.createdAt,
       paidAt: raw.paid_at || raw.paidAt || null,
       txid: raw.txid || null,
-      payUrl: raw.pay_url || raw.payUrl || null
+      payUrl: normalizePayUrl(raw.pay_url || raw.payUrl || null, chargeId)
     };
   }
 
@@ -2474,8 +2528,9 @@ async function loadPix() {
     if (!payload.description) {
       delete payload.description;
     }
-    if (!payload.amount) {
-      showToast('Informe o valor do link.', 'error');
+    const amountValue = parseAmountInput(payload.amount);
+    if (!amountValue || amountValue <= 0) {
+      showToast('Informe um valor v\u00e1lido para o link.', 'error');
       return;
     }
     if (!payload.name || !payload.email || !payload.cpf) {
@@ -2503,7 +2558,7 @@ async function loadPix() {
     pixChargePollAttempts = 0;
 
     const chargePayload = {
-      amount: payload.amount,
+      amount: amountValue,
       description: payload.description
     };
     const payerPayload = {
@@ -2519,7 +2574,7 @@ async function loadPix() {
         body: JSON.stringify(chargePayload)
       });
       const chargeId = charge.charge_id;
-      const payUrl = charge.pay_url || charge.payUrl || `${window.location.origin}/pay/${chargeId}`;
+      const payUrl = normalizePayUrl(charge.pay_url || charge.payUrl || null, chargeId);
       const payment = await apiRequest(
         `/api/public/charges/${encodeURIComponent(chargeId)}/create_payment`,
         {
@@ -2653,8 +2708,8 @@ async function loadPix() {
       showToast('Link n\u00e3o identificado.', 'error');
       return;
     }
-    const amount = Number(payload.amount);
-    if (!Number.isFinite(amount) || amount <= 0) {
+    const amount = parseAmountInput(payload.amount);
+    if (!amount || amount <= 0) {
       showToast('Informe um valor v\u00e1lido.', 'error');
       return;
     }
@@ -2690,8 +2745,9 @@ async function loadPix() {
   async function handleWithdrawalCreate(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.withdrawalForm).entries());
-    if (!payload.amount) {
-      showToast('Informe o valor do saque.', 'error');
+    const amountValue = parseAmountInput(payload.amount);
+    if (!amountValue || amountValue <= 0) {
+      showToast('Informe um valor v\u00e1lido para o saque.', 'error');
       return;
     }
     if (!payload.pix_key) {
@@ -2720,7 +2776,7 @@ async function loadPix() {
       await apiRequest('/v1/withdrawals', {
         method: 'POST',
         body: JSON.stringify({
-          amount: payload.amount,
+          amount: amountValue,
           pix_key_type: pixKeyType,
           pix_key: pixKey
         })
@@ -2750,6 +2806,13 @@ async function loadPix() {
     const payload = Object.fromEntries(new FormData(elements.cardForm).entries());
     if (!payload.limit) {
       delete payload.limit;
+    } else {
+      const limitValue = parseAmountInput(payload.limit);
+      if (!limitValue || limitValue <= 0) {
+        showToast('Informe um limite v\u00e1lido.', 'error');
+        return;
+      }
+      payload.limit = limitValue;
     }
 
     try {
@@ -2772,6 +2835,17 @@ async function loadPix() {
     delete payload.cardId;
     if (!cardId) {
       showToast('Selecione um cartão.', 'error');
+      return;
+    }
+    const amountValue = parseAmountInput(payload.amount);
+    if (!amountValue || amountValue <= 0) {
+      showToast('Informe um valor válido.', 'error');
+      return;
+    }
+    payload.amount = amountValue;
+    payload.merchant = String(payload.merchant || '').trim();
+    if (!payload.merchant) {
+      showToast('Informe o estabelecimento.', 'error');
       return;
     }
 

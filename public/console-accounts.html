@@ -292,7 +292,44 @@
 
               <div class="balance-actions">
                 <a class="btn btn-ghost btn-sm" href="/console/pix#linkForm">Depositar</a>
-                <a class="btn btn-primary btn-sm" href="/console/pix#withdrawalForm">Solicitar saque</a>
+                <a class="btn btn-primary btn-sm" href="#withdrawalForm">Solicitar saque</a>
+              </div>
+
+              <div class="grid-2">
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Solicitar saque</h3>
+                    <span class="tag">Pix</span>
+                  </div>
+                  <form class="form" id="withdrawalForm">
+                    <label>
+                      Valor
+                      <input type="text" name="amount" placeholder="0,00" inputmode="decimal" required />
+                    </label>
+                    <label>
+                      Tipo de chave Pix
+                      <select name="pix_key_type" required>
+                        <option value="email">Email</option>
+                        <option value="phone">Celular</option>
+                        <option value="cpf">CPF</option>
+                        <option value="random">Chave aleat&oacute;ria</option>
+                      </select>
+                    </label>
+                    <label>
+                      Chave Pix
+                      <input type="text" name="pix_key" placeholder="ex: nome@email.com" required />
+                    </label>
+                    <button class="btn btn-primary" type="submit">Solicitar saque</button>
+                  </form>
+                </div>
+
+                <div class="card">
+                  <div class="card-head">
+                    <h3>Saques recentes</h3>
+                    <button class="btn btn-ghost" type="button" id="refreshWithdrawals">Atualizar</button>
+                  </div>
+                  <div class="data-table data-table--withdrawals" id="withdrawalsList"></div>
+                </div>
               </div>
 
               <div class="card">
