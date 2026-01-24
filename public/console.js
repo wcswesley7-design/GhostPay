@@ -1141,7 +1141,7 @@
     if (!balance || (!elements.balanceAvailable && !elements.balanceReserve)) {
       return;
     }
-    const totalCents = Number(balance.total_cents ? 0);
+    const totalCents = Number(balance.total_cents || 0);
     const availableCents =
       balance.available_cents != null ? Number(balance.available_cents) : totalCents - Number(balance.hold_cents || 0);
     const holdCents = Number(balance.hold_cents || 0);
