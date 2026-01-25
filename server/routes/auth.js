@@ -16,7 +16,10 @@ const registerSchema = z.object({
   cpf: z.string().min(11).max(20),
   password: z.string().min(8).max(128),
   plan: z.enum(['infinity']).default('infinity'),
-  subscriptionSession: z.string().min(1).optional()
+  subscriptionSession: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().min(1).optional()
+  )
 });
 
 const loginSchema = z.object({

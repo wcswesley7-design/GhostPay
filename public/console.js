@@ -2258,6 +2258,9 @@ async function loadPix() {
     if (!payload.plan) {
       payload.plan = 'infinity';
     }
+    if (!payload.subscriptionSession) {
+      delete payload.subscriptionSession;
+    }
     if (payload.cpf.length !== 11) {
       showToast('Informe um CPF válido.', 'error');
       return;
