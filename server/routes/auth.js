@@ -15,8 +15,8 @@ const registerSchema = z.object({
   email: z.string().email().max(120),
   cpf: z.string().min(11).max(20),
   password: z.string().min(8).max(128),
-  plan: z.enum(['infinity']),
-  subscriptionSession: z.string().min(1)
+  plan: z.enum(['infinity']).default('infinity'),
+  subscriptionSession: z.string().min(1).optional()
 });
 
 const loginSchema = z.object({
@@ -55,8 +55,10 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
   const email = req.body.email.trim().toLowerCase();
   const cpf = String(req.body.cpf || '').replace(/\D/g, '');
   const password = req.body.password;
-  const plan = req.body.plan;
+  const plan = req.body.plan || 'infinity';
   const subscriptionSession = req.body.subscriptionSession;
+  const ownerEmail = (process.env.OWNER_EMAIL || '').trim().toLowerCase();
+  const isOwner = ownerEmail && email === ownerEmail;
 
   try {
     if (cpf.length !== 11) {
@@ -80,26 +82,32 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const sessionResult = await client.query(
-        'SELECT id, plan, status, user_id FROM subscription_sessions WHERE id = $1 FOR UPDATE',
-        [subscriptionSession]
-      );
-      const session = sessionResult.rows[0];
-      if (!session) {
-        await client.query('ROLLBACK');
-        return res.status(402).json({ error: 'subscription_required' });
-      }
-      if (session.plan !== plan) {
-        await client.query('ROLLBACK');
-        return res.status(400).json({ error: 'subscription_plan_mismatch' });
-      }
-      if (session.status !== 'approved') {
-        await client.query('ROLLBACK');
-        return res.status(402).json({ error: 'subscription_not_approved' });
-      }
-      if (session.user_id) {
-        await client.query('ROLLBACK');
-        return res.status(409).json({ error: 'subscription_already_used' });
+      if (!isOwner) {
+        if (!subscriptionSession) {
+          await client.query('ROLLBACK');
+          return res.status(402).json({ error: 'subscription_required' });
+        }
+        const sessionResult = await client.query(
+          'SELECT id, plan, status, user_id FROM subscription_sessions WHERE id = $1 FOR UPDATE',
+          [subscriptionSession]
+        );
+        const session = sessionResult.rows[0];
+        if (!session) {
+          await client.query('ROLLBACK');
+          return res.status(402).json({ error: 'subscription_required' });
+        }
+        if (session.plan !== plan) {
+          await client.query('ROLLBACK');
+          return res.status(400).json({ error: 'subscription_plan_mismatch' });
+        }
+        if (session.status !== 'approved') {
+          await client.query('ROLLBACK');
+          return res.status(402).json({ error: 'subscription_not_approved' });
+        }
+        if (session.user_id) {
+          await client.query('ROLLBACK');
+          return res.status(409).json({ error: 'subscription_already_used' });
+        }
       }
 
       await client.query(
@@ -110,10 +118,12 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
         'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
         [accountId, userId, 'Primary Wallet', 'BRL', 0, accountNum, now]
       );
-      await client.query('UPDATE subscription_sessions SET user_id = $1 WHERE id = $2', [
-        userId,
-        subscriptionSession
-      ]);
+      if (!isOwner && subscriptionSession) {
+        await client.query('UPDATE subscription_sessions SET user_id = $1 WHERE id = $2', [
+          userId,
+          subscriptionSession
+        ]);
+      }
 
       await client.query('COMMIT');
     } catch (err) {

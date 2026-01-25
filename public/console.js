@@ -2256,13 +2256,7 @@ async function loadPix() {
     payload.cpf = String(payload.cpf || '').replace(/\D/g, '');
 
     if (!payload.plan) {
-      setPlanSelection('');
-      showToast('Selecione o plano Infinity para continuar.', 'error');
-      return;
-    }
-    if (!payload.subscriptionSession) {
-      showToast('Finalize a assinatura Infinity antes de criar a conta.', 'error');
-      return;
+      payload.plan = 'infinity';
     }
     if (payload.cpf.length !== 11) {
       showToast('Informe um CPF válido.', 'error');
@@ -3117,10 +3111,11 @@ async function loadPix() {
     const planParam = searchParams.get('plan');
     const sessionParam = searchParams.get('session');
     if (elements.registerForm) {
-      setRegisterAllowed(false);
+      setRegisterAllowed(true);
     }
     if (planParam && elements.registerForm) {
       setPlanSelection(planParam);
+      setRegisterAllowed(false);
       if (elements.tabs.length) {
         setActiveTab('register');
       }
