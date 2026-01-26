@@ -215,8 +215,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .brand-text {
-  display: grid;
-  gap: 4px;
+  display: none;
 }
 
 .brand-name {
