@@ -595,14 +595,14 @@ html[data-theme='light'] .topbar.is-scrolled {
 
 .sync-sidebar {
   position: fixed;
-  left: max(16px, calc((100vw - 1200px) / 2));
-  top: 98px;
+  left: 0;
+  top: 72px;
   width: var(--sidebar-width);
-  height: calc(100vh - 128px);
+  height: calc(100vh - 72px);
   overflow-y: auto;
   scrollbar-width: thin;
   padding: 18px 16px;
-  border-radius: 24px;
+  border-radius: 0 24px 24px 0;
   border: 1px solid rgba(255, 255, 255, 0.06);
   background: linear-gradient(180deg, rgba(14, 18, 22, 0.98), rgba(9, 12, 16, 0.98));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
@@ -612,14 +612,14 @@ html[data-theme='light'] .topbar.is-scrolled {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0;
   text-decoration: none;
 }
 
 .sidebar-brand-logo {
-  width: 40px;
-  height: 40px;
+  width: 84px;
+  height: 84px;
   object-fit: contain;
 }
 
