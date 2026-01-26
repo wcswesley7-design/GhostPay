@@ -25,7 +25,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=20260126-5" />
+    <link rel="stylesheet" href="/styles.css?v=20260126-7" />
   </head>
   <body class="gateway-console">
     <div class="ambient" aria-hidden="true">
@@ -268,219 +268,245 @@
 
           <div class="console-main">
             <section class="section" id="profile" data-reveal>
-              <div class="profile-shell" data-module-scope>
-                <div class="profile-header">
-                  <h2>Perfil</h2>
-                  <p class="lead">Dados da conta, recursos habilitados e limites operacionais da conta.</p>
-                </div>
-
-                <div class="module-tabs" data-module-tabs>
-                  <button class="tab-pill active" type="button" data-panel-target="profile-account">Dados da conta</button>
-                  <button class="tab-pill" type="button" data-panel-target="profile-fees">Taxas</button>
-                  <button class="tab-pill" type="button" data-panel-target="profile-resources">Recursos</button>
-                  <button class="tab-pill" type="button" data-panel-target="profile-limits">Limites</button>
+              <div class="profile-shell profile-shell--v2" data-module-scope>
+                <div class="profile-tabs" data-module-tabs>
+                  <button class="tab-pill active" type="button" data-panel-target="profile-account">
+                    <span class="tab-pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-user"></use></svg>
+                    </span>
+                    Minha Conta
+                  </button>
+                  <button class="tab-pill" type="button" data-panel-target="profile-docs">
+                    <span class="tab-pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-folder"></use></svg>
+                    </span>
+                    Documentos
+                  </button>
+                  <button class="tab-pill" type="button" data-panel-target="profile-notifications">
+                    <span class="tab-pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-spark"></use></svg>
+                    </span>
+                    Notifica&ccedil;&otilde;es
+                  </button>
+                  <button class="tab-pill" type="button" data-panel-target="profile-integrations">
+                    <span class="tab-pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-link"></use></svg>
+                    </span>
+                    Integra&ccedil;&otilde;es
+                  </button>
+                  <button class="tab-pill" type="button" data-panel-target="profile-security">
+                    <span class="tab-pill-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-shield"></use></svg>
+                    </span>
+                    Seguran&ccedil;a
+                  </button>
                 </div>
 
                 <div class="module-panel is-active" data-panel="profile-account">
-                  <div class="profile-grid">
-                    <div class="profile-card">
-                      <div class="profile-id">
-                        <div class="profile-avatar" id="profileInitials">--</div>
-                        <div class="profile-meta">
-                          <strong id="profileName">--</strong>
-                          <small>ID: <span id="profileAccountId">--</span></small>
+                  <div class="profile-v2-layout">
+                    <div class="profile-v2-card profile-v2-summary">
+                      <div class="profile-v2-header">
+                        <span class="profile-v2-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-user"></use></svg>
+                        </span>
+                        <div>
+                          <h3>Minha Conta</h3>
+                          <p>Informa&ccedil;&otilde;es b&aacute;sicas</p>
                         </div>
-                        <span class="tag">Conta</span>
                       </div>
-                      <small>Cria&ccedil;&atilde;o: <span id="profileCreatedAt">--</span></small>
+                      <div class="profile-v2-list">
+                        <div class="profile-v2-item">
+                          <span class="profile-v2-label">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-user"></use></svg>
+                            Nome
+                          </span>
+                          <strong id="profileFullName">--</strong>
+                        </div>
+                        <div class="profile-v2-item">
+                          <span class="profile-v2-label">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-calendar"></use></svg>
+                            Data de Nascimento
+                          </span>
+                          <strong>--/--/----</strong>
+                        </div>
+                        <div class="profile-v2-item">
+                          <span class="profile-v2-label">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                            E-mail
+                          </span>
+                          <strong id="profileEmail">--</strong>
+                        </div>
+                        <div class="profile-v2-item">
+                          <span class="profile-v2-label">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-id"></use></svg>
+                            Documento
+                          </span>
+                          <div class="profile-v2-inline">
+                            <strong id="profileCpf">--</strong>
+                            <span class="tag tag-soft">Pessoa f&iacute;sica</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
-                    <div class="profile-card">
-                      <h3>Configura&ccedil;&otilde;es</h3>
-                      <div class="profile-fields">
+                    <div class="profile-v2-card profile-v2-form">
+                      <div class="profile-v2-header">
+                        <span class="profile-v2-icon profile-v2-icon--accent" aria-hidden="true">
+                          <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-pencil"></use></svg>
+                        </span>
+                        <div>
+                          <h3>Dados Cadastrais</h3>
+                          <p>Atualize suas informa&ccedil;&otilde;es</p>
+                        </div>
+                      </div>
+                      <div class="profile-v2-fields">
                         <label>
-                          Nome de exibi&ccedil;&atilde;o
-                          <div class="field-row">
-                            <input type="text" id="profileDisplayName" name="displayName" placeholder="Como quer ser chamado?" />
+                          Nome completo
+                          <div class="field-row field-row--inline">
+                            <input type="text" id="profileDisplayName" name="displayName" placeholder="Seu nome completo" />
                             <button class="btn btn-ghost btn-sm" type="button" id="profileSaveName">Salvar</button>
                           </div>
                         </label>
                         <label>
-                          Tipo de conta
-                          <div class="field-static">Pessoa f&iacute;sica</div>
+                          Categoria do Neg&oacute;cio (MCC)
+                          <select>
+                            <option value="">Selecione a categoria</option>
+                            <option>Venda de Outros Produtos - 5963</option>
+                            <option>Software e servi&ccedil;os digitais - 5734</option>
+                            <option>Servi&ccedil;os profissionais - 7399</option>
+                            <option>Educa&ccedil;&atilde;o e cursos - 8299</option>
+                          </select>
+                          <small class="field-help">O MCC identifica o tipo de neg&oacute;cio da sua empresa</small>
                         </label>
-                      </div>
-                    </div>
-
-                    <div class="profile-card">
-                      <h3>Dados pessoais</h3>
-                      <div class="profile-fields">
-                        <div class="field-row">
+                        <div class="profile-v2-subtitle">Dados pessoais</div>
+                        <div class="profile-v2-grid">
                           <label>
-                            Nome completo
-                            <div class="field-static" id="profileFullName">--</div>
-                          </label>
-                          <label>
-                            CPF
-                            <div class="field-static" id="profileCpf">--</div>
+                            Data de Nascimento
+                            <input type="text" placeholder="00/00/0000" />
                           </label>
                         </div>
-                        <div class="field-row">
+                        <div class="profile-v2-subtitle">Endere&ccedil;o</div>
+                        <div class="profile-v2-grid">
                           <label>
-                            E-mail
-                            <div class="field-static" id="profileEmail">--</div>
+                            CEP
+                            <input type="text" placeholder="00000-000" />
                           </label>
                           <label>
-                            Telefone
-                            <div class="field-static" id="profilePhone">--</div>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="profile-card">
-                      <h3>Dados banc&aacute;rios</h3>
-                      <div class="profile-fields">
-                        <div class="field-row">
-                          <label>
-                            Tipo de chave Pix
-                            <div class="field-static">CPF</div>
+                            Logradouro
+                            <input type="text" placeholder="Avenida" />
                           </label>
                           <label>
-                            Chave Pix
-                            <div class="field-static" id="profilePixKey">--</div>
+                            N&uacute;mero
+                            <input type="text" placeholder="000" />
                           </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="module-panel" data-panel="profile-fees">
-                  <div class="profile-grid">
-                    <div class="profile-card">
-                      <h3>Tabela de taxas</h3>
-                      <p class="muted">Resumo das taxas aplicadas para cobran&ccedil;as Pix e saques manuais.</p>
-                      <div class="list">
-                        <div class="list-item">
-                          <strong>Pix confirmado</strong>
-                          <div class="list-meta">
-                            <span>0,99% por cobran&ccedil;a</span>
-                          </div>
-                        </div>
-                        <div class="list-item">
-                          <strong>Saque manual</strong>
-                          <div class="list-meta">
-                            <span>R$ 4,90 por solicita&ccedil;&atilde;o aprovada</span>
-                          </div>
-                        </div>
-                        <div class="list-item">
-                          <strong>Links ativos</strong>
-                          <div class="list-meta">
-                            <span>Sem custo adicional</span>
-                          </div>
+                          <label>
+                            Bairro
+                            <input type="text" placeholder="Bairro" />
+                          </label>
+                          <label>
+                            Complemento
+                            <input type="text" placeholder="Complemento" />
+                          </label>
+                          <label>
+                            Cidade
+                            <input type="text" placeholder="Cidade" />
+                          </label>
+                          <label>
+                            Estado
+                            <select>
+                              <option value="">Selecione</option>
+                              <option>AC</option>
+                              <option>AL</option>
+                              <option>AP</option>
+                              <option>AM</option>
+                              <option>BA</option>
+                              <option>CE</option>
+                              <option>DF</option>
+                              <option>ES</option>
+                              <option>GO</option>
+                              <option>MA</option>
+                              <option>MT</option>
+                              <option>MS</option>
+                              <option>MG</option>
+                              <option>PA</option>
+                              <option>PB</option>
+                              <option>PR</option>
+                              <option>PE</option>
+                              <option>PI</option>
+                              <option>RJ</option>
+                              <option>RN</option>
+                              <option>RS</option>
+                              <option>RO</option>
+                              <option>RR</option>
+                              <option>SC</option>
+                              <option>SP</option>
+                              <option>SE</option>
+                              <option>TO</option>
+                            </select>
+                          </label>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div class="module-panel" data-panel="profile-resources">
-                  <div class="profile-grid">
-                    <div class="profile-card">
-                      <h3>Recursos habilitados</h3>
-                      <p class="muted">Ferramentas dispon&iacute;veis na sua conta Fluxo.</p>
-                      <div class="list">
-                        <div class="list-item">
-                          <strong>Links Pix din&acirc;micos</strong>
-                          <div class="list-meta">
-                            <span>Gere QR Code e copia e cola para produtos.</span>
-                          </div>
-                        </div>
-                        <div class="list-item">
-                          <strong>Concilia&ccedil;&atilde;o autom&aacute;tica</strong>
-                          <div class="list-meta">
-                            <span>Atualiza&ccedil;&atilde;o via webhook e verificação ativa.</span>
-                          </div>
-                        </div>
-                        <div class="list-item">
-                          <strong>Saques manuais</strong>
-                          <div class="list-meta">
-                            <span>Fluxo seguro com aprova&ccedil;&atilde;o operacional.</span>
-                          </div>
-                        </div>
+                <div class="module-panel" data-panel="profile-docs">
+                  <div class="profile-v2-card profile-v2-placeholder">
+                    <div class="profile-v2-header">
+                      <span class="profile-v2-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-folder"></use></svg>
+                      </span>
+                      <div>
+                        <h3>Documentos</h3>
+                        <p>Envio e valida&ccedil;&atilde;o de documentos</p>
                       </div>
                     </div>
+                    <p class="muted">Envio de documentos em breve.</p>
                   </div>
                 </div>
 
-                <div class="module-panel" data-panel="profile-limits">
-                  <div class="profile-grid">
-                    <div class="profile-card">
-                      <h3>Limites</h3>
-                      <div class="limits-grid">
-                        <div class="limit-card">
-                          <div class="limit-info">
-                            <span class="limit-icon" aria-hidden="true">
-                              <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-wallet"></use></svg>
-                            </span>
-                            <div>
-                              <strong>Saque por dia</strong>
-                              <div class="muted">Valor m&aacute;ximo liberado por dia.</div>
-                            </div>
-                          </div>
-                          <span class="limit-value">R$ 10.000,00</span>
-                        </div>
-                        <div class="limit-card">
-                          <div class="limit-info">
-                            <span class="limit-icon" aria-hidden="true">
-                              <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-calendar"></use></svg>
-                            </span>
-                            <div>
-                              <strong>Saque por m&ecirc;s</strong>
-                              <div class="muted">Total permitido no m&ecirc;s.</div>
-                            </div>
-                          </div>
-                          <span class="limit-value">R$ 400.000,00</span>
-                        </div>
-                        <div class="limit-card">
-                          <div class="limit-info">
-                            <span class="limit-icon" aria-hidden="true">
-                              <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-link"></use></svg>
-                            </span>
-                            <div>
-                              <strong>Ticket m&iacute;nimo</strong>
-                              <div class="muted">Valor m&iacute;nimo aceito por transa&ccedil;&atilde;o.</div>
-                            </div>
-                          </div>
-                          <span class="limit-value">R$ 1,00</span>
-                        </div>
-                        <div class="limit-card">
-                          <div class="limit-info">
-                            <span class="limit-icon" aria-hidden="true">
-                              <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-bolt"></use></svg>
-                            </span>
-                            <div>
-                              <strong>Ticket m&aacute;ximo</strong>
-                              <div class="muted">Valor m&aacute;ximo aceito por transa&ccedil;&atilde;o.</div>
-                            </div>
-                          </div>
-                          <span class="limit-value">R$ 120,00</span>
-                        </div>
-                        <div class="limit-card">
-                          <div class="limit-info">
-                            <span class="limit-icon" aria-hidden="true">
-                              <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-shield"></use></svg>
-                            </span>
-                            <div>
-                              <strong>Saque noturno</strong>
-                              <div class="muted">Valor m&aacute;ximo das 20h &agrave;s 8h.</div>
-                            </div>
-                          </div>
-                          <span class="limit-value">R$ 1.000,00</span>
-                        </div>
+                <div class="module-panel" data-panel="profile-notifications">
+                  <div class="profile-v2-card profile-v2-placeholder">
+                    <div class="profile-v2-header">
+                      <span class="profile-v2-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-spark"></use></svg>
+                      </span>
+                      <div>
+                        <h3>Notifica&ccedil;&otilde;es</h3>
+                        <p>Prefer&ecirc;ncias de alertas</p>
                       </div>
                     </div>
+                    <p class="muted">Defina como deseja receber alertas da conta.</p>
+                  </div>
+                </div>
+
+                <div class="module-panel" data-panel="profile-integrations">
+                  <div class="profile-v2-card profile-v2-placeholder">
+                    <div class="profile-v2-header">
+                      <span class="profile-v2-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-link"></use></svg>
+                      </span>
+                      <div>
+                        <h3>Integra&ccedil;&otilde;es</h3>
+                        <p>Conecte suas plataformas</p>
+                      </div>
+                    </div>
+                    <p class="muted">Integra&ccedil;&otilde;es dispon&iacute;veis em breve.</p>
+                  </div>
+                </div>
+
+                <div class="module-panel" data-panel="profile-security">
+                  <div class="profile-v2-card profile-v2-placeholder">
+                    <div class="profile-v2-header">
+                      <span class="profile-v2-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-shield"></use></svg>
+                      </span>
+                      <div>
+                        <h3>Seguran&ccedil;a</h3>
+                        <p>Prote&ccedil;&atilde;o da conta</p>
+                      </div>
+                    </div>
+                    <p class="muted">Ajuste de senha e autentica&ccedil;&atilde;o em breve.</p>
                   </div>
                 </div>
               </div>
@@ -525,8 +551,8 @@
 
     <div class="toast" id="toast"></div>
 
-    <script src="/site.js?v=20260126-5"></script>
-    <script src="/console.js?v=20260126-5"></script>
+    <script src="/site.js?v=20260126-7"></script>
+    <script src="/console.js?v=20260126-7"></script>
   </body>
 </html>
 
