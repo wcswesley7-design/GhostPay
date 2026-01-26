@@ -25,7 +25,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=20260126-2" />
+    <link rel="stylesheet" href="/styles.css?v=20260126-3" />
   </head>
   <body class="gateway-console">
     <div class="ambient" aria-hidden="true">
@@ -39,7 +39,7 @@
     <header class="topbar" data-topbar>
       <div class="container">
         <a class="brand" href="/">
-          <span class="brand-mark"><img src="/assets/fluxo-back.png" alt="Fluxo" class="brand-logo" /></span>
+          <span class="brand-mark"><img src="/logofluxonoback.png" alt="Fluxo" class="brand-logo" /></span>
           <span class="brand-text">
             <span class="brand-name">Fluxo</span>
             <span class="brand-tag">Pagamentos Pix</span>
@@ -297,34 +297,7 @@
                 </div>
               </div>
 
-              <div class="balance-actions">
-                <button class="btn btn-primary btn-sm" type="button" data-open-deposit>Depositar</button>
-              </div>
-
               <div class="grid-2">
-                <div class="card">
-                  <div class="card-head">
-                    <h3>Dep&oacute;sito manual</h3>
-                    <span class="tag">Entrada</span>
-                  </div>
-                  <form class="form" id="depositForm">
-                    <label>
-                      Valor
-                      <input type="text" name="amount" placeholder="0,00" inputmode="decimal" required />
-                    </label>
-                    <label>
-                      Conta de destino
-                      <select name="accountId" required>
-                        <option value="">Selecionar conta</option>
-                      </select>
-                    </label>
-                    <label>
-                      Descri&ccedil;&atilde;o (opcional)
-                      <input type="text" name="note" placeholder="Ex: Ajuste de saldo" />
-                    </label>
-                    <button class="btn btn-primary" type="submit">Confirmar dep&oacute;sito</button>
-                  </form>
-                </div>
                 <div class="card">
                   <div class="card-head">
                     <h3>Solicitar saque</h3>
@@ -433,8 +406,8 @@
 
     <div class="toast" id="toast"></div>
 
-    <script src="/site.js?v=20260126-2"></script>
-    <script src="/console.js?v=20260126-2"></script>
+    <script src="/site.js?v=20260126-3"></script>
+    <script src="/console.js?v=20260126-3"></script>
   </body>
 </html>
 

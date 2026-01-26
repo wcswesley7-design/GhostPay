@@ -77,6 +77,8 @@
     metricChargeRevenue: document.getElementById('metricChargeRevenue'),
     salesChartLine: document.getElementById('salesChartLine'),
     salesChartFill: document.getElementById('salesChartFill'),
+    salesChartStage: document.getElementById('salesChartStage'),
+    salesChartEmpty: document.getElementById('salesChartEmpty'),
     conversionDonut: document.getElementById('conversionDonut'),
     overviewRange: document.getElementById('overviewRange'),
     transactionsRange: document.getElementById('transactionsRange'),
@@ -89,7 +91,6 @@
     accountsList: document.getElementById('accountsList'),
     accountForm: document.getElementById('accountForm'),
     transactionForm: document.getElementById('transactionForm'),
-    depositForm: document.getElementById('depositForm'),
     transactionsList: document.getElementById('transactionsList'),
     pixKeysList: document.getElementById('pixKeysList'),
     pixChargesList: document.getElementById('pixChargesList'),
@@ -173,8 +174,7 @@
     filterApplyButtons: document.querySelectorAll('[data-filter-apply]'),
     filterClearButtons: document.querySelectorAll('[data-filter-clear]'),
     filterInputs: document.querySelectorAll('[data-filter-input]'),
-    exportButtons: document.querySelectorAll('[data-export]'),
-    openDepositButtons: document.querySelectorAll('[data-open-deposit]')
+    exportButtons: document.querySelectorAll('[data-export]')
   };
 
   const confirmModal = {
@@ -510,8 +510,12 @@
     if (!elements.salesChartLine || !elements.salesChartFill) {
       return;
     }
+    const hasData = Array.isArray(values) && values.some((value) => Number(value) > 0);
+    if (elements.salesChartStage) {
+      elements.salesChartStage.classList.toggle('is-empty', !hasData);
+    }
     const path = buildLinePath(values);
-    if (!path) {
+    if (!path || !hasData) {
       elements.salesChartLine.setAttribute('d', '');
       elements.salesChartFill.setAttribute('d', '');
       return;
@@ -1026,9 +1030,6 @@
       }
     if (elements.cardForm) {
       fillAccountSelect(elements.cardForm.elements.accountId, '<option value="">Selecionar conta</option>');
-    }
-    if (elements.depositForm) {
-      fillAccountSelect(elements.depositForm.elements.accountId, '<option value="">Selecionar conta</option>');
     }
   }
 
@@ -2527,39 +2528,6 @@ async function loadPix() {
     }
   }
 
-  async function handleDeposit(event) {
-    event.preventDefault();
-    if (!elements.depositForm) {
-      return;
-    }
-    const payload = Object.fromEntries(new FormData(elements.depositForm).entries());
-    const amount = parseAmountInput(payload.amount);
-    if (!amount || amount <= 0) {
-      showToast('Informe um valor válido.', 'error');
-      return;
-    }
-    if (!payload.accountId) {
-      showToast('Selecione a conta de destino.', 'error');
-      return;
-    }
-    try {
-      await apiRequest('/api/transactions', {
-        method: 'POST',
-        body: JSON.stringify({
-          type: 'deposit',
-          amount,
-          toAccountId: payload.accountId,
-          note: payload.note || undefined
-        })
-      });
-      elements.depositForm.reset();
-      await loadOverview();
-      showToast('Depósito confirmado');
-    } catch (err) {
-      const validationMessage = getValidationMessage(err.details);
-      showToast(validationMessage || err.message, 'error');
-    }
-  }
 
   async function handleProfileSave() {
     if (!elements.profileDisplayName) {
@@ -2843,6 +2811,8 @@ async function loadPix() {
   async function handlePixChargeCreate(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.pixChargeForm).entries());
+    payload.name = String(payload.name || '').trim();
+    payload.email = String(payload.email || '').trim();
     if (!payload.description) {
       delete payload.description;
     }
@@ -2885,6 +2855,9 @@ async function loadPix() {
       cpf: cpfDigits,
       phone: payload.phone
     };
+    if (!payerPayload.phone || !String(payerPayload.phone).trim()) {
+      delete payerPayload.phone;
+    }
 
     try {
       const charge = await apiRequest('/v1/charges', {
@@ -3394,25 +3367,8 @@ async function loadPix() {
     if (elements.refreshCardDetail) {
       elements.refreshCardDetail.addEventListener('click', loadCardDetail);
     }
-    if (elements.depositForm) {
-      elements.depositForm.addEventListener('submit', handleDeposit);
-    }
     if (elements.profileSaveName) {
       elements.profileSaveName.addEventListener('click', handleProfileSave);
-    }
-    if (elements.openDepositButtons && elements.openDepositButtons.length) {
-      elements.openDepositButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-          if (!elements.depositForm) {
-            return;
-          }
-          elements.depositForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          const amountInput = elements.depositForm.querySelector('input[name="amount"]');
-          if (amountInput) {
-            amountInput.focus();
-          }
-        });
-      });
     }
     if (elements.sidebarToggles && elements.sidebarToggles.length) {
       const stored = localStorage.getItem('fluxo_sidebar_collapsed') === '1';
