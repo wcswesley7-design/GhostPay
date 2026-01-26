@@ -181,6 +181,12 @@ html[data-theme='light'] .topbar.is-scrolled {
   position: relative;
 }
 
+.gateway-console .topbar .nav,
+.gateway-console .topbar .topbar-actions,
+.gateway-console .topbar .menu-toggle {
+  display: none;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -614,7 +620,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 0;
   text-decoration: none;
 }
