@@ -833,6 +833,10 @@ html[data-theme='light'] .topbar.is-scrolled {
   --sidebar-width: 80px;
 }
 
+.sidebar-collapsed .gateway-console {
+  --sidebar-width: 80px;
+}
+
 .sidebar-collapsed .console-sidebar {
   top: 90px;
 }
@@ -873,6 +877,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 
 .gateway-console {
   background: #000;
+  --sidebar-width: 260px;
 }
 
 .gateway-console .topbar {
@@ -882,6 +887,18 @@ html[data-theme='light'] .topbar.is-scrolled {
 
 .gateway-console .console-layout {
   gap: 28px;
+}
+
+.gateway-console .footer {
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.gateway-console .footer .container {
+  width: 100%;
+  max-width: none;
 }
 
 .gateway-console .console-sidebar {
@@ -3006,6 +3023,10 @@ html.auth-has-token #dashboardPanel {
 }
 
 @media (max-width: 1100px) {
+  .gateway-console {
+    --sidebar-width: 0px;
+  }
+
   .hero-grid {
     grid-template-columns: 1fr;
   }
@@ -3040,6 +3061,13 @@ html.auth-has-token #dashboardPanel {
     padding-left: 0;
     padding-right: 0;
     --sidebar-width: 0px;
+  }
+
+  .gateway-console .footer {
+    margin-left: 0;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .console-sidebar {
