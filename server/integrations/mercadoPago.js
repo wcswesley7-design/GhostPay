@@ -1,7 +1,11 @@
 const MP_BASE_URL = process.env.MP_BASE_URL || 'https://api.mercadopago.com';
 
 function getAccessToken() {
-  const token = process.env.MP_ACCESS_TOKEN;
+  const token =
+    process.env.MP_ACCESS_TOKEN ||
+    process.env.MP_TOKEN ||
+    process.env.MERCADOPAGO_ACCESS_TOKEN ||
+    process.env.MERCADO_PAGO_ACCESS_TOKEN;
   if (!token) {
     const error = new Error('mp_not_configured');
     error.status = 503;

@@ -15,7 +15,10 @@ const registerSchema = z.object({
   email: z.string().email().max(120),
   cpf: z.string().min(11).max(20),
   password: z.string().min(8).max(128),
-  plan: z.enum(['infinity']).default('infinity'),
+  plan: z.preprocess(
+    (value) => (value === '' || value === null || value === undefined ? undefined : value),
+    z.enum(['infinity']).default('infinity')
+  ),
   subscriptionSession: z.preprocess(
     (value) => (value === '' ? undefined : value),
     z.string().min(1).optional()
@@ -24,7 +27,7 @@ const registerSchema = z.object({
 
 const loginSchema = z.object({
   email: z.string().email().max(120),
-  password: z.string().min(8).max(128)
+  password: z.string().min(1).max(128)
 });
 
 function issueToken(user) {

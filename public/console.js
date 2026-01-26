@@ -14,7 +14,18 @@
     withdrawals: [],
     cards: [],
     activeCard: null,
-    cardNumberVisible: false
+    cardNumberVisible: false,
+    filters: {
+      transactions: {
+        query: '',
+        from: null,
+        to: null
+      },
+      overview: {
+        from: null,
+        to: null
+      }
+    }
   };
 
   let pixChargePollTimer = null;
@@ -78,6 +89,7 @@
     accountsList: document.getElementById('accountsList'),
     accountForm: document.getElementById('accountForm'),
     transactionForm: document.getElementById('transactionForm'),
+    depositForm: document.getElementById('depositForm'),
     transactionsList: document.getElementById('transactionsList'),
     pixKeysList: document.getElementById('pixKeysList'),
     pixChargesList: document.getElementById('pixChargesList'),
@@ -144,6 +156,8 @@
     profileCpf: document.getElementById('profileCpf'),
     profilePhone: document.getElementById('profilePhone'),
     profilePixKey: document.getElementById('profilePixKey'),
+    profileDisplayName: document.getElementById('profileDisplayName'),
+    profileSaveName: document.getElementById('profileSaveName'),
     refreshAccounts: document.getElementById('refreshAccounts'),
     refreshOverview: document.getElementById('refreshOverview'),
     refreshTransactions: document.getElementById('refreshTransactions'),
@@ -152,7 +166,15 @@
     refreshWithdrawals: document.getElementById('refreshWithdrawals'),
     refreshCards: document.getElementById('refreshCards'),
     refreshCardTx: document.getElementById('refreshCardTx'),
-    refreshCardDetail: document.getElementById('refreshCardDetail')
+    refreshCardDetail: document.getElementById('refreshCardDetail'),
+    sidebarToggles: document.querySelectorAll('[data-sidebar-toggle]'),
+    filterToggles: document.querySelectorAll('[data-filter-toggle]'),
+    filterPanels: document.querySelectorAll('[data-filter-panel]'),
+    filterApplyButtons: document.querySelectorAll('[data-filter-apply]'),
+    filterClearButtons: document.querySelectorAll('[data-filter-clear]'),
+    filterInputs: document.querySelectorAll('[data-filter-input]'),
+    exportButtons: document.querySelectorAll('[data-export]'),
+    openDepositButtons: document.querySelectorAll('[data-open-deposit]')
   };
 
   const confirmModal = {
@@ -250,6 +272,24 @@
     elements.toast.classList.add('show');
     elements.toast.classList.toggle('error', mode === 'error');
     setTimeout(() => elements.toast.classList.remove('show'), 2600);
+  }
+
+  function getValidationMessage(details) {
+    if (!details) {
+      return null;
+    }
+    const fieldErrors = details.fieldErrors || {};
+    for (const key of Object.keys(fieldErrors)) {
+      const messages = fieldErrors[key];
+      if (messages && messages.length) {
+        return messages[0];
+      }
+    }
+    const formErrors = details.formErrors;
+    if (formErrors && formErrors.length) {
+      return formErrors[0];
+    }
+    return null;
   }
 
   async function copyToClipboard(value) {
@@ -423,6 +463,9 @@
     }
     if (elements.profileFullName) {
       elements.profileFullName.textContent = name;
+    }
+    if (elements.profileDisplayName) {
+      elements.profileDisplayName.value = name;
     }
     if (elements.profileEmail) {
       elements.profileEmail.textContent = email;
@@ -883,6 +926,7 @@
     if (!response.ok) {
       const error = new Error(data.error || 'Falha na solicitação');
       error.status = response.status;
+      error.details = data.details;
       throw error;
     }
     return data;
@@ -916,6 +960,17 @@
     if (!isAuthed) {
       setError('');
     }
+  }
+
+  function setSidebarCollapsed(collapsed) {
+    document.documentElement.classList.toggle('sidebar-collapsed', collapsed);
+    if (elements.sidebarToggles && elements.sidebarToggles.length) {
+      elements.sidebarToggles.forEach((button) => {
+        button.textContent = collapsed ? 'Expandir' : 'Recolher';
+        button.setAttribute('aria-expanded', (!collapsed).toString());
+      });
+    }
+    localStorage.setItem('fluxo_sidebar_collapsed', collapsed ? '1' : '0');
   }
 
   function renderSkeleton(container, count) {
@@ -972,9 +1027,13 @@
     if (elements.cardForm) {
       fillAccountSelect(elements.cardForm.elements.accountId, '<option value="">Selecionar conta</option>');
     }
+    if (elements.depositForm) {
+      fillAccountSelect(elements.depositForm.elements.accountId, '<option value="">Selecionar conta</option>');
+    }
   }
 
   function renderMetrics(metrics) {
+    state.metrics = metrics || {};
     const balance = formatCents(metrics.totalBalanceCents, 'BRL');
     const income = formatCents(metrics.incomeCents, 'BRL');
     const spend = formatCents(metrics.spendCents, 'BRL');
@@ -1317,6 +1376,185 @@
       .join('');
 
     elements.transactionsList.innerHTML = header + rows;
+  }
+
+  function formatRangeLabel(from, to) {
+    if (!from && !to) {
+      return 'Últimos 30 dias';
+    }
+    const fromLabel = from ? formatShortDate(from) : 'Início';
+    const toLabel = to ? formatShortDate(to) : 'Hoje';
+    return `${fromLabel} - ${toLabel}`;
+  }
+
+  function updateRangeLabel(scope) {
+    if (scope === 'overview' && elements.overviewRange) {
+      const { from, to } = state.filters.overview;
+      elements.overviewRange.textContent = formatRangeLabel(from, to);
+    }
+    if (scope === 'transactions' && elements.transactionsRange) {
+      const { from, to } = state.filters.transactions;
+      elements.transactionsRange.textContent = formatRangeLabel(from, to);
+    }
+  }
+
+  function parseDateValue(value) {
+    if (!value) {
+      return null;
+    }
+    const parsed = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+    return parsed;
+  }
+
+  function filterTransactions(transactions) {
+    const { query, from, to } = state.filters.transactions;
+    let filtered = transactions.slice();
+    if (query) {
+      const term = query.toLowerCase();
+      filtered = filtered.filter((transaction) => {
+        const label = labels[transaction.type] || transaction.type;
+        const haystack = [
+          transaction.counterparty,
+          transaction.note,
+          transaction.id,
+          label,
+          formatCents(transaction.amountCents, 'BRL')
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(term);
+      });
+    }
+    if (from || to) {
+      const fromTime = from ? new Date(from).setHours(0, 0, 0, 0) : null;
+      const toTime = to ? new Date(to).setHours(23, 59, 59, 999) : null;
+      filtered = filtered.filter((transaction) => {
+        const createdAt = new Date(transaction.createdAt).getTime();
+        if (fromTime && createdAt < fromTime) {
+          return false;
+        }
+        if (toTime && createdAt > toTime) {
+          return false;
+        }
+        return true;
+      });
+    }
+    return filtered;
+  }
+
+  function applyTransactionFilters() {
+    if (!elements.transactionsList) {
+      return;
+    }
+    const filtered = filterTransactions(state.transactions);
+    renderTransactions(filtered);
+  }
+
+  function toggleFilterPanel(scope, forceOpen) {
+    const panel = document.querySelector(`[data-filter-panel="${scope}"]`);
+    if (!panel) {
+      return;
+    }
+    const shouldOpen = forceOpen !== undefined ? forceOpen : !panel.classList.contains('is-open');
+    panel.classList.toggle('is-open', shouldOpen);
+  }
+
+  function applyFilterScope(scope) {
+    const fromInput = document.querySelector(`[data-filter-from="${scope}"]`);
+    const toInput = document.querySelector(`[data-filter-to="${scope}"]`);
+    const from = parseDateValue(fromInput ? fromInput.value : '');
+    const to = parseDateValue(toInput ? toInput.value : '');
+
+    if (scope === 'transactions') {
+      state.filters.transactions.from = from;
+      state.filters.transactions.to = to;
+      applyTransactionFilters();
+    }
+    if (scope === 'overview') {
+      state.filters.overview.from = from;
+      state.filters.overview.to = to;
+    }
+    updateRangeLabel(scope);
+    toggleFilterPanel(scope, false);
+  }
+
+  function clearFilterScope(scope) {
+    const fromInput = document.querySelector(`[data-filter-from="${scope}"]`);
+    const toInput = document.querySelector(`[data-filter-to="${scope}"]`);
+    if (fromInput) {
+      fromInput.value = '';
+    }
+    if (toInput) {
+      toInput.value = '';
+    }
+    if (scope === 'transactions') {
+      state.filters.transactions.from = null;
+      state.filters.transactions.to = null;
+      applyTransactionFilters();
+    }
+    if (scope === 'overview') {
+      state.filters.overview.from = null;
+      state.filters.overview.to = null;
+    }
+    updateRangeLabel(scope);
+  }
+
+  function downloadCsv(filename, rows) {
+    if (!rows.length) {
+      showToast('Nenhum dado para exportar.', 'info');
+      return;
+    }
+    const headers = Object.keys(rows[0]);
+    const escapeValue = (value) => {
+      if (value === null || value === undefined) {
+        return '';
+      }
+      const text = String(value).replace(/"/g, '""');
+      return `"${text}"`;
+    };
+    const csv = [headers.map(escapeValue).join(';')]
+      .concat(rows.map((row) => headers.map((key) => escapeValue(row[key])).join(';')))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  function exportTransactions() {
+    const rows = filterTransactions(state.transactions).map((transaction) => ({
+      id: transaction.id,
+      tipo: labels[transaction.type] || transaction.type,
+      valor: formatCents(transaction.amountCents, 'BRL'),
+      status: transaction.status || 'completed',
+      data: formatDate(transaction.createdAt),
+      cliente: transaction.counterparty || '',
+      nota: transaction.note || ''
+    }));
+    downloadCsv('fluxo-transacoes.csv', rows);
+  }
+
+  function exportOverview() {
+    if (!state.metrics) {
+      showToast('Nenhum resumo disponível.', 'info');
+      return;
+    }
+    const rows = [
+      { indicador: 'Saldo total', valor: formatCents(state.metrics.totalBalanceCents || 0, 'BRL') },
+      { indicador: 'Entradas 30d', valor: formatCents(state.metrics.incomeCents || 0, 'BRL') },
+      { indicador: 'Saídas 30d', valor: formatCents(state.metrics.spendCents || 0, 'BRL') },
+      { indicador: 'Transações', valor: state.metrics.transactionCount || 0 }
+    ];
+    downloadCsv('fluxo-resumo.csv', rows);
   }
 
 function renderPixKeys(keys) {
@@ -1741,7 +1979,7 @@ function renderCards(cards) {
 
       updateAccountSelects();
       renderAccounts(state.accounts);
-      renderTransactions(state.transactions);
+      applyTransactionFilters();
       renderMetrics(data.metrics || {});
       renderProfile();
 
@@ -2289,6 +2527,73 @@ async function loadPix() {
     }
   }
 
+  async function handleDeposit(event) {
+    event.preventDefault();
+    if (!elements.depositForm) {
+      return;
+    }
+    const payload = Object.fromEntries(new FormData(elements.depositForm).entries());
+    const amount = parseAmountInput(payload.amount);
+    if (!amount || amount <= 0) {
+      showToast('Informe um valor válido.', 'error');
+      return;
+    }
+    if (!payload.accountId) {
+      showToast('Selecione a conta de destino.', 'error');
+      return;
+    }
+    try {
+      await apiRequest('/api/transactions', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: 'deposit',
+          amount,
+          toAccountId: payload.accountId,
+          note: payload.note || undefined
+        })
+      });
+      elements.depositForm.reset();
+      await loadOverview();
+      showToast('Depósito confirmado');
+    } catch (err) {
+      const validationMessage = getValidationMessage(err.details);
+      showToast(validationMessage || err.message, 'error');
+    }
+  }
+
+  async function handleProfileSave() {
+    if (!elements.profileDisplayName) {
+      return;
+    }
+    const name = elements.profileDisplayName.value.trim();
+    if (name.length < 2) {
+      showToast('Informe um nome válido.', 'error');
+      return;
+    }
+    try {
+      const data = await apiRequest('/api/profile', {
+        method: 'PATCH',
+        body: JSON.stringify({ name })
+      });
+      if (data.token) {
+        setToken(data.token);
+      }
+      if (data.user) {
+        state.user = data.user;
+      }
+      renderProfile();
+      if (elements.sidebarName) {
+        elements.sidebarName.textContent = name;
+      }
+      if (elements.welcomeTitle) {
+        elements.welcomeTitle.textContent = `Bem-vindo, ${name}`;
+      }
+      showToast('Nome atualizado');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
   async function handleAccountCreate(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.accountForm).entries());
@@ -2309,7 +2614,8 @@ async function loadPix() {
         'Account already exists': 'Sua conta principal j\u00E1 foi criada.',
         'Primary account is required': 'A conta principal \u00E9 obrigat\u00F3ria.'
       };
-      showToast(messages[err.message] || err.message, 'error');
+      const validationMessage = getValidationMessage(err.details);
+      showToast(validationMessage || messages[err.message] || err.message, 'error');
     }
   }
 
@@ -3087,6 +3393,97 @@ async function loadPix() {
     }
     if (elements.refreshCardDetail) {
       elements.refreshCardDetail.addEventListener('click', loadCardDetail);
+    }
+    if (elements.depositForm) {
+      elements.depositForm.addEventListener('submit', handleDeposit);
+    }
+    if (elements.profileSaveName) {
+      elements.profileSaveName.addEventListener('click', handleProfileSave);
+    }
+    if (elements.openDepositButtons && elements.openDepositButtons.length) {
+      elements.openDepositButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          if (!elements.depositForm) {
+            return;
+          }
+          elements.depositForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const amountInput = elements.depositForm.querySelector('input[name="amount"]');
+          if (amountInput) {
+            amountInput.focus();
+          }
+        });
+      });
+    }
+    if (elements.sidebarToggles && elements.sidebarToggles.length) {
+      const stored = localStorage.getItem('fluxo_sidebar_collapsed') === '1';
+      setSidebarCollapsed(stored);
+      elements.sidebarToggles.forEach((button) => {
+        button.addEventListener('click', () => {
+          const next = !document.documentElement.classList.contains('sidebar-collapsed');
+          setSidebarCollapsed(next);
+        });
+      });
+    }
+    if (elements.filterToggles && elements.filterToggles.length) {
+      elements.filterToggles.forEach((button) => {
+        button.addEventListener('click', () => {
+          const scope = button.dataset.filterToggle;
+          toggleFilterPanel(scope);
+        });
+      });
+    }
+    if (elements.filterApplyButtons && elements.filterApplyButtons.length) {
+      elements.filterApplyButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const scope = button.dataset.filterApply;
+          applyFilterScope(scope);
+        });
+      });
+    }
+    if (elements.filterClearButtons && elements.filterClearButtons.length) {
+      elements.filterClearButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const scope = button.dataset.filterClear;
+          clearFilterScope(scope);
+        });
+      });
+    }
+    if (elements.filterInputs && elements.filterInputs.length) {
+      elements.filterInputs.forEach((input) => {
+        input.addEventListener('input', () => {
+          const scope = input.dataset.filterInput;
+          if (scope === 'transactions') {
+            state.filters.transactions.query = input.value.trim();
+            applyTransactionFilters();
+          }
+        });
+      });
+    }
+    if (elements.exportButtons && elements.exportButtons.length) {
+      elements.exportButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const scope = button.dataset.export;
+          if (scope === 'transactions') {
+            exportTransactions();
+          } else if (scope === 'overview') {
+            exportOverview();
+          }
+        });
+      });
+    }
+    updateRangeLabel('overview');
+    updateRangeLabel('transactions');
+    if (elements.logoutBtn) {
+      const sidebar = document.querySelector('.console-sidebar');
+      if (sidebar && !sidebar.contains(elements.logoutBtn)) {
+        elements.logoutBtn.classList.add('sidebar-logout');
+        const menuCard = sidebar.querySelector('.card:last-child');
+        if (menuCard) {
+          menuCard.appendChild(elements.logoutBtn);
+        } else {
+          sidebar.appendChild(elements.logoutBtn);
+        }
+      }
     }
     if (elements.logoutBtn) {
       elements.logoutBtn.addEventListener('click', async () => {
