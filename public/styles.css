@@ -85,12 +85,12 @@ small {
 }
 
 .container {
-  width: min(1200px, 92vw);
+  width: min(1400px, 94vw);
   margin: 0 auto;
 }
 
 .page {
-  padding: 36px 0 80px;
+  padding: 48px 0 90px;
   display: grid;
   gap: 28px;
 }
@@ -394,7 +394,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .hero {
-  padding: 28px;
+  padding: 36px;
   border-radius: var(--radius-lg);
   background: radial-gradient(120% 120% at 0% 0%, rgba(var(--accent-rgb), 0.18), transparent 60%),
     linear-gradient(160deg, var(--surface), var(--surface-glass));
@@ -581,9 +581,11 @@ html[data-theme='light'] .topbar.is-scrolled {
   grid-template-columns: 1fr;
   align-items: start;
   --sidebar-width: 260px;
-  width: min(1200px, 92vw);
-  margin: 0 auto;
-  padding-left: calc(var(--sidebar-width) + 24px);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-left: calc(var(--sidebar-width) + 32px);
+  padding-right: 32px;
 }
 
 .console-sidebar {
@@ -618,8 +620,8 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .sidebar-brand-logo {
-  width: 84px;
-  height: 84px;
+  width: 96px;
+  height: 96px;
   object-fit: contain;
 }
 
@@ -3036,6 +3038,7 @@ html.auth-has-token #dashboardPanel {
   .console-layout {
     grid-template-columns: 1fr;
     padding-left: 0;
+    padding-right: 0;
     --sidebar-width: 0px;
   }
 
