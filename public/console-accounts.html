@@ -25,7 +25,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=20260126-7" />
+    <link rel="stylesheet" href="/styles.css?v=20260126-8" />
   </head>
   <body class="gateway-console">
     <div class="ambient" aria-hidden="true">
@@ -183,86 +183,54 @@
 
       <section class="section hidden" id="dashboardPanel">
         <div class="console-layout">
-          <aside class="console-sidebar" data-reveal>
-            <div class="card">
-              <div class="card-head">
-                <h3>Conta</h3>
-                <span class="tag">Conta ativa</span>
+          <aside class="console-sidebar sync-sidebar" data-reveal>
+            <a class="sidebar-brand" href="/">
+              <img src="/logofluxonoback.png" alt="Fluxo" class="sidebar-brand-logo" />
+              <div class="sidebar-brand-text">
+                <span class="sidebar-brand-title">Fluxo</span>
+                <span class="sidebar-brand-sub">Pagamentos Pix</span>
               </div>
-              <div class="list">
-                <div class="list-item">
-                  <strong>Conta</strong>
-                  <div class="list-meta">
-                    <span id="sidebarName">--</span>
-                  </div>
+            </a>
+
+            <div class="sidebar-section">
+              <div class="sidebar-section-title">Menus</div>
+              <nav class="sidebar-nav">
+                <a class="sidebar-item" href="/console"><span class="sidebar-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-monitor"></use></svg></span><span class="sidebar-label">In?cio</span></a>
+                <button class="sidebar-item sidebar-item--toggle" type="button" data-sidebar-group="financeiro">
+                  <span class="sidebar-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-wallet"></use></svg>
+                  </span>
+                  <span class="sidebar-label">Financeiro</span>
+                  <span class="sidebar-chevron" aria-hidden="true">?</span>
+                </button>
+                <div class="sidebar-submenu is-open" data-sidebar-submenu="financeiro">
+                  <a class="sidebar-subitem" href="/console/contas" aria-current="page">Saldo</a>
+                  <a class="sidebar-subitem" href="/console/movimentacoes">Transa??es</a>
                 </div>
-                <div class="list-item">
-                  <strong>Status</strong>
-                  <div class="list-meta">
-                    <span>Opera&ccedil;&otilde;es ativas</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-head card-head--menu">
-                <h3>Menu</h3>
-                <div class="card-actions">
-                  <span class="tag">Menu</span>
-                  <button class="btn btn-ghost btn-xs sidebar-toggle" type="button" data-sidebar-toggle aria-expanded="true">Recolher</button>
-                </div>
-              </div>
-              <nav class="console-nav console-nav--stacked">
-                <div class="nav-group">
-                  <span class="nav-group-title">Dashboard</span>
-                  <a class="pill" href="/console">
-                    <span class="pill-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="/assets/icons.svg#icon-monitor"></use>
-                      </svg>
-                    </span>
-                    <span>Vis&atilde;o geral</span>
-                  </a>
-                </div>
-                <div class="nav-group">
-                  <span class="nav-group-title">Financeiro</span>
-                  <a class="pill" href="/console/contas" aria-current="page">
-                    <span class="pill-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="/assets/icons.svg#icon-wallet"></use>
-                      </svg>
-                    </span>
-                    <span>Saldo</span>
-                  </a>
-                  <a class="pill" href="/console/movimentacoes">
-                    <span class="pill-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="/assets/icons.svg#icon-chart"></use>
-                      </svg>
-                    </span>
-                    <span>Transa&ccedil;&otilde;es</span>
-                  </a>
-                </div>
-                <div class="nav-group">
-                  <span class="nav-group-title">Pagamentos</span>
-                  <a class="pill" href="/console/pix">
-                    <span class="pill-icon pill-icon--pix" aria-hidden="true"></span>
-                    <span>Link de pagamento</span>
-                  </a>
-                </div>
-                <div class="nav-group">
-                  <span class="nav-group-title">Conta</span>
-                  <a class="pill" href="/console/perfil">
-                    <span class="pill-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="/assets/icons.svg#icon-user"></use>
-                      </svg>
-                    </span>
-                    <span>Perfil</span>
-                  </a>
-                </div>
+                <a class="sidebar-item" href="/console/pix"><span class="sidebar-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-link"></use></svg></span><span class="sidebar-label">Link de pagamento</span></a>
+                <a class="sidebar-item" href="/console/perfil"><span class="sidebar-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-user"></use></svg></span><span class="sidebar-label">Perfil</span></a>
+                <a class="sidebar-item" href="/support"><span class="sidebar-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-spark"></use></svg></span><span class="sidebar-label">Suporte</span></a>
               </nav>
-              <a class="btn btn-ghost" href="/support">Suporte</a>
+            </div>
+
+            <div class="sidebar-section">
+              <div class="sidebar-section-title">Developer</div>
+              <nav class="sidebar-nav">
+                <a class="sidebar-item" href="/developers"><span class="sidebar-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-link"></use></svg></span><span class="sidebar-label">API</span></a>
+                <a class="sidebar-item" href="/platform"><span class="sidebar-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-sliders"></use></svg></span><span class="sidebar-label">Central de Apps</span></a>
+              </nav>
+            </div>
+
+            <div class="sidebar-footer">
+              <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebarAvatar">--</div>
+                <div class="sidebar-user-meta">
+                  <strong id="sidebarName">--</strong>
+                  <span class="sidebar-badge">NOVO</span>
+                </div>
+              </div>
+              <div class="sidebar-divider"></div>
+              <button class="btn btn-ghost sidebar-compact" type="button" data-sidebar-toggle>Compactar</button>
             </div>
           </aside>
 
@@ -406,8 +374,8 @@
 
     <div class="toast" id="toast"></div>
 
-    <script src="/site.js?v=20260126-7"></script>
-    <script src="/console.js?v=20260126-7"></script>
+    <script src="/site.js?v=20260126-8"></script>
+    <script src="/console.js?v=20260126-8"></script>
   </body>
 </html>
 

@@ -87,6 +87,7 @@
     balancePending: document.getElementById('balancePending'),
     balanceBlocked: document.getElementById('balanceBlocked'),
     sidebarName: document.getElementById('sidebarName'),
+    sidebarAvatar: document.getElementById('sidebarAvatar'),
     accountChips: document.getElementById('accountChips'),
     accountsList: document.getElementById('accountsList'),
     accountForm: document.getElementById('accountForm'),
@@ -454,6 +455,9 @@
     }
     if (elements.profileInitials) {
       elements.profileInitials.textContent = getInitials(name);
+    }
+    if (elements.sidebarAvatar) {
+      elements.sidebarAvatar.textContent = getInitials(name);
     }
     if (elements.profileAccountId) {
       elements.profileAccountId.textContent = accountId;
@@ -958,6 +962,9 @@
     if (!isAuthed && elements.sidebarName) {
       elements.sidebarName.textContent = '--';
     }
+    if (!isAuthed && elements.sidebarAvatar) {
+      elements.sidebarAvatar.textContent = '--';
+    }
     if (!isAuthed && elements.welcomeTitle) {
       elements.welcomeTitle.textContent = 'Seu fluxo de pagamentos em um painel simples.';
     }
@@ -970,7 +977,7 @@
     document.documentElement.classList.toggle('sidebar-collapsed', collapsed);
     if (elements.sidebarToggles && elements.sidebarToggles.length) {
       elements.sidebarToggles.forEach((button) => {
-        button.textContent = collapsed ? 'Expandir' : 'Recolher';
+        button.textContent = collapsed ? 'Expandir' : 'Compactar';
         button.setAttribute('aria-expanded', (!collapsed).toString());
       });
     }
@@ -3380,6 +3387,24 @@ async function loadPix() {
         });
       });
     }
+    const sidebarGroups = document.querySelectorAll('[data-sidebar-group]');
+    if (sidebarGroups.length) {
+      sidebarGroups.forEach((button) => {
+        const key = button.dataset.sidebarGroup;
+        const submenu = document.querySelector(`[data-sidebar-submenu=\"${key}\"]`);
+        if (submenu && submenu.querySelector('[aria-current=\"page\"]')) {
+          submenu.classList.add('is-open');
+          button.classList.add('is-open');
+        }
+        button.addEventListener('click', () => {
+          if (!submenu) {
+            return;
+          }
+          submenu.classList.toggle('is-open');
+          button.classList.toggle('is-open', submenu.classList.contains('is-open'));
+        });
+      });
+    }
     if (elements.filterToggles && elements.filterToggles.length) {
       elements.filterToggles.forEach((button) => {
         button.addEventListener('click', () => {
@@ -3433,9 +3458,9 @@ async function loadPix() {
       const sidebar = document.querySelector('.console-sidebar');
       if (sidebar && !sidebar.contains(elements.logoutBtn)) {
         elements.logoutBtn.classList.add('sidebar-logout');
-        const menuCard = sidebar.querySelector('.card:last-child');
-        if (menuCard) {
-          menuCard.appendChild(elements.logoutBtn);
+        const footer = sidebar.querySelector('.sidebar-footer');
+        if (footer) {
+          footer.appendChild(elements.logoutBtn);
         } else {
           sidebar.appendChild(elements.logoutBtn);
         }
