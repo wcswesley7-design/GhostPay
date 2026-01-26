@@ -890,10 +890,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .gateway-console .footer {
-  margin-left: var(--sidebar-width);
-  width: calc(100% - var(--sidebar-width));
-  padding-left: 32px;
-  padding-right: 32px;
+  display: none;
 }
 
 .gateway-console .footer .container {
