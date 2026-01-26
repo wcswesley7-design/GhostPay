@@ -214,12 +214,6 @@ html[data-theme='light'] .topbar.is-scrolled {
   filter: none;
 }
 
-.topbar .brand-text,
-.topbar .nav,
-.topbar .topbar-actions {
-  display: none !important;
-}
-
 .brand-text {
   display: grid;
   gap: 4px;
