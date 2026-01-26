@@ -91,7 +91,7 @@ router.post('/:id/test', async (req, res) => {
     }
 
     emitWebhook(req.user.id, 'webhook.test', {
-      message: 'GhostPay webhook test',
+      message: 'Fluxo webhook test',
       webhookId: req.params.id
     });
     return res.json({ status: 'queued' });

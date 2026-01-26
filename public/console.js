@@ -401,7 +401,7 @@
       return;
     }
     const user = state.user || {};
-    const name = user.name || 'Conta GhostPay';
+    const name = user.name || 'Conta Fluxo';
     const email = user.email || '--';
     const account = state.accounts[0];
     const accountId = (account && (account.accountNumber || account.id)) || user.id || '--';
@@ -911,7 +911,7 @@
       elements.sidebarName.textContent = '--';
     }
     if (!isAuthed && elements.welcomeTitle) {
-      elements.welcomeTitle.textContent = 'Sua conta digital em um painel simples.';
+      elements.welcomeTitle.textContent = 'Seu fluxo de pagamentos em um painel simples.';
     }
     if (!isAuthed) {
       setError('');
@@ -1966,7 +1966,7 @@ async function loadPix() {
     }
     updateCardNumberDisplay(card);
     if (elements.cardVisualHolder) {
-      elements.cardVisualHolder.textContent = state.user && state.user.name ? state.user.name : 'Titular GhostPay';
+      elements.cardVisualHolder.textContent = state.user && state.user.name ? state.user.name : 'Titular Fluxo';
     }
     if (elements.cardVisualExpiry) {
       elements.cardVisualExpiry.textContent = getCardExpiry(card.createdAt);
@@ -3150,7 +3150,7 @@ async function loadPix() {
       }
       if (decoded.name || decoded.email) {
         state.user = {
-          name: decoded.name || 'Conta GhostPay',
+          name: decoded.name || 'Conta Fluxo',
           email: decoded.email || '',
           cpf: decoded.cpf || ''
         };

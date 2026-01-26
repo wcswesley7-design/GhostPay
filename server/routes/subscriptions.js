@@ -13,7 +13,7 @@ const PLAN_CONFIG = {
   infinity: {
     label: 'Infinity',
     amount: 59.9,
-    description: 'GhostPay Infinity (Pix)'
+    description: 'Fluxo Infinity (Pix)'
   }
 };
 

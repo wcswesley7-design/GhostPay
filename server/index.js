@@ -141,7 +141,7 @@ async function start() {
   try {
     await initDb();
     app.listen(port, () => {
-      console.log(`GhostPay running on http://localhost:${port}`);
+      console.log(`Fluxo running on http://localhost:${port}`);
     });
     startWebhookWorker();
     startMercadoPagoSync();

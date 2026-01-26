@@ -33,7 +33,7 @@ async function mpRequest(path, options = {}) {
 function splitName(fullName) {
   const parts = String(fullName || '').trim().split(/\s+/).filter(Boolean);
   if (!parts.length) {
-    return { firstName: 'Cliente', lastName: 'GhostPay' };
+    return { firstName: 'Cliente', lastName: 'Fluxo' };
   }
   if (parts.length === 1) {
     return { firstName: parts[0], lastName: parts[0] };
