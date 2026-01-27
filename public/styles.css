@@ -1021,6 +1021,41 @@ html[data-theme='light'] .topbar.is-scrolled {
   box-shadow: none;
 }
 
+.gateway-console .card,
+.gateway-console .glass-card,
+.gateway-console .cta-card,
+.gateway-console .metric-card,
+.gateway-console .stat-card,
+.gateway-console .feature-card,
+.gateway-console .timeline-step,
+.gateway-console .faq-card {
+  background: #0b0b0b;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.gateway-console .glass-card {
+  backdrop-filter: none;
+}
+
+.gateway-console .sync-sidebar {
+  background: #050505;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.gateway-console .sidebar-item,
+.gateway-console .sidebar-subitem {
+  background: transparent;
+}
+
+.gateway-console .sidebar-item[aria-current='page'],
+.gateway-console .sidebar-item:focus-visible,
+.gateway-console .sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
 .gateway-console .hero {
   padding: 18px 0 6px;
 }
