@@ -1028,13 +1028,22 @@ html[data-theme='light'] .topbar.is-scrolled {
 .gateway-console .stat-card,
 .gateway-console .feature-card,
 .gateway-console .timeline-step,
-.gateway-console .faq-card {
+.gateway-console .faq-card,
+.console-page .card,
+.console-page .glass-card,
+.console-page .cta-card,
+.console-page .metric-card,
+.console-page .stat-card,
+.console-page .feature-card,
+.console-page .timeline-step,
+.console-page .faq-card {
   background: #0b0b0b;
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: none;
 }
 
-.gateway-console .glass-card {
+.gateway-console .glass-card,
+.console-page .glass-card {
   backdrop-filter: none;
 }
 
