@@ -1005,8 +1005,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .gateway-console .topbar {
-  background: #000;
-  border-bottom-color: rgba(164, 183, 172, 0.18);
+  display: none;
 }
 
 .gateway-console .console-layout {
@@ -1061,6 +1060,8 @@ html[data-theme='light'] .topbar.is-scrolled {
   background: #050505;
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: none;
+  top: 0;
+  height: 100vh;
 }
 
 .gateway-console .sidebar-item,
