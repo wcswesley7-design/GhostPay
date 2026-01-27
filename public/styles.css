@@ -37,6 +37,10 @@ html[data-theme='light'] {
   --glow: 0 0 0 1px rgba(27, 193, 115, 0.16), 0 0 24px rgba(27, 193, 115, 0.12);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -93,6 +97,14 @@ small {
   padding: 48px 0 90px;
   display: grid;
   gap: 28px;
+}
+
+.page.landing {
+  gap: 72px;
+}
+
+.landing section[id] {
+  scroll-margin-top: 120px;
 }
 
 .center-page {
@@ -179,6 +191,15 @@ html[data-theme='light'] .topbar.is-scrolled {
   justify-content: center;
   gap: 20px;
   position: relative;
+}
+
+.topbar--landing .container {
+  justify-content: space-between;
+}
+
+.topbar--landing .brand-mark {
+  width: 96px;
+  height: 42px;
 }
 
 .gateway-console .topbar .nav,
@@ -408,6 +429,45 @@ html[data-theme='light'] .topbar.is-scrolled {
   box-shadow: var(--shadow);
 }
 
+.hero--center {
+  text-align: center;
+  padding: 56px 32px;
+}
+
+.hero--center .hero-grid {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
+.hero--center .hero-copy {
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+}
+
+.hero--center .hero-actions {
+  justify-content: center;
+}
+
+.hero--center .hero-metrics {
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-panels {
+  margin-top: 24px;
+  display: grid;
+  gap: 16px;
+  width: min(980px, 100%);
+}
+
+.hero-panels .glass-card {
+  text-align: left;
+}
+
 .hero-grid {
   display: grid;
   gap: 24px;
@@ -528,6 +588,54 @@ html[data-theme='light'] .topbar.is-scrolled {
 .section {
   display: grid;
   gap: 18px;
+}
+
+.section-head--center {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.checklist li::before {
+  content: '\2713';
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+.checklist strong {
+  color: var(--text);
+}
+
+.plan-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.plan-list li::before {
+  content: '\2022';
+  color: var(--accent);
+  margin-right: 6px;
 }
 
 .console-nav {

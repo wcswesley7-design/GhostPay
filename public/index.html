@@ -15,7 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260126-19" />
+    <link rel="stylesheet" href="styles.css?v=20260126-21" />
   </head>
   <body>
     <div class="ambient" aria-hidden="true">
@@ -26,23 +26,19 @@
       <div class="scanline"></div>
     </div>
 
-    <header class="topbar" data-topbar>
+    <header class="topbar topbar--landing" data-topbar>
       <div class="container">
-        <a class="brand" href="/">
+        <a class="brand" href="#inicio">
           <span class="brand-mark"><img src="/logofluxonoback.png" alt="Fluxo" class="brand-logo" /></span>
-          <span class="brand-text">
-            <span class="brand-name">Fluxo</span>
-            <span class="brand-tag">Pagamentos Pix</span>
-          </span>
         </a>
 
         <nav class="nav" data-nav>
-          <a class="nav-link" href="/">In&iacute;cio</a>
-          <a class="nav-link" href="/platform">Plataforma</a>
-          <a class="nav-link" href="/security">Seguran&ccedil;a</a>
-          <a class="nav-link" href="/empresa">Empresa</a>
-          <a class="nav-link" href="/pricing">Planos</a>
-          <a class="nav-link" href="/support">Suporte</a>
+          <a class="nav-link" href="#inicio">In&iacute;cio</a>
+          <a class="nav-link" href="#plataforma">Plataforma</a>
+          <a class="nav-link" href="#seguranca">Seguran&ccedil;a</a>
+          <a class="nav-link" href="#empresa">Empresa</a>
+          <a class="nav-link" href="#planos">Planos</a>
+          <a class="nav-link" href="#suporte">Suporte</a>
         </nav>
 
         <div class="topbar-actions">
@@ -67,35 +63,26 @@
       </div>
     </header>
 
-    <main class="page">
-      <section class="hero" data-reveal>
+    <main class="page landing">
+      <section class="hero hero--center" id="inicio" data-reveal>
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Fluxo Gateway</p>
-            <h1>O gateway de pagamentos Pix que transforma cobran&ccedil;as em fluxo de caixa.</h1>
+            <p class="eyebrow">Bem-vindo &agrave; Fluxo</p>
+            <h1>A plataforma Pix que acelera o seu fluxo de caixa.</h1>
             <p class="lead">
-              Infraestrutura completa para cobran&ccedil;as Pix, saldo interno e opera&ccedil;&otilde;es seguras em um painel moderno.
+              Simplifique cobran&ccedil;as, receba em segundos, concilie em tempo real e acompanhe tudo em um painel &uacute;nico.
             </p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="/assinatura?plan=infinity">Abrir conta</a>
-              <a class="btn btn-ghost" href="/platform">Ver plataforma</a>
+              <a class="btn btn-ghost" href="#plataforma">Ver plataforma</a>
             </div>
-            <div class="hero-metrics">
-              <div class="metric-card">
-                <span class="metric-label">Cobran&ccedil;as</span>
-                <strong>QR Code e copia e cola em segundos.</strong>
-              </div>
-              <div class="metric-card">
-                <span class="metric-label">Webhooks</span>
-                <strong>Notifica&ccedil;&otilde;es e concilia&ccedil;&atilde;o autom&aacute;tica.</strong>
-              </div>
-              <div class="metric-card">
-                <span class="metric-label">Saldo</span>
-                <strong>Carteira do merchant com extrato completo.</strong>
-              </div>
+            <div class="pill-row">
+              <span class="pill">Pix instant&acirc;neo</span>
+              <span class="pill">Checkout integrado</span>
+              <span class="pill">Dashboard em tempo real</span>
             </div>
           </div>
-          <div class="hero-panel">
+          <div class="hero-panels grid-2">
             <div class="glass-card">
               <div class="card-head">
                 <h3>Resumo da conta</h3>
@@ -132,12 +119,26 @@
             </div>
           </div>
         </div>
+        <div class="hero-metrics">
+          <div class="metric-card">
+            <span class="metric-label">Cobran&ccedil;as</span>
+            <strong>QR Code e copia e cola em segundos.</strong>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Concilia&ccedil;&atilde;o</span>
+            <strong>Atualiza&ccedil;&atilde;o autom&aacute;tica por webhook.</strong>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Saldo</span>
+            <strong>Carteira do merchant com extrato completo.</strong>
+          </div>
+        </div>
       </section>
 
-      <section class="section" data-reveal>
-        <div class="section-head">
-          <h2>Por que usar Fluxo</h2>
-          <p class="lead">Infraestrutura Pix pensada para performance, seguran&ccedil;a e escala.</p>
+      <section class="section" id="plataforma" data-reveal>
+        <div class="section-head section-head--center">
+          <h2>Plataforma completa para vender com Pix</h2>
+          <p class="lead">Tudo o que voc&ecirc; precisa para cobrar, conciliar e escalar suas opera&ccedil;&otilde;es.</p>
         </div>
         <div class="feature-grid">
           <div class="feature-card">
@@ -147,7 +148,21 @@
           </div>
           <div class="feature-card">
             <div class="icon" aria-hidden="true">
-              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-chart"></use></svg>
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-link"></use></svg>
+            </div>
+            <h3>Links de pagamento</h3>
+            <p class="muted">Crie cobran&ccedil;as por produto e compartilhe com seus clientes.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-monitor"></use></svg>
+            </div>
+            <h3>Checkout personalizado</h3>
+            <p class="muted">Experi&ecirc;ncia fluida para pagamentos com Pix e status em tempo real.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-spark"></use></svg>
             </div>
             <h3>Concilia&ccedil;&atilde;o autom&aacute;tica</h3>
             <p class="muted">Webhooks e verifica&ccedil;&atilde;o ativa para evitar cr&eacute;ditos duplicados.</p>
@@ -156,63 +171,49 @@
             <div class="icon" aria-hidden="true">
               <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-wallet"></use></svg>
             </div>
-            <h3>Saldo do merchant</h3>
-            <p class="muted">Carteira interna com extrato e hist&oacute;rico de cobran&ccedil;as.</p>
+            <h3>Dashboard financeiro</h3>
+            <p class="muted">Saldo, extratos e indicadores para tomada de decis&atilde;o.</p>
           </div>
           <div class="feature-card">
             <div class="icon" aria-hidden="true">
-              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-shield-check"></use></svg>
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-sliders"></use></svg>
             </div>
-            <h3>Seguran&ccedil;a e compliance</h3>
-            <p class="muted">LGPD, HMAC em webhooks e monitoramento cont&iacute;nuo.</p>
+            <h3>Integra&ccedil;&otilde;es e webhooks</h3>
+            <p class="muted">Integre via API e acompanhe eventos com logs dedicados.</p>
           </div>
         </div>
-      </section>
 
-      <section class="section" data-reveal>
         <div class="grid-2">
           <div class="card">
             <div class="card-head">
-              <h3>M&oacute;dulos da plataforma</h3>
+              <h3>M&oacute;dulos do painel</h3>
               <span class="tag">Plataforma</span>
             </div>
-            <div class="module-tabs" data-module-tabs>
-              <button class="tab-pill active" type="button" data-module-target="charges">Cobran&ccedil;as</button>
-              <button class="tab-pill" type="button" data-module-target="wallet">Carteira</button>
-              <button class="tab-pill" type="button" data-module-target="webhooks">Webhooks</button>
+            <p class="muted">Vis&atilde;o completa do seu fluxo financeiro em um &uacute;nico painel.</p>
+            <div class="pill-row">
+              <span class="pill">Cobran&ccedil;as</span>
+              <span class="pill">Links</span>
+              <span class="pill">Carteira</span>
+              <span class="pill">Extratos</span>
+              <span class="pill">Saques</span>
             </div>
-            <div class="module-panel" data-module-panel="charges">
-              <strong>Cria&ccedil;&atilde;o de cobran&ccedil;as Pix</strong>
-              <p class="muted">QR Code, copia e cola, expira&ccedil;&atilde;o e status em tempo real.</p>
-              <div class="pill-row">
-                <span class="pill">QR Code</span>
-                <span class="pill">BR Code</span>
-                <span class="pill">Status</span>
+            <div class="stats-grid stats-grid--compact">
+              <div class="stat-card">
+                <span class="stat-label">Recebimentos</span>
+                <strong>Em tempo real</strong>
+                <span class="stat-meta">Notifica&ccedil;&atilde;o imediata</span>
               </div>
-            </div>
-            <div class="module-panel hidden" data-module-panel="wallet">
-              <strong>Carteira interna do merchant</strong>
-              <p class="muted">Saldo, extratos e solicita&ccedil;&otilde;es de saque com aprova&ccedil;&atilde;o manual.</p>
-              <div class="pill-row">
-                <span class="pill">Saldo</span>
-                <span class="pill">Extratos</span>
-                <span class="pill">Saques</span>
-              </div>
-            </div>
-            <div class="module-panel hidden" data-module-panel="webhooks">
-              <strong>Eventos e concilia&ccedil;&atilde;o</strong>
-              <p class="muted">Eventos de pagamento e confirma&ccedil;&atilde;o com idempot&ecirc;ncia.</p>
-              <div class="pill-row">
-                <span class="pill">Webhook</span>
-                <span class="pill">HMAC</span>
-                <span class="pill">Logs</span>
+              <div class="stat-card">
+                <span class="stat-label">Concilia&ccedil;&atilde;o</span>
+                <strong>Autom&aacute;tica</strong>
+                <span class="stat-meta">Sem retrabalho manual</span>
               </div>
             </div>
           </div>
 
           <div class="card">
             <div class="card-head">
-              <h3>Fluxo do Pix</h3>
+              <h3>Fluxo da cobran&ccedil;a</h3>
               <span class="tag">Operacional</span>
             </div>
             <div class="timeline">
@@ -223,68 +224,271 @@
               </div>
               <div class="timeline-step">
                 <span>02</span>
-                <strong>Pagamento do pagador</strong>
+                <strong>Pagamento do cliente</strong>
                 <p class="muted">Pix confirmado no Mercado Pago.</p>
               </div>
               <div class="timeline-step">
                 <span>03</span>
                 <strong>Saldo atualizado</strong>
-                <p class="muted">Webhook confirma e credita automaticamente no ledger.</p>
+                <p class="muted">Webhook credita automaticamente no ledger.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section" data-reveal>
+      <section class="section" id="seguranca" data-reveal>
+        <div class="section-head section-head--center">
+          <h2>Seguran&ccedil;a em cada etapa</h2>
+          <p class="lead">Infraestrutura robusta, compliance e monitoramento cont&iacute;nuo para proteger seu dinheiro.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Camadas de prote&ccedil;&atilde;o</h3>
+              <span class="tag">Seguran&ccedil;a</span>
+            </div>
+            <ul class="checklist">
+              <li><strong>HMAC nos webhooks</strong> para garantir autenticidade das notifica&ccedil;&otilde;es.</li>
+              <li><strong>Regras antifraude</strong> e valida&ccedil;&atilde;o de cobran&ccedil;as sens&iacute;veis.</li>
+              <li><strong>LGPD</strong> com coleta m&iacute;nima e controle de permiss&otilde;es.</li>
+              <li><strong>Monitoramento 24/7</strong> com alertas operacionais em tempo real.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Indicadores de confian&ccedil;a</h3>
+              <span class="tag">Compliance</span>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span class="stat-label">SLA</span>
+                <strong>99,9%</strong>
+                <span class="stat-meta">Disponibilidade do servi&ccedil;o</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Monitoramento</span>
+                <strong>24/7</strong>
+                <span class="stat-meta">Alertas e respostas autom&aacute;ticas</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Logs</span>
+                <strong>Auditoria</strong>
+                <span class="stat-meta">Rastreabilidade completa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="empresa" data-reveal>
+        <div class="section-head section-head--center">
+          <h2>Empresa focada em opera&ccedil;&otilde;es Pix</h2>
+          <p class="lead">Equipe especializada em pagamentos, concilia&ccedil;&atilde;o e suporte consultivo.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Quem somos</h3>
+              <span class="tag">Fluxo</span>
+            </div>
+            <p class="muted">
+              Nascemos para simplificar cobran&ccedil;as Pix com uma experi&ecirc;ncia moderna, clara e confi&aacute;vel. Atuamos ao lado
+              de times financeiros e opera&ccedil;&otilde;es para garantir previsibilidade no fluxo de caixa.
+            </p>
+            <div class="pill-row">
+              <span class="pill">Atendimento consultivo</span>
+              <span class="pill">Equipe dedicada</span>
+              <span class="pill">Foco em performance</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Nossos n&uacute;meros</h3>
+              <span class="tag">Resultados</span>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span class="stat-label">Clientes ativos</span>
+                <strong>+2.400</strong>
+                <span class="stat-meta">Crescimento mensal</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Cobran&ccedil;as/dia</span>
+                <strong>+18k</strong>
+                <span class="stat-meta">Processadas automaticamente</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">NPS</span>
+                <strong>92</strong>
+                <span class="stat-meta">Satisfa&ccedil;&atilde;o dos clientes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="planos" data-reveal>
+        <div class="section-head section-head--center">
+          <h2>Planos para cada est&aacute;gio do seu neg&oacute;cio</h2>
+          <p class="lead">Escolha o plano que combina com seu volume e evolua quando precisar.</p>
+        </div>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-head">
+              <h3>Essencial</h3>
+              <span class="tag">Start</span>
+            </div>
+            <div class="price">R$ 0</div>
+            <p class="muted">Ideal para testar o fluxo de cobran&ccedil;as Pix.</p>
+            <ul class="plan-list">
+              <li>Links de pagamento</li>
+              <li>Dashboard b&aacute;sico</li>
+              <li>Suporte por e-mail</li>
+            </ul>
+            <a class="btn btn-ghost" href="#suporte">Falar com time</a>
+          </div>
+          <div class="price-card">
+            <div class="price-head">
+              <h3>Pro</h3>
+              <span class="tag">Escala</span>
+            </div>
+            <div class="price">R$ 29,90/m&ecirc;s</div>
+            <p class="muted">Para opera&ccedil;&otilde;es que precisam de concilia&ccedil;&atilde;o autom&aacute;tica.</p>
+            <ul class="plan-list">
+              <li>Webhooks em tempo real</li>
+              <li>Extratos detalhados</li>
+              <li>Suporte priorit&aacute;rio</li>
+            </ul>
+            <a class="btn btn-ghost" href="/assinatura?plan=pro">Assinar Pro</a>
+          </div>
+          <div class="price-card highlight">
+            <div class="price-head">
+              <h3>Infinity</h3>
+              <span class="tag">Completo</span>
+            </div>
+            <div class="price">R$ 59,90/m&ecirc;s</div>
+            <p class="muted">Tudo desbloqueado para times em alta demanda.</p>
+            <ul class="plan-list">
+              <li>Concilia&ccedil;&atilde;o e ledger completo</li>
+              <li>Saques manuais com aprova&ccedil;&atilde;o</li>
+              <li>Suporte dedicado</li>
+            </ul>
+            <a class="btn btn-primary" href="/assinatura?plan=infinity">Assinar Infinity</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="suporte" data-reveal>
+        <div class="section-head section-head--center">
+          <h2>Suporte que acompanha sua opera&ccedil;&atilde;o</h2>
+          <p class="lead">Fale com especialistas e tenha respostas r&aacute;pidas quando precisar.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Fale com a Fluxo</h3>
+              <span class="tag">Suporte</span>
+            </div>
+            <p class="muted">
+              Atendimento humano, consultivo e focado em resolver sua demanda. Estamos dispon&iacute;veis para d&uacute;vidas de integra&ccedil;&atilde;o,
+              cobran&ccedil;as e opera&ccedil;&otilde;es financeiras.
+            </p>
+            <div class="pill-row">
+              <span class="pill">WhatsApp</span>
+              <span class="pill">E-mail</span>
+              <span class="pill">Central 24/7</span>
+            </div>
+            <div class="stats-grid stats-grid--compact">
+              <div class="stat-card">
+                <span class="stat-label">Tempo de resposta</span>
+                <strong>At&eacute; 15 min</strong>
+                <span class="stat-meta">Hor&aacute;rio comercial</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Canal dedicado</span>
+                <strong>Infinity</strong>
+                <span class="stat-meta">Prioridade operacional</span>
+              </div>
+            </div>
+          </div>
+          <form class="form card" data-support-form>
+            <div class="card-head">
+              <h3>Solicitar contato</h3>
+              <span class="tag">Contato</span>
+            </div>
+            <label>
+              Nome
+              <input type="text" name="name" placeholder="Seu nome" required />
+            </label>
+            <label>
+              E-mail
+              <input type="email" name="email" placeholder="seu@email.com" required />
+            </label>
+            <label>
+              Mensagem
+              <textarea name="message" rows="4" placeholder="Conte rapidamente sua necessidade" required></textarea>
+            </label>
+            <button class="btn btn-primary" type="submit">Enviar mensagem</button>
+          </form>
+        </div>
+        <div class="faq-grid">
+          <div class="faq-card">
+            <strong>Quanto tempo para liberar o acesso?</strong>
+            <p class="muted">Assim que o Pix da assinatura &eacute; confirmado, liberamos o painel.</p>
+          </div>
+          <div class="faq-card">
+            <strong>Posso integrar via API?</strong>
+            <p class="muted">Sim. Webhooks e endpoints est&atilde;o dispon&iacute;veis para integra&ccedil;&otilde;es completas.</p>
+          </div>
+          <div class="faq-card">
+            <strong>Existe suporte para concilia&ccedil;&atilde;o?</strong>
+            <p class="muted">Nossa equipe acompanha a opera&ccedil;&atilde;o e ajusta regras quando necess&aacute;rio.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cta" data-reveal>
         <div class="cta-card card">
           <div>
-            <h3>Pronto para operar com Pix?</h3>
+            <h3>Pronto para acelerar seu fluxo de caixa?</h3>
             <p class="muted">Ative sua conta e tenha cobran&ccedil;as Pix com concilia&ccedil;&atilde;o em tempo real.</p>
           </div>
           <div class="cta-actions">
-            <a class="btn btn-primary" href="/assinatura?plan=infinity">Ativar Infinity</a>
-            <a class="btn btn-ghost" href="/support">Falar com especialistas</a>
+            <a class="btn btn-primary" href="/assinatura?plan=infinity">Abrir conta</a>
+            <a class="btn btn-ghost" href="#suporte">Falar com especialistas</a>
           </div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div>
-            <h4>Fluxo</h4>
-            <p class="muted">
-              Pagamentos Pix com concilia&ccedil;&atilde;o em tempo real, carteira digital e opera&ccedil;&otilde;es seguras.
-            </p>
-          </div>
-          <div>
-            <h4>Produto</h4>
-            <a href="/platform">Plataforma</a>
-            <a href="/pricing">Planos</a>
-            <a href="/developers">Developers</a>
-          </div>
-          <div>
-            <h4>Empresa</h4>
-            <a href="/empresa">Quem somos</a>
-            <a href="/security">Seguran&ccedil;a</a>
-            <a href="/support">Suporte</a>
-          </div>
-          <div>
-            <h4>Legal</h4>
-            <a href="/lgpd">LGPD</a>
-            <a href="/privacidade">Privacidade</a>
-            <a href="/termos">Termos de uso</a>
-          </div>
+      <div class="container footer-grid">
+        <div>
+          <div class="brand-name">Fluxo</div>
+          <small>Pagamentos Pix com concilia&ccedil;&atilde;o em tempo real e dashboard financeiro.</small>
         </div>
-        <div class="footer-bottom">
-          <span>&copy; 2026 Fluxo. Todos os direitos reservados.</span>
-          <span>Opera&ccedil;&atilde;o Modelo B (cust&oacute;dia).</span>
+        <div class="footer-col">
+          <strong>Se&ccedil;&otilde;es</strong>
+          <a href="#plataforma">Plataforma</a>
+          <a href="#seguranca">Seguran&ccedil;a</a>
+          <a href="#planos">Planos</a>
+        </div>
+        <div class="footer-col">
+          <strong>Empresa</strong>
+          <a href="#empresa">Empresa</a>
+          <a href="#suporte">Suporte</a>
+          <a href="/console?tab=login">Entrar</a>
+        </div>
+        <div class="footer-col">
+          <strong>Legal</strong>
+          <a href="/lgpd">LGPD</a>
+          <a href="/privacidade">Privacidade</a>
+          <a href="/termos">Termos de uso</a>
         </div>
       </div>
     </footer>
 
-    <script src="site.js?v=20260126-19"></script>
+    <script src="site.js?v=20260126-21"></script>
   </body>
 </html>

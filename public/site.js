@@ -28,8 +28,20 @@
       return;
     }
     const current = normalizePath(window.location.pathname);
+    const currentHash = window.location.hash;
     nav.querySelectorAll('.nav-link').forEach((link) => {
-      const href = normalizePath(link.getAttribute('href'));
+      const rawHref = link.getAttribute('href') || '';
+      if (rawHref.startsWith('#')) {
+        if ((!currentHash && rawHref === '#inicio') || currentHash === rawHref) {
+          link.classList.add('active');
+        }
+        link.addEventListener('click', () => {
+          nav.querySelectorAll('.nav-link').forEach((navLink) => navLink.classList.remove('active'));
+          link.classList.add('active');
+        });
+        return;
+      }
+      const href = normalizePath(rawHref);
       if (href === current) {
         link.classList.add('active');
       }
