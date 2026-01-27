@@ -994,6 +994,16 @@ html[data-theme='light'] .topbar.is-scrolled {
   --sidebar-width: 260px;
 }
 
+.gateway-console,
+.console-page {
+  --surface: #0b0b0b;
+  --surface-strong: #0b0b0b;
+  --surface-glass: #0b0b0b;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --shadow: none;
+}
+
 .gateway-console .topbar {
   background: #000;
   border-bottom-color: rgba(164, 183, 172, 0.18);
@@ -1063,6 +1073,46 @@ html[data-theme='light'] .topbar.is-scrolled {
 .gateway-console .sidebar-item:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.12);
+}
+
+.gateway-console input,
+.gateway-console select,
+.gateway-console textarea,
+.console-page input,
+.console-page select,
+.console-page textarea {
+  background: #0b0b0b;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.gateway-console input:focus,
+.gateway-console select:focus,
+.gateway-console textarea:focus,
+.console-page input:focus,
+.console-page select:focus,
+.console-page textarea:focus {
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: none;
+}
+
+.gateway-console .data-table .table-row,
+.console-page .data-table .table-row,
+.gateway-console .list-item,
+.console-page .list-item,
+.gateway-console .metric,
+.console-page .metric {
+  background: #0b0b0b;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.gateway-console .tab.active,
+.console-page .tab.active,
+.gateway-console .tab-pill.active,
+.console-page .tab-pill.active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .gateway-console .hero {
