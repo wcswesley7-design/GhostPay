@@ -17,6 +17,7 @@
     cardNumberVisible: false,
     financialChart: null,
     financialZoomRegistered: false,
+    financialSeriesMode: 'all',
     filters: {
       transactions: {
         query: '',
@@ -1375,7 +1376,7 @@
     }
 
     state.financialChart = new Chart(elements.financialChart, config);
-    setFinancialSeries('all');
+    setFinancialSeries(state.financialSeriesMode || 'all');
   }
 
   function setFinancialSeries(mode) {
@@ -1388,6 +1389,7 @@
       paid: 2,
       pending: 3
     };
+    state.financialSeriesMode = mode;
     state.financialChart.data.datasets.forEach((dataset, index) => {
       if (mode === 'all') {
         dataset.hidden = false;
@@ -1398,7 +1400,11 @@
     state.financialChart.update();
     if (elements.financialSeriesButtons) {
       elements.financialSeriesButtons.forEach((button) => {
-        button.classList.toggle('is-active', button.dataset.financialSeries === mode);
+        if (mode === 'all') {
+          button.classList.toggle('is-active', true);
+        } else {
+          button.classList.toggle('is-active', button.dataset.financialSeries === mode);
+        }
       });
     }
   }
@@ -3894,7 +3900,12 @@ async function loadPix() {
     if (elements.financialSeriesButtons && elements.financialSeriesButtons.length) {
       elements.financialSeriesButtons.forEach((button) => {
         button.addEventListener('click', () => {
-          setFinancialSeries(button.dataset.financialSeries || 'all');
+          const next = button.dataset.financialSeries || 'all';
+          if (state.financialSeriesMode === next) {
+            setFinancialSeries('all');
+          } else {
+            setFinancialSeries(next);
+          }
         });
       });
     }

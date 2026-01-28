@@ -1438,31 +1438,6 @@ html[data-theme='light'] .topbar.is-scrolled {
   gap: 18px;
 }
 
-.financial-overview__controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem;
-}
-
-.financial-toggle {
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.financial-toggle.is-active {
-  border-color: rgba(122, 162, 255, 0.45);
-  color: #e4edff;
-  background: rgba(122, 162, 255, 0.18);
-}
-
 .overview-stat {
   display: grid;
   gap: 8px;
@@ -1613,6 +1588,27 @@ html[data-theme='light'] .topbar.is-scrolled {
   justify-content: center;
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.85rem;
+}
+
+.legend-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 999px;
+}
+
+.legend-toggle .legend-dot {
+  margin-right: 0;
+}
+
+.legend-toggle.is-active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .legend-dot {

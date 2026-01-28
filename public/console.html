@@ -336,25 +336,24 @@
                   </div>
                 </div>
 
-                <div class="financial-overview__controls">
-                  <span class="muted">Mostrar:</span>
-                  <button class="financial-toggle is-active" type="button" data-financial-series="all">Todos</button>
-                  <button class="financial-toggle" type="button" data-financial-series="revenue">Receita</button>
-                  <button class="financial-toggle" type="button" data-financial-series="paid">Pix pagos</button>
-                  <button class="financial-toggle" type="button" data-financial-series="pending">Pix pendentes</button>
-                  <button class="financial-toggle" type="button" data-financial-series="outflow">Sa&iacute;das</button>
-                </div>
-
                 <div class="financial-overview__chart">
                   <div class="chart-canvas">
                     <canvas id="financialChart" height="280" aria-label="Gr&aacute;fico financeiro" role="img"></canvas>
                   </div>
                 </div>
                 <div class="financial-overview__legend">
-                  <span><i class="legend-dot is-blue"></i>Receita</span>
-                  <span><i class="legend-dot is-yellow"></i>Sa&iacute;das</span>
-                  <span><i class="legend-dot is-gray"></i>Pix pagos</span>
-                  <span><i class="legend-dot is-rose"></i>Pix pendentes</span>
+                  <button class="legend-toggle is-active" type="button" data-financial-series="revenue">
+                    <i class="legend-dot is-blue"></i>Receita
+                  </button>
+                  <button class="legend-toggle" type="button" data-financial-series="outflow">
+                    <i class="legend-dot is-yellow"></i>Sa&iacute;das
+                  </button>
+                  <button class="legend-toggle" type="button" data-financial-series="paid">
+                    <i class="legend-dot is-gray"></i>Pix pagos
+                  </button>
+                  <button class="legend-toggle" type="button" data-financial-series="pending">
+                    <i class="legend-dot is-rose"></i>Pix pendentes
+                  </button>
                 </div>
               </div>
             </section>
