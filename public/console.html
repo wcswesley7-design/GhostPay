@@ -277,129 +277,122 @@
                 </div>
               </div>
 
-              <div class="stats-grid">
-                <div class="stat-card">
-                  <span class="stat-label">Vendas</span>
-                  <strong id="metricSales">--</strong>
-                  <span class="stat-meta" id="metricSalesDelta">0% vs m&ecirc;s anterior</span>
+              <div class="financial-overview card">
+                <div class="financial-overview__header">
+                  <h3>Vis&atilde;o geral financeira</h3>
+                  <button class="btn btn-ghost btn-icon-only financial-overview__menu" type="button" aria-label="Mais op&ccedil;&otilde;es">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <use href="/assets/icons.svg#icon-more"></use>
+                    </svg>
+                  </button>
                 </div>
-                <div class="stat-card">
-                  <span class="stat-label">Ticket m&eacute;dio</span>
-                  <strong id="metricTicket">--</strong>
-                  <span class="stat-meta">M&eacute;dia por cobran&ccedil;a paga</span>
+                <div class="financial-overview__stats">
+                  <div class="overview-stat">
+                    <span class="overview-stat__label">Receita</span>
+                    <div class="overview-stat__value">
+                      <span class="overview-stat__icon is-green" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+                          <path d="M8 12l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <strong id="metricSales">--</strong>
+                    </div>
+                  </div>
+                  <div class="overview-stat">
+                    <span class="overview-stat__label">Despesas</span>
+                    <div class="overview-stat__value">
+                      <span class="overview-stat__icon is-red" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+                          <path d="M12 8v8M12 16l-3-3M12 16l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <strong id="metricSpendFull">--</strong>
+                    </div>
+                  </div>
+                  <div class="overview-stat">
+                    <span class="overview-stat__label">Investimento</span>
+                    <div class="overview-stat__value">
+                      <span class="overview-stat__icon is-blue" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M4 16h4v4H4zM10 12h4v8h-4zM16 8h4v12h-4z" fill="currentColor"/>
+                        </svg>
+                      </span>
+                      <strong id="metricRevenue">--</strong>
+                    </div>
+                  </div>
+                  <div class="overview-stat">
+                    <span class="overview-stat__label">Poupan&ccedil;a</span>
+                    <div class="overview-stat__value">
+                      <span class="overview-stat__icon is-gold" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M5 12a7 7 0 0 1 14 0v3a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z" fill="none" stroke="currentColor" stroke-width="2"/>
+                          <path d="M9 9h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                      </span>
+                      <strong id="metricChargeRevenue">--</strong>
+                    </div>
+                  </div>
                 </div>
-                <div class="stat-card">
-                  <span class="stat-label">Pix pagos</span>
-                  <strong id="metricPixPaid">--</strong>
-                  <span class="stat-meta">Cobran&ccedil;as confirmadas</span>
-                </div>
-                <div class="stat-card">
-                  <span class="stat-label">Vendas hoje</span>
-                  <strong id="metricSalesToday">--</strong>
-                  <span class="stat-meta">Atualiza&ccedil;&atilde;o em tempo real</span>
-                </div>
-                <div class="stat-card stat-card--health">
-                  <span class="stat-label">Sa&uacute;de da conta</span>
-                  <strong id="metricHealth">--</strong>
-                  <div class="health-bar"><span id="metricHealthBar"></span></div>
-                  <span class="stat-meta" id="metricHealthPct">--</span>
-                </div>
-              </div>
 
-              <div class="grid-2 dashboard-panels">
-                <div class="card chart-card">
-                  <div class="card-head">
-                    <h3>Receita</h3>
-                    <span class="tag">Atualiza&ccedil;&atilde;o em tempo real</span>
+                <div class="financial-overview__chart">
+                  <div class="chart-axis-labels">
+                    <span>120.00</span>
+                    <span>100.00</span>
+                    <span>80.00</span>
+                    <span>60.00</span>
+                    <span>40.00</span>
+                    <span>20.00</span>
+                    <span>0.00</span>
                   </div>
-                  <div class="chart-wrap">
-                    <div class="chart-stage" id="salesChartStage">
-                      <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                        <path class="chart-fill" id="salesChartFill"></path>
-                        <path class="chart-line" id="salesChartLine"></path>
-                      </svg>
-                      <div class="chart-empty" id="salesChartEmpty">Dados indispon&iacute;veis para o per&iacute;odo selecionado</div>
-                      <div class="chart-axis" aria-hidden="true"></div>
+                  <div class="chart-canvas">
+                    <svg class="chart-grid" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                      <path d="M0 10H100M0 25H100M0 40H100M0 55H100M0 70H100M0 85H100" />
+                    </svg>
+                    <div class="chart-bars">
+                      <div class="chart-bar" style="--bar: 0.74"></div>
+                      <div class="chart-bar" style="--bar: 0.82"></div>
+                      <div class="chart-bar" style="--bar: 0.58"></div>
+                      <div class="chart-bar" style="--bar: 0.9"></div>
+                      <div class="chart-bar" style="--bar: 0.64"></div>
+                      <div class="chart-bar" style="--bar: 0.7"></div>
+                      <div class="chart-bar" style="--bar: 0.42"></div>
+                      <div class="chart-bar" style="--bar: 0.3"></div>
+                      <div class="chart-bar" style="--bar: 0.78"></div>
+                      <div class="chart-bar" style="--bar: 0.38"></div>
+                      <div class="chart-bar" style="--bar: 0.74"></div>
+                      <div class="chart-bar" style="--bar: 0.32"></div>
                     </div>
-                    <div class="chart-footer">
-                      <div>
-                        <span class="muted">Receita 7 dias</span>
-                        <strong id="metricRevenue">--</strong>
-                      </div>
-                      <div class="chart-legend">
-                        <span class="dot dot-blue"></span>
-                        <span>Pix pagos</span>
-                      </div>
-                    </div>
-                    <div class="chart-metrics">
-                      <div class="chart-metric">
-                        <span>Maior dia</span>
-                        <strong id="metricRevenueMax">--</strong>
-                      </div>
-                      <div class="chart-metric">
-                        <span>M&iacute;nimo</span>
-                        <strong id="metricRevenueMin">--</strong>
-                      </div>
-                      <div class="chart-metric">
-                        <span>M&eacute;dia di&aacute;ria</span>
-                        <strong id="metricRevenueAvg">--</strong>
-                      </div>
-                      <div class="chart-metric">
-                        <span>Ticket m&aacute;ximo</span>
-                        <strong id="metricTicketMax">--</strong>
-                      </div>
-                      <div class="chart-metric">
-                        <span>Ticket m&iacute;nimo</span>
-                        <strong id="metricTicketMin">--</strong>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-            </div>
-
-                <div class="card conversion-card">
-                  <div class="card-head">
-                    <h3>Taxa de convers&atilde;o</h3>
-                    <span class="tag">Pix</span>
-                  </div>
-                  <div class="conversion-grid">
-                    <div class="donut">
-                      <svg viewBox="0 0 36 36" aria-hidden="true">
-                        <path class="donut-bg" d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0 -31.831" />
-                        <path class="donut-value" id="conversionDonut" d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0 -31.831" />
-                      </svg>
-                      <div class="donut-center">
-                        <strong id="metricConversion">--</strong>
-                        <span class="muted">Pix pagos</span>
-                      </div>
-                    </div>
-                    <div class="conversion-meta">
-                      <div class="list-item">
-                        <strong id="metricChargeTotal">--</strong>
-                        <span>Total de cobran&ccedil;as</span>
-                      </div>
-                      <div class="list-item">
-                        <strong id="metricChargePaid">--</strong>
-                        <span>Cobran&ccedil;as pagas</span>
-                      </div>
-                      <div class="list-item">
-                        <strong id="metricChargePending">--</strong>
-                        <span>Pendentes</span>
-                      </div>
-                      <div class="list-item">
-                        <strong id="metricChargePendingValue">--</strong>
-                        <span>Valor pendente</span>
-                      </div>
-                      <div class="list-item">
-                        <strong id="metricChargeFailed">--</strong>
-                        <span>Canceladas</span>
-                      </div>
-                      <div class="list-item">
-                        <strong id="metricChargeRevenue">--</strong>
-                        <span>Receita confirmada</span>
-                      </div>
+                    <svg class="chart-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                      <path class="chart-line-solid" d="M0 72 L9 60 L18 66 L27 52 L36 62 L45 58 L54 64 L63 62 L72 40 L81 58 L90 50 L100 48" />
+                      <path class="chart-line-dash" d="M0 88 L9 84 L18 86 L27 80 L36 78 L45 84 L54 88 L63 86 L72 84 L81 70 L90 78 L100 66" />
+                    </svg>
+                    <div class="chart-bars-secondary">
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.2"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.24"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.36"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.22"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.18"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.25"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.28"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.12"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.24"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.34"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.2"></div>
+                      <div class="chart-bar chart-bar--accent" style="--bar: 0.18"></div>
                     </div>
                   </div>
+                  <div class="chart-months">
+                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+                    <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                  </div>
+                </div>
+                <div class="financial-overview__legend">
+                  <span><i class="legend-dot is-blue"></i>Renda total</span>
+                  <span><i class="legend-dot is-yellow"></i>Despesas totais</span>
+                  <span><i class="legend-dot is-gray"></i>Investimentos</span>
+                  <span><i class="legend-dot is-rose"></i>Poupan&ccedil;a</span>
                 </div>
               </div>
             </section>
