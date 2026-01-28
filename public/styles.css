@@ -10,6 +10,10 @@
   --accent-2: #004526;
   --accent-3: #0a7a46;
   --accent-rgb: 0, 92, 50;
+  --accent-cool: #2f6fd6;
+  --accent-cool-rgb: 47, 111, 214;
+  --accent-warm: #f2b56b;
+  --accent-warm-rgb: 242, 181, 107;
   --danger: #f87171;
   --warning: #f7c948;
   --border: rgba(164, 183, 172, 0.18);
@@ -56,6 +60,10 @@ body {
   font-family: var(--font-sans);
   color: var(--text);
   background: #000;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(var(--accent-cool-rgb), 0.18), transparent 45%),
+    radial-gradient(circle at 88% 10%, rgba(var(--accent-rgb), 0.12), transparent 38%),
+    radial-gradient(circle at 80% 80%, rgba(var(--accent-warm-rgb), 0.16), transparent 45%);
   overflow-x: hidden;
 }
 
@@ -113,7 +121,7 @@ small {
 }
 
 .ambient {
-  display: none;
+  display: block;
 }
 
 .orb {
@@ -137,7 +145,7 @@ small {
   height: 520px;
   right: -180px;
   bottom: -220px;
-  background: radial-gradient(circle, rgba(15, 143, 82, 0.38), transparent 65%);
+  background: radial-gradient(circle, rgba(var(--accent-cool-rgb), 0.35), transparent 65%);
   animation-delay: -8s;
 }
 
@@ -146,7 +154,7 @@ small {
   height: 240px;
   top: 22%;
   right: 16%;
-  background: radial-gradient(circle, rgba(57, 224, 141, 0.28), transparent 65%);
+  background: radial-gradient(circle, rgba(var(--accent-warm-rgb), 0.28), transparent 65%);
   animation-delay: -12s;
 }
 
@@ -162,7 +170,7 @@ small {
 .scanline {
   position: absolute;
   inset: -50% 0 0 0;
-  background: linear-gradient(180deg, transparent, rgba(var(--accent-rgb), 0.12), transparent);
+  background: linear-gradient(180deg, transparent, rgba(var(--accent-cool-rgb), 0.12), transparent);
   animation: scan 10s linear infinite;
   opacity: 0.4;
 }
