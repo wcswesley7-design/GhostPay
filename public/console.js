@@ -466,9 +466,6 @@
   }
 
   function renderProfile() {
-    if (!elements.profileName && !elements.profileAccountId) {
-      return;
-    }
     const user = state.user || {};
     const name = user.name || 'Conta Fluxo';
     const email = user.email || '--';
