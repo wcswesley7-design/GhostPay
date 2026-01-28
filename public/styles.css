@@ -348,6 +348,25 @@ html[data-theme='light'] .topbar.is-scrolled {
   box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.18);
 }
 
+.gateway-console .btn,
+.console-page .btn {
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.gateway-console .btn-primary,
+.console-page .btn-primary {
+  box-shadow: none;
+}
+
+.gateway-console .btn-primary:hover,
+.console-page .btn-primary:hover,
+.gateway-console .btn-ghost:hover,
+.console-page .btn-ghost:hover {
+  transform: none;
+  box-shadow: none;
+  color: var(--text);
+}
+
 .btn-sm {
   padding: 6px 10px;
   border-radius: 10px;
@@ -867,12 +886,20 @@ html[data-theme='light'] .topbar.is-scrolled {
   display: grid;
   gap: 12px;
   margin-top: 8px;
+  margin-top: auto;
 }
 
 .sidebar-user {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.sidebar-user--top {
+  padding: 12px;
+  border-radius: 14px;
+  background: #0b0b0b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-avatar {

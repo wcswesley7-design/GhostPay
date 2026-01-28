@@ -2546,6 +2546,10 @@ async function loadPix() {
       return;
     }
     try {
+      if (elements.profileSaveName) {
+        elements.profileSaveName.disabled = true;
+        elements.profileSaveName.textContent = 'Salvando...';
+      }
       const data = await apiRequest('/api/profile', {
         method: 'PATCH',
         body: JSON.stringify({ name })
@@ -2566,6 +2570,11 @@ async function loadPix() {
       showToast('Nome atualizado');
     } catch (err) {
       showToast(err.message, 'error');
+    } finally {
+      if (elements.profileSaveName) {
+        elements.profileSaveName.disabled = false;
+        elements.profileSaveName.textContent = 'Salvar';
+      }
     }
   }
 
@@ -3376,6 +3385,14 @@ async function loadPix() {
     }
     if (elements.profileSaveName) {
       elements.profileSaveName.addEventListener('click', handleProfileSave);
+    }
+    if (elements.profileDisplayName) {
+      elements.profileDisplayName.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          handleProfileSave();
+        }
+      });
     }
     if (elements.sidebarToggles && elements.sidebarToggles.length) {
       const stored = localStorage.getItem('fluxo_sidebar_collapsed') === '1';
