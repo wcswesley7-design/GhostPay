@@ -25,7 +25,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=20260126-27" />
+    <link rel="stylesheet" href="/styles.css?v=20260126-28" />
   </head>
   <body class="gateway-console">
     <div class="ambient" aria-hidden="true">
@@ -290,7 +290,7 @@
                             <svg viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-calendar"></use></svg>
                             Data de Nascimento
                           </span>
-                          <strong>--/--/----</strong>
+                          <strong id="profileBirthDate">--/--/----</strong>
                         </div>
                         <div class="profile-v2-item">
                           <span class="profile-v2-label">
@@ -301,6 +301,13 @@
                         </div>
                         <div class="profile-v2-item">
                           <span class="profile-v2-label">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-phone"></use></svg>
+                            Telefone
+                          </span>
+                          <strong id="profilePhoneSummary">--</strong>
+                        </div>
+                        <div class="profile-v2-item">
+                          <span class="profile-v2-label">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-id"></use></svg>
                             Documento
                           </span>
@@ -308,6 +315,20 @@
                             <strong id="profileCpf">--</strong>
                             <span class="tag tag-soft">Pessoa f&iacute;sica</span>
                           </div>
+                        </div>
+                        <div class="profile-v2-item">
+                          <span class="profile-v2-label">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-briefcase"></use></svg>
+                            MCC
+                          </span>
+                          <strong id="profileMcc">--</strong>
+                        </div>
+                        <div class="profile-v2-item">
+                          <span class="profile-v2-label">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="/assets/icons.svg#icon-map-pin"></use></svg>
+                            Endere&ccedil;o
+                          </span>
+                          <strong id="profileAddressSummary">--</strong>
                         </div>
                       </div>
                     </div>
@@ -327,17 +348,17 @@
                           Nome completo
                           <div class="field-row field-row--inline">
                             <input type="text" id="profileDisplayName" name="displayName" placeholder="Seu nome completo" />
-                            <button class="btn btn-ghost btn-sm" type="button" id="profileSaveName">Salvar</button>
+                            <button class="btn btn-ghost btn-sm" type="button" id="profileSaveBasic">Salvar</button>
                           </div>
                         </label>
                         <label>
                           Categoria do Neg&oacute;cio (MCC)
-                          <select>
+                          <select id="profileMccInput">
                             <option value="">Selecione a categoria</option>
-                            <option>Venda de Outros Produtos - 5963</option>
-                            <option>Software e servi&ccedil;os digitais - 5734</option>
-                            <option>Servi&ccedil;os profissionais - 7399</option>
-                            <option>Educa&ccedil;&atilde;o e cursos - 8299</option>
+                            <option value="5963">Venda de Outros Produtos - 5963</option>
+                            <option value="5734">Software e servi&ccedil;os digitais - 5734</option>
+                            <option value="7399">Servi&ccedil;os profissionais - 7399</option>
+                            <option value="8299">Educa&ccedil;&atilde;o e cursos - 8299</option>
                           </select>
                           <small class="field-help">O MCC identifica o tipo de neg&oacute;cio da sua empresa</small>
                         </label>
@@ -345,38 +366,42 @@
                         <div class="profile-v2-grid">
                           <label>
                             Data de Nascimento
-                            <input type="text" placeholder="00/00/0000" />
+                            <input type="date" id="profileBirthDateInput" />
+                          </label>
+                          <label>
+                            Telefone
+                            <input type="tel" id="profilePhoneInput" placeholder="(11) 99999-0000" />
                           </label>
                         </div>
                         <div class="profile-v2-subtitle">Endere&ccedil;o</div>
                         <div class="profile-v2-grid">
                           <label>
                             CEP
-                            <input type="text" placeholder="00000-000" />
+                            <input type="text" id="profileCep" placeholder="00000-000" />
                           </label>
                           <label>
                             Logradouro
-                            <input type="text" placeholder="Avenida" />
+                            <input type="text" id="profileStreet" placeholder="Avenida" />
                           </label>
                           <label>
                             N&uacute;mero
-                            <input type="text" placeholder="000" />
+                            <input type="text" id="profileNumber" placeholder="000" />
                           </label>
                           <label>
                             Bairro
-                            <input type="text" placeholder="Bairro" />
+                            <input type="text" id="profileNeighborhood" placeholder="Bairro" />
                           </label>
                           <label>
                             Complemento
-                            <input type="text" placeholder="Complemento" />
+                            <input type="text" id="profileComplement" placeholder="Complemento" />
                           </label>
                           <label>
                             Cidade
-                            <input type="text" placeholder="Cidade" />
+                            <input type="text" id="profileCity" placeholder="Cidade" />
                           </label>
                           <label>
                             Estado
-                            <select>
+                            <select id="profileState">
                               <option value="">Selecione</option>
                               <option>AC</option>
                               <option>AL</option>
@@ -414,7 +439,7 @@
                 </div>
 
                 <div class="module-panel" data-panel="profile-docs">
-                  <div class="profile-v2-card profile-v2-placeholder">
+                  <div class="profile-v2-card">
                     <div class="profile-v2-header">
                       <span class="profile-v2-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-folder"></use></svg>
@@ -424,12 +449,31 @@
                         <p>Envio e valida&ccedil;&atilde;o de documentos</p>
                       </div>
                     </div>
-                    <p class="muted">Envio de documentos em breve.</p>
+                    <div class="profile-v2-fields">
+                      <label>
+                        Tipo de documento
+                        <select id="profileDocType">
+                          <option value="">Selecione</option>
+                          <option value="cpf">CPF</option>
+                          <option value="rg">RG</option>
+                          <option value="cnh">CNH</option>
+                          <option value="cnpj">CNPJ</option>
+                        </select>
+                      </label>
+                      <label>
+                        N&uacute;mero do documento
+                        <input type="text" id="profileDocNumber" placeholder="Digite o n&uacute;mero" />
+                      </label>
+                      <div class="field-row field-row--inline">
+                        <button class="btn btn-ghost btn-sm" type="button" id="profileDocSave">Salvar documentos</button>
+                      </div>
+                      <small class="muted">O envio do arquivo ser&aacute; habilitado na pr&oacute;xima etapa.</small>
+                    </div>
                   </div>
                 </div>
 
                 <div class="module-panel" data-panel="profile-notifications">
-                  <div class="profile-v2-card profile-v2-placeholder">
+                  <div class="profile-v2-card">
                     <div class="profile-v2-header">
                       <span class="profile-v2-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-spark"></use></svg>
@@ -439,12 +483,32 @@
                         <p>Prefer&ecirc;ncias de alertas</p>
                       </div>
                     </div>
-                    <p class="muted">Defina como deseja receber alertas da conta.</p>
+                    <div class="profile-v2-fields">
+                      <div class="toggle-row">
+                        <input type="checkbox" id="profileNotifyEmail" />
+                        <label for="profileNotifyEmail">Receber alertas por e-mail</label>
+                      </div>
+                      <div class="toggle-row">
+                        <input type="checkbox" id="profileNotifySms" />
+                        <label for="profileNotifySms">Receber alertas por SMS</label>
+                      </div>
+                      <div class="toggle-row">
+                        <input type="checkbox" id="profileNotifyWhatsapp" />
+                        <label for="profileNotifyWhatsapp">Receber alertas por WhatsApp</label>
+                      </div>
+                      <div class="toggle-row">
+                        <input type="checkbox" id="profileNotifyReport" />
+                        <label for="profileNotifyReport">Resumo semanal de desempenho</label>
+                      </div>
+                      <div class="field-row field-row--inline">
+                        <button class="btn btn-ghost btn-sm" type="button" id="profileNotifySave">Salvar prefer&ecirc;ncias</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div class="module-panel" data-panel="profile-integrations">
-                  <div class="profile-v2-card profile-v2-placeholder">
+                  <div class="profile-v2-card">
                     <div class="profile-v2-header">
                       <span class="profile-v2-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-link"></use></svg>
@@ -454,22 +518,50 @@
                         <p>Conecte suas plataformas</p>
                       </div>
                     </div>
-                    <p class="muted">Integra&ccedil;&otilde;es dispon&iacute;veis em breve.</p>
+                    <div class="profile-v2-fields">
+                      <label>
+                        URL do webhook
+                        <input type="url" id="profileWebhookUrl" placeholder="https://suaempresa.com/webhook" />
+                      </label>
+                      <label>
+                        Segredo do webhook
+                        <input type="text" id="profileWebhookSecret" placeholder="Chave secreta" />
+                      </label>
+                      <label>
+                        Callback de retorno
+                        <input type="url" id="profileCallbackUrl" placeholder="https://suaempresa.com/callback" />
+                      </label>
+                      <div class="field-row field-row--inline">
+                        <button class="btn btn-ghost btn-sm" type="button" id="profileIntegrationsSave">Salvar integra&ccedil;&otilde;es</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div class="module-panel" data-panel="profile-security">
-                  <div class="profile-v2-card profile-v2-placeholder">
+                  <div class="profile-v2-card">
                     <div class="profile-v2-header">
                       <span class="profile-v2-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><use href="/assets/icons.svg#icon-shield"></use></svg>
                       </span>
                       <div>
                         <h3>Seguran&ccedil;a</h3>
-                        <p>Prote&ccedil;&atilde;o da conta</p>
+                        <p>Prefer&ecirc;ncias de prote&ccedil;&atilde;o</p>
                       </div>
                     </div>
-                    <p class="muted">Ajuste de senha e autentica&ccedil;&atilde;o em breve.</p>
+                    <div class="profile-v2-fields">
+                      <div class="toggle-row">
+                        <input type="checkbox" id="profileSecurity2fa" />
+                        <label for="profileSecurity2fa">Ativar autentica&ccedil;&atilde;o em duas etapas</label>
+                      </div>
+                      <div class="toggle-row">
+                        <input type="checkbox" id="profileSecurityAlerts" />
+                        <label for="profileSecurityAlerts">Alertas de login em novos dispositivos</label>
+                      </div>
+                      <div class="field-row field-row--inline">
+                        <button class="btn btn-ghost btn-sm" type="button" id="profileSecuritySave">Salvar seguran&ccedil;a</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -514,8 +606,8 @@
 
     <div class="toast" id="toast"></div>
 
-    <script src="/site.js?v=20260126-27"></script>
-    <script src="/console.js?v=20260126-27"></script>
+    <script src="/site.js?v=20260126-28"></script>
+    <script src="/console.js?v=20260126-28"></script>
   </body>
 </html>
 

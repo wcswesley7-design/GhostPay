@@ -156,10 +156,38 @@
     profileFullName: document.getElementById('profileFullName'),
     profileEmail: document.getElementById('profileEmail'),
     profileCpf: document.getElementById('profileCpf'),
-    profilePhone: document.getElementById('profilePhone'),
     profilePixKey: document.getElementById('profilePixKey'),
     profileDisplayName: document.getElementById('profileDisplayName'),
-    profileSaveName: document.getElementById('profileSaveName'),
+    profileSaveBasic: document.getElementById('profileSaveBasic'),
+    profileBirthDate: document.getElementById('profileBirthDate'),
+    profileMcc: document.getElementById('profileMcc'),
+    profileAddressSummary: document.getElementById('profileAddressSummary'),
+    profilePhoneSummary: document.getElementById('profilePhoneSummary'),
+    profilePhoneInput: document.getElementById('profilePhoneInput'),
+    profileMccInput: document.getElementById('profileMccInput'),
+    profileBirthDateInput: document.getElementById('profileBirthDateInput'),
+    profileCep: document.getElementById('profileCep'),
+    profileStreet: document.getElementById('profileStreet'),
+    profileNumber: document.getElementById('profileNumber'),
+    profileNeighborhood: document.getElementById('profileNeighborhood'),
+    profileComplement: document.getElementById('profileComplement'),
+    profileCity: document.getElementById('profileCity'),
+    profileState: document.getElementById('profileState'),
+    profileDocType: document.getElementById('profileDocType'),
+    profileDocNumber: document.getElementById('profileDocNumber'),
+    profileDocSave: document.getElementById('profileDocSave'),
+    profileNotifyEmail: document.getElementById('profileNotifyEmail'),
+    profileNotifySms: document.getElementById('profileNotifySms'),
+    profileNotifyWhatsapp: document.getElementById('profileNotifyWhatsapp'),
+    profileNotifyReport: document.getElementById('profileNotifyReport'),
+    profileNotifySave: document.getElementById('profileNotifySave'),
+    profileWebhookUrl: document.getElementById('profileWebhookUrl'),
+    profileWebhookSecret: document.getElementById('profileWebhookSecret'),
+    profileCallbackUrl: document.getElementById('profileCallbackUrl'),
+    profileIntegrationsSave: document.getElementById('profileIntegrationsSave'),
+    profileSecurity2fa: document.getElementById('profileSecurity2fa'),
+    profileSecurityAlerts: document.getElementById('profileSecurityAlerts'),
+    profileSecuritySave: document.getElementById('profileSecuritySave'),
     refreshAccounts: document.getElementById('refreshAccounts'),
     refreshOverview: document.getElementById('refreshOverview'),
     refreshTransactions: document.getElementById('refreshTransactions'),
@@ -444,6 +472,14 @@
     const user = state.user || {};
     const name = user.name || 'Conta Fluxo';
     const email = user.email || '--';
+    const phone = user.phone || '--';
+    const birthDate = user.birthDate || user.birth_date || '';
+    const mcc = user.mcc || '--';
+    const address = user.address || {};
+    const addressSummary = [address.street, address.number, address.neighborhood, address.city, address.state]
+      .filter(Boolean)
+      .join(' · ');
+    const profileMeta = user.profileMeta || {};
     const account = state.accounts[0];
     const accountId = (account && (account.accountNumber || account.id)) || user.id || '--';
     const createdAt = account && account.createdAt ? formatDate(account.createdAt) : '--';
@@ -474,14 +510,89 @@
     if (elements.profileEmail) {
       elements.profileEmail.textContent = email;
     }
+    if (elements.profilePhoneSummary) {
+      elements.profilePhoneSummary.textContent = phone || '--';
+    }
     if (elements.profileCpf) {
       elements.profileCpf.textContent = formatCpf(user.cpf);
     }
-    if (elements.profilePhone) {
-      elements.profilePhone.textContent = user.phone || '--';
-    }
     if (elements.profilePixKey) {
       elements.profilePixKey.textContent = pixKeyValue || '--';
+    }
+    if (elements.profileBirthDate) {
+      elements.profileBirthDate.textContent = birthDate ? formatShortDate(birthDate) : '--';
+    }
+    if (elements.profileMcc) {
+      elements.profileMcc.textContent = mcc || '--';
+    }
+    if (elements.profileAddressSummary) {
+      elements.profileAddressSummary.textContent = addressSummary || '--';
+    }
+    if (elements.profileDisplayName) {
+      elements.profileDisplayName.value = name;
+    }
+    if (elements.profilePhoneInput) {
+      elements.profilePhoneInput.value = phone !== '--' ? phone : '';
+    }
+    if (elements.profileBirthDateInput) {
+      elements.profileBirthDateInput.value = birthDate ? String(birthDate).slice(0, 10) : '';
+    }
+    if (elements.profileMccInput) {
+      elements.profileMccInput.value = mcc !== '--' ? mcc : '';
+    }
+    if (elements.profileCep) {
+      elements.profileCep.value = address.cep || '';
+    }
+    if (elements.profileStreet) {
+      elements.profileStreet.value = address.street || '';
+    }
+    if (elements.profileNumber) {
+      elements.profileNumber.value = address.number || '';
+    }
+    if (elements.profileNeighborhood) {
+      elements.profileNeighborhood.value = address.neighborhood || '';
+    }
+    if (elements.profileComplement) {
+      elements.profileComplement.value = address.complement || '';
+    }
+    if (elements.profileCity) {
+      elements.profileCity.value = address.city || '';
+    }
+    if (elements.profileState) {
+      elements.profileState.value = address.state || '';
+    }
+    if (elements.profileDocType && profileMeta.documents) {
+      elements.profileDocType.value = profileMeta.documents.type || '';
+    }
+    if (elements.profileDocNumber && profileMeta.documents) {
+      elements.profileDocNumber.value = profileMeta.documents.number || '';
+    }
+    if (elements.profileNotifyEmail) {
+      elements.profileNotifyEmail.checked = !!profileMeta.notifications?.email;
+    }
+    if (elements.profileNotifySms) {
+      elements.profileNotifySms.checked = !!profileMeta.notifications?.sms;
+    }
+    if (elements.profileNotifyWhatsapp) {
+      elements.profileNotifyWhatsapp.checked = !!profileMeta.notifications?.whatsapp;
+    }
+    if (elements.profileNotifyReport) {
+      elements.profileNotifyReport.checked = !!profileMeta.notifications?.weeklyReport;
+    }
+    if (elements.profileWebhookUrl) {
+      elements.profileWebhookUrl.value = profileMeta.integrations?.webhookUrl || '';
+    }
+    if (elements.profileWebhookSecret) {
+      elements.profileWebhookSecret.value = profileMeta.integrations?.webhookSecret || '';
+    }
+    if (elements.profileCallbackUrl) {
+      elements.profileCallbackUrl.value = profileMeta.integrations?.callbackUrl || '';
+    }
+    if (elements.profileSecurity2fa) {
+      elements.profileSecurity2fa.checked = !!profileMeta.security?.twoFactor;
+    }
+    if (elements.profileSecurityAlerts) {
+      elements.profileSecurityAlerts.checked = !!profileMeta.security?.sessionAlerts;
     }
   }
 
@@ -2372,6 +2483,22 @@ async function loadPix() {
     return Boolean(elements.cardDetailPanel);
   }
 
+  function needsProfileData() {
+    return Boolean(elements.profileDisplayName || elements.profileSaveBasic || elements.profileDocSave);
+  }
+
+  async function loadProfile() {
+    try {
+      const data = await apiRequest('/api/profile');
+      if (data && data.user) {
+        state.user = data.user;
+        renderProfile();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function loadPageData() {
     if (needsCardDetail()) {
       if (needsOverviewData()) {
@@ -2393,6 +2520,9 @@ async function loadPix() {
     }
     if (needsCardsData()) {
       tasks.push(loadCards());
+    }
+    if (needsProfileData()) {
+      tasks.push(loadProfile());
     }
     if (tasks.length) {
       await Promise.allSettled(tasks);
@@ -2534,7 +2664,59 @@ async function loadPix() {
       showToast(messages[err.message] || err.message, 'error');
     }
   }
-
+  function buildProfilePayload() {
+    const payload = {};
+    if (elements.profileDisplayName) {
+      const name = elements.profileDisplayName.value.trim();
+      if (name) {
+        payload.name = name;
+      }
+    }
+    if (elements.profilePhoneInput) {
+      const phone = elements.profilePhoneInput.value.trim();
+      if (phone) {
+        payload.phone = phone;
+      }
+    }
+    if (elements.profileBirthDateInput) {
+      const birthDate = elements.profileBirthDateInput.value.trim();
+      if (birthDate) {
+        payload.birthDate = birthDate;
+      }
+    }
+    if (elements.profileMccInput) {
+      const mcc = elements.profileMccInput.value.trim();
+      if (mcc) {
+        payload.mcc = mcc;
+      }
+    }
+    const address = {};
+    if (elements.profileCep && elements.profileCep.value.trim()) {
+      address.cep = elements.profileCep.value.trim();
+    }
+    if (elements.profileStreet && elements.profileStreet.value.trim()) {
+      address.street = elements.profileStreet.value.trim();
+    }
+    if (elements.profileNumber && elements.profileNumber.value.trim()) {
+      address.number = elements.profileNumber.value.trim();
+    }
+    if (elements.profileNeighborhood && elements.profileNeighborhood.value.trim()) {
+      address.neighborhood = elements.profileNeighborhood.value.trim();
+    }
+    if (elements.profileComplement && elements.profileComplement.value.trim()) {
+      address.complement = elements.profileComplement.value.trim();
+    }
+    if (elements.profileCity && elements.profileCity.value.trim()) {
+      address.city = elements.profileCity.value.trim();
+    }
+    if (elements.profileState && elements.profileState.value.trim()) {
+      address.state = elements.profileState.value.trim();
+    }
+    if (Object.keys(address).length) {
+      payload.address = address;
+    }
+    return payload;
+  }
 
   async function handleProfileSave() {
     if (!elements.profileDisplayName) {
@@ -2545,14 +2727,15 @@ async function loadPix() {
       showToast('Informe um nome válido.', 'error');
       return;
     }
+    const payload = buildProfilePayload();
     try {
-      if (elements.profileSaveName) {
-        elements.profileSaveName.disabled = true;
-        elements.profileSaveName.textContent = 'Salvando...';
+      if (elements.profileSaveBasic) {
+        elements.profileSaveBasic.disabled = true;
+        elements.profileSaveBasic.textContent = 'Salvando...';
       }
       const data = await apiRequest('/api/profile', {
         method: 'PATCH',
-        body: JSON.stringify({ name })
+        body: JSON.stringify(payload)
       });
       if (data.token) {
         setToken(data.token);
@@ -2567,14 +2750,58 @@ async function loadPix() {
       if (elements.welcomeTitle) {
         elements.welcomeTitle.textContent = `Bem-vindo, ${name}`;
       }
-      showToast('Nome atualizado');
+      showToast('Informações atualizadas');
     } catch (err) {
       showToast(err.message, 'error');
     } finally {
-      if (elements.profileSaveName) {
-        elements.profileSaveName.disabled = false;
-        elements.profileSaveName.textContent = 'Salvar';
+      if (elements.profileSaveBasic) {
+        elements.profileSaveBasic.disabled = false;
+        elements.profileSaveBasic.textContent = 'Salvar';
       }
+    }
+  }
+
+  async function handleProfileMetaSave(scope) {
+    const meta = {};
+    if (scope === 'documents') {
+      meta.documents = {
+        type: elements.profileDocType ? elements.profileDocType.value : '',
+        number: elements.profileDocNumber ? elements.profileDocNumber.value.trim() : ''
+      };
+    }
+    if (scope === 'notifications') {
+      meta.notifications = {
+        email: elements.profileNotifyEmail ? elements.profileNotifyEmail.checked : false,
+        sms: elements.profileNotifySms ? elements.profileNotifySms.checked : false,
+        whatsapp: elements.profileNotifyWhatsapp ? elements.profileNotifyWhatsapp.checked : false,
+        weeklyReport: elements.profileNotifyReport ? elements.profileNotifyReport.checked : false
+      };
+    }
+    if (scope === 'integrations') {
+      meta.integrations = {
+        webhookUrl: elements.profileWebhookUrl ? elements.profileWebhookUrl.value.trim() : '',
+        webhookSecret: elements.profileWebhookSecret ? elements.profileWebhookSecret.value.trim() : '',
+        callbackUrl: elements.profileCallbackUrl ? elements.profileCallbackUrl.value.trim() : ''
+      };
+    }
+    if (scope === 'security') {
+      meta.security = {
+        twoFactor: elements.profileSecurity2fa ? elements.profileSecurity2fa.checked : false,
+        sessionAlerts: elements.profileSecurityAlerts ? elements.profileSecurityAlerts.checked : false
+      };
+    }
+    try {
+      const data = await apiRequest('/api/profile', {
+        method: 'PATCH',
+        body: JSON.stringify({ profileMeta: meta })
+      });
+      if (data.user) {
+        state.user = data.user;
+      }
+      renderProfile();
+      showToast('Preferências salvas');
+    } catch (err) {
+      showToast(err.message, 'error');
     }
   }
 
@@ -3383,8 +3610,8 @@ async function loadPix() {
     if (elements.refreshCardDetail) {
       elements.refreshCardDetail.addEventListener('click', loadCardDetail);
     }
-    if (elements.profileSaveName) {
-      elements.profileSaveName.addEventListener('click', handleProfileSave);
+    if (elements.profileSaveBasic) {
+      elements.profileSaveBasic.addEventListener('click', handleProfileSave);
     }
     if (elements.profileDisplayName) {
       elements.profileDisplayName.addEventListener('keydown', (event) => {
@@ -3393,6 +3620,18 @@ async function loadPix() {
           handleProfileSave();
         }
       });
+    }
+    if (elements.profileDocSave) {
+      elements.profileDocSave.addEventListener('click', () => handleProfileMetaSave('documents'));
+    }
+    if (elements.profileNotifySave) {
+      elements.profileNotifySave.addEventListener('click', () => handleProfileMetaSave('notifications'));
+    }
+    if (elements.profileIntegrationsSave) {
+      elements.profileIntegrationsSave.addEventListener('click', () => handleProfileMetaSave('integrations'));
+    }
+    if (elements.profileSecuritySave) {
+      elements.profileSecuritySave.addEventListener('click', () => handleProfileMetaSave('security'));
     }
     if (elements.sidebarToggles && elements.sidebarToggles.length) {
       const stored = localStorage.getItem('fluxo_sidebar_collapsed') === '1';
@@ -3568,3 +3807,4 @@ async function loadPix() {
 
   initialize();
 })();
+

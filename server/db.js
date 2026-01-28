@@ -32,6 +32,17 @@ async function initDb() {
       "ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'infinity';"
     );
     await client.query("ALTER TABLE users ALTER COLUMN plan SET DEFAULT 'infinity';");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS birth_date DATE;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS mcc TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address_cep TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address_street TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address_number TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address_neighborhood TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address_complement TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address_city TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS address_state TEXT;");
+    await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_meta JSONB DEFAULT '{}'::jsonb;");
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS accounts (
