@@ -1619,8 +1619,12 @@ html[data-theme='light'] .topbar.is-scrolled {
   margin-right: 8px;
 }
 
+.legend-dot.is-graphite {
+  background: #3b3f4a;
+}
+
 .legend-dot.is-blue {
-  background: #6379d6;
+  background: #4f8cff;
 }
 
 .legend-dot.is-yellow {
@@ -1633,6 +1637,10 @@ html[data-theme='light'] .topbar.is-scrolled {
 
 .legend-dot.is-rose {
   background: #d28b7c;
+}
+
+.legend-dot.is-green {
+  background: #2dd07d;
 }
 
 @media (max-width: 1100px) {
