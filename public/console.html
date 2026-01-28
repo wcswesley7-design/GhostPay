@@ -296,11 +296,11 @@
                           <path d="M8 12l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                       </span>
-                      <strong id="metricSales">--</strong>
+                      <strong id="metricRevenueTotal">--</strong>
                     </div>
                   </div>
                   <div class="overview-stat">
-                    <span class="overview-stat__label">Despesas</span>
+                    <span class="overview-stat__label">Pix pagos</span>
                     <div class="overview-stat__value">
                       <span class="overview-stat__icon is-red" aria-hidden="true">
                         <svg viewBox="0 0 24 24">
@@ -308,22 +308,22 @@
                           <path d="M12 8v8M12 16l-3-3M12 16l3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                       </span>
-                      <strong id="metricSpendFull">--</strong>
+                      <strong id="metricPixPaidCount">--</strong>
                     </div>
                   </div>
                   <div class="overview-stat">
-                    <span class="overview-stat__label">Investimento</span>
+                    <span class="overview-stat__label">Pix pendentes</span>
                     <div class="overview-stat__value">
                       <span class="overview-stat__icon is-blue" aria-hidden="true">
                         <svg viewBox="0 0 24 24">
                           <path d="M4 16h4v4H4zM10 12h4v8h-4zM16 8h4v12h-4z" fill="currentColor"/>
                         </svg>
                       </span>
-                      <strong id="metricRevenue">--</strong>
+                      <strong id="metricPixPendingCount">--</strong>
                     </div>
                   </div>
                   <div class="overview-stat">
-                    <span class="overview-stat__label">Poupan&ccedil;a</span>
+                    <span class="overview-stat__label">Sa&iacute;das</span>
                     <div class="overview-stat__value">
                       <span class="overview-stat__icon is-gold" aria-hidden="true">
                         <svg viewBox="0 0 24 24">
@@ -331,68 +331,30 @@
                           <path d="M9 9h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                       </span>
-                      <strong id="metricChargeRevenue">--</strong>
+                      <strong id="metricOutflowTotal">--</strong>
                     </div>
                   </div>
                 </div>
 
+                <div class="financial-overview__controls">
+                  <span class="muted">Mostrar:</span>
+                  <button class="financial-toggle is-active" type="button" data-financial-series="all">Todos</button>
+                  <button class="financial-toggle" type="button" data-financial-series="revenue">Receita</button>
+                  <button class="financial-toggle" type="button" data-financial-series="paid">Pix pagos</button>
+                  <button class="financial-toggle" type="button" data-financial-series="pending">Pix pendentes</button>
+                  <button class="financial-toggle" type="button" data-financial-series="outflow">Sa&iacute;das</button>
+                </div>
+
                 <div class="financial-overview__chart">
-                  <div class="chart-axis-labels">
-                    <span>120.00</span>
-                    <span>100.00</span>
-                    <span>80.00</span>
-                    <span>60.00</span>
-                    <span>40.00</span>
-                    <span>20.00</span>
-                    <span>0.00</span>
-                  </div>
                   <div class="chart-canvas">
-                    <svg class="chart-grid" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                      <path d="M0 10H100M0 25H100M0 40H100M0 55H100M0 70H100M0 85H100" />
-                    </svg>
-                    <div class="chart-bars">
-                      <div class="chart-bar" style="--bar: 0.74"></div>
-                      <div class="chart-bar" style="--bar: 0.82"></div>
-                      <div class="chart-bar" style="--bar: 0.58"></div>
-                      <div class="chart-bar" style="--bar: 0.9"></div>
-                      <div class="chart-bar" style="--bar: 0.64"></div>
-                      <div class="chart-bar" style="--bar: 0.7"></div>
-                      <div class="chart-bar" style="--bar: 0.42"></div>
-                      <div class="chart-bar" style="--bar: 0.3"></div>
-                      <div class="chart-bar" style="--bar: 0.78"></div>
-                      <div class="chart-bar" style="--bar: 0.38"></div>
-                      <div class="chart-bar" style="--bar: 0.74"></div>
-                      <div class="chart-bar" style="--bar: 0.32"></div>
-                    </div>
-                    <svg class="chart-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                      <path class="chart-line-solid" d="M0 72 L9 60 L18 66 L27 52 L36 62 L45 58 L54 64 L63 62 L72 40 L81 58 L90 50 L100 48" />
-                      <path class="chart-line-dash" d="M0 88 L9 84 L18 86 L27 80 L36 78 L45 84 L54 88 L63 86 L72 84 L81 70 L90 78 L100 66" />
-                    </svg>
-                    <div class="chart-bars-secondary">
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.2"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.24"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.36"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.22"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.18"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.25"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.28"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.12"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.24"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.34"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.2"></div>
-                      <div class="chart-bar chart-bar--accent" style="--bar: 0.18"></div>
-                    </div>
-                  </div>
-                  <div class="chart-months">
-                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
-                    <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                    <canvas id="financialChart" height="280" aria-label="Gr&aacute;fico financeiro" role="img"></canvas>
                   </div>
                 </div>
                 <div class="financial-overview__legend">
-                  <span><i class="legend-dot is-blue"></i>Renda total</span>
-                  <span><i class="legend-dot is-yellow"></i>Despesas totais</span>
-                  <span><i class="legend-dot is-gray"></i>Investimentos</span>
-                  <span><i class="legend-dot is-rose"></i>Poupan&ccedil;a</span>
+                  <span><i class="legend-dot is-blue"></i>Receita</span>
+                  <span><i class="legend-dot is-yellow"></i>Sa&iacute;das</span>
+                  <span><i class="legend-dot is-gray"></i>Pix pagos</span>
+                  <span><i class="legend-dot is-rose"></i>Pix pendentes</span>
                 </div>
               </div>
             </section>
@@ -437,6 +399,8 @@
     <div class="toast" id="toast"></div>
 
     <script src="/site.js?v=20260126-28"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <script src="/console.js?v=20260126-28"></script>
   </body>
 </html>

@@ -1438,6 +1438,31 @@ html[data-theme='light'] .topbar.is-scrolled {
   gap: 18px;
 }
 
+.financial-overview__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+.financial-toggle {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.financial-toggle.is-active {
+  border-color: rgba(122, 162, 255, 0.45);
+  color: #e4edff;
+  background: rgba(122, 162, 255, 0.18);
+}
+
 .overview-stat {
   display: grid;
   gap: 8px;
@@ -1499,14 +1524,7 @@ html[data-theme='light'] .topbar.is-scrolled {
 .financial-overview__chart {
   display: grid;
   gap: 12px;
-  grid-template-columns: 64px 1fr;
-}
-
-.chart-axis-labels {
-  display: grid;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 0.78rem;
+  grid-template-columns: 1fr;
 }
 
 .chart-canvas {
@@ -1516,6 +1534,11 @@ html[data-theme='light'] .topbar.is-scrolled {
   padding: 12px 16px;
   background: rgba(0, 0, 0, 0.35);
   overflow: hidden;
+}
+
+.chart-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .chart-grid {
@@ -1619,12 +1642,6 @@ html[data-theme='light'] .topbar.is-scrolled {
 @media (max-width: 1100px) {
   .financial-overview__stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .financial-overview__chart {
-    grid-template-columns: 1fr;
-  }
-  .chart-axis-labels {
-    display: none;
   }
 }
 

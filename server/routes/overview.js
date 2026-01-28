@@ -81,4 +81,72 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/financial', async (req, res) => {
+  try {
+    const results = await pool.query(
+      `
+      WITH months AS (
+        SELECT generate_series(
+          date_trunc('month', now()) - interval '11 months',
+          date_trunc('month', now()),
+          interval '1 month'
+        ) AS month
+      ),
+      pix AS (
+        SELECT date_trunc('month', created_at) AS month,
+               SUM(CASE WHEN status = 'paid' THEN amount_cents ELSE 0 END) AS revenue_cents,
+               SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) AS paid_count,
+               SUM(CASE WHEN status IN ('created', 'waiting_payment') THEN 1 ELSE 0 END) AS pending_count
+        FROM pix_charges
+        WHERE user_id = $1
+          AND created_at >= date_trunc('month', now()) - interval '11 months'
+        GROUP BY 1
+      ),
+      outflow AS (
+        SELECT date_trunc('month', created_at) AS month,
+               SUM(CASE WHEN type IN ('withdrawal', 'payment') THEN amount_cents ELSE 0 END) AS outflow_cents
+        FROM transactions
+        WHERE user_id = $1
+          AND created_at >= date_trunc('month', now()) - interval '11 months'
+        GROUP BY 1
+      )
+      SELECT months.month,
+             COALESCE(pix.revenue_cents, 0) AS revenue_cents,
+             COALESCE(pix.paid_count, 0) AS paid_count,
+             COALESCE(pix.pending_count, 0) AS pending_count,
+             COALESCE(outflow.outflow_cents, 0) AS outflow_cents
+      FROM months
+      LEFT JOIN pix ON months.month = pix.month
+      LEFT JOIN outflow ON months.month = outflow.month
+      ORDER BY months.month;
+      `,
+      [req.user.id]
+    );
+
+    const series = results.rows.map((row) => ({
+      month: row.month,
+      revenueCents: Number(row.revenue_cents || 0),
+      paidCount: Number(row.paid_count || 0),
+      pendingCount: Number(row.pending_count || 0),
+      outflowCents: Number(row.outflow_cents || 0)
+    }));
+
+    const totals = series.reduce(
+      (acc, item) => {
+        acc.revenueCents += item.revenueCents;
+        acc.outflowCents += item.outflowCents;
+        acc.paidCount += item.paidCount;
+        acc.pendingCount += item.pendingCount;
+        return acc;
+      },
+      { revenueCents: 0, outflowCents: 0, paidCount: 0, pendingCount: 0 }
+    );
+
+    return res.json({ series, totals });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Unable to load financial overview' });
+  }
+});
+
 module.exports = router;

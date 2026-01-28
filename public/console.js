@@ -15,6 +15,8 @@
     cards: [],
     activeCard: null,
     cardNumberVisible: false,
+    financialChart: null,
+    financialZoomRegistered: false,
     filters: {
       transactions: {
         query: '',
@@ -82,6 +84,12 @@
     conversionDonut: document.getElementById('conversionDonut'),
     overviewRange: document.getElementById('overviewRange'),
     transactionsRange: document.getElementById('transactionsRange'),
+    financialChart: document.getElementById('financialChart'),
+    financialSeriesButtons: document.querySelectorAll('[data-financial-series]'),
+    metricRevenueTotal: document.getElementById('metricRevenueTotal'),
+    metricPixPaidCount: document.getElementById('metricPixPaidCount'),
+    metricPixPendingCount: document.getElementById('metricPixPendingCount'),
+    metricOutflowTotal: document.getElementById('metricOutflowTotal'),
     balanceAvailable: document.getElementById('balanceAvailable'),
     balanceReserve: document.getElementById('balanceReserve'),
     balancePending: document.getElementById('balancePending'),
@@ -368,6 +376,23 @@
       currency,
       maximumFractionDigits: 2
     }).format(value);
+  }
+
+  function formatCompactCurrency(cents, currency = 'BRL') {
+    const value = Number(cents || 0) / 100;
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency,
+      notation: 'compact',
+      maximumFractionDigits: 2
+    }).format(value);
+  }
+
+  function formatCompactNumber(value) {
+    return new Intl.NumberFormat('pt-BR', {
+      notation: 'compact',
+      maximumFractionDigits: 2
+    }).format(Number(value || 0));
   }
 
   function parseAmountInput(value) {
@@ -1185,6 +1210,228 @@
     }
     if (elements.metricCount) {
       elements.metricCount.textContent = metrics.transactionCount || 0;
+    }
+  }
+
+  const financialHoverLinePlugin = {
+    id: 'financialHoverLine',
+    afterDatasetsDraw(chart) {
+      const tooltip = chart.tooltip;
+      if (!tooltip || !tooltip.getActiveElements().length) {
+        return;
+      }
+      const ctx = chart.ctx;
+      const { chartArea } = chart;
+      const active = tooltip.getActiveElements()[0];
+      const x = active.element.x;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(x, chartArea.top);
+      ctx.lineTo(x, chartArea.bottom);
+      ctx.stroke();
+      ctx.restore();
+    }
+  };
+
+  function buildFinancialChart(series) {
+    if (!elements.financialChart || !window.Chart) {
+      return;
+    }
+
+    if (!state.financialZoomRegistered) {
+      const zoomPlugin = window.ChartZoom || window.chartjsPluginZoom;
+      if (zoomPlugin) {
+        Chart.register(zoomPlugin);
+        state.financialZoomRegistered = true;
+      }
+    }
+
+    const labels = series.map((item) =>
+      new Date(item.month).toLocaleString('en-US', { month: 'short' })
+    );
+    const revenue = series.map((item) => Number(item.revenueCents || 0) / 100);
+    const outflow = series.map((item) => Number(item.outflowCents || 0) / 100);
+    const paidCount = series.map((item) => Number(item.paidCount || 0));
+    const pendingCount = series.map((item) => Number(item.pendingCount || 0));
+
+    const data = {
+      labels,
+      datasets: [
+        {
+          label: 'Receita',
+          type: 'bar',
+          data: revenue,
+          backgroundColor: 'rgba(97, 120, 190, 0.7)',
+          borderRadius: 6,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Saídas',
+          type: 'bar',
+          data: outflow,
+          backgroundColor: '#ffb020',
+          borderRadius: 6,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Pix pagos',
+          type: 'line',
+          data: paidCount,
+          borderColor: 'rgba(150, 156, 178, 0.9)',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.35,
+          yAxisID: 'y1'
+        },
+        {
+          label: 'Pix pendentes',
+          type: 'line',
+          data: pendingCount,
+          borderColor: 'rgba(210, 139, 124, 0.9)',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 0,
+          borderDash: [6, 6],
+          tension: 0.35,
+          yAxisID: 'y1'
+        }
+      ]
+    };
+
+    const config = {
+      type: 'bar',
+      data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: {
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.55)'
+            },
+            grid: { display: false }
+          },
+          y: {
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.4)',
+              callback: (value) => value.toFixed(0)
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.12)',
+              borderDash: [4, 4]
+            }
+          },
+          y1: {
+            position: 'right',
+            ticks: { display: false },
+            grid: { display: false }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#17181d',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderWidth: 1,
+            padding: 12,
+            titleColor: '#fff',
+            bodyColor: '#d6dbe6',
+            callbacks: {
+              label: (context) => {
+                const label = context.dataset.label || '';
+                const value = context.parsed.y || 0;
+                if (context.dataset.yAxisID === 'y') {
+                  return `${label}: ${formatCents(value * 100, 'BRL')}`;
+                }
+                return `${label}: ${value}`;
+              }
+            }
+          },
+          zoom: {
+            zoom: {
+              wheel: { enabled: true },
+              pinch: { enabled: true },
+              mode: 'x'
+            },
+            pan: {
+              enabled: true,
+              mode: 'x',
+              modifierKey: 'ctrl'
+            }
+          }
+        }
+      },
+      plugins: [financialHoverLinePlugin]
+    };
+
+    if (state.financialChart) {
+      state.financialChart.data = data;
+      state.financialChart.update();
+      return;
+    }
+
+    state.financialChart = new Chart(elements.financialChart, config);
+    setFinancialSeries('all');
+  }
+
+  function setFinancialSeries(mode) {
+    if (!state.financialChart) {
+      return;
+    }
+    const seriesMap = {
+      revenue: 0,
+      outflow: 1,
+      paid: 2,
+      pending: 3
+    };
+    state.financialChart.data.datasets.forEach((dataset, index) => {
+      if (mode === 'all') {
+        dataset.hidden = false;
+      } else {
+        dataset.hidden = index !== seriesMap[mode];
+      }
+    });
+    state.financialChart.update();
+    if (elements.financialSeriesButtons) {
+      elements.financialSeriesButtons.forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.financialSeries === mode);
+      });
+    }
+  }
+
+  function renderFinancialSummary(totals) {
+    if (elements.metricRevenueTotal) {
+      elements.metricRevenueTotal.textContent = formatCompactCurrency(totals.revenueCents || 0, 'BRL');
+    }
+    if (elements.metricOutflowTotal) {
+      elements.metricOutflowTotal.textContent = formatCompactCurrency(totals.outflowCents || 0, 'BRL');
+    }
+    if (elements.metricPixPaidCount) {
+      elements.metricPixPaidCount.textContent = formatCompactNumber(totals.paidCount || 0);
+    }
+    if (elements.metricPixPendingCount) {
+      elements.metricPixPendingCount.textContent = formatCompactNumber(totals.pendingCount || 0);
+    }
+  }
+
+  async function loadFinancialOverview() {
+    if (!elements.financialChart) {
+      return;
+    }
+    try {
+      const data = await apiRequest('/api/overview/financial');
+      if (data && data.series) {
+        buildFinancialChart(data.series);
+      }
+      if (data && data.totals) {
+        renderFinancialSummary(data.totals);
+      }
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -2110,6 +2357,7 @@ function renderCards(cards) {
       applyTransactionFilters();
       renderMetrics(data.metrics || {});
       renderProfile();
+      await loadFinancialOverview();
 
       if (chargesData && chargesData.charges) {
         const normalized = chargesData.charges.map(normalizePixCharge).filter(Boolean);
@@ -2467,7 +2715,8 @@ async function loadPix() {
         elements.cardForm ||
         elements.profileName ||
         elements.profileAccountId ||
-        elements.profileFullName
+        elements.profileFullName ||
+        elements.financialChart
     );
   }
 
@@ -3641,6 +3890,13 @@ async function loadPix() {
     }
     if (elements.profileSecuritySave) {
       elements.profileSecuritySave.addEventListener('click', () => handleProfileMetaSave('security'));
+    }
+    if (elements.financialSeriesButtons && elements.financialSeriesButtons.length) {
+      elements.financialSeriesButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          setFinancialSeries(button.dataset.financialSeries || 'all');
+        });
+      });
     }
     if (elements.sidebarToggles && elements.sidebarToggles.length) {
       const stored = localStorage.getItem('fluxo_sidebar_collapsed') === '1';
