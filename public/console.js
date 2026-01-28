@@ -434,6 +434,18 @@
     });
   }
 
+  function formatShortDateUtc(value) {
+    if (!value) {
+      return '';
+    }
+    return new Date(value).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC'
+    });
+  }
+
   function formatPercent(value, digits = 0) {
     if (!Number.isFinite(value)) {
       return '0%';
@@ -517,7 +529,7 @@
       elements.profilePixKey.textContent = pixKeyValue || '--';
     }
     if (elements.profileBirthDate) {
-      elements.profileBirthDate.textContent = birthDate ? formatShortDate(birthDate) : '--';
+      elements.profileBirthDate.textContent = birthDate ? formatShortDateUtc(birthDate) : '--';
     }
     if (elements.profileMcc) {
       elements.profileMcc.textContent = mcc || '--';
