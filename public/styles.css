@@ -1760,6 +1760,12 @@ html[data-theme='light'] .topbar.is-scrolled {
   margin-bottom: 6px;
 }
 
+.balance-mini-icon svg {
+  width: 18px;
+  height: 18px;
+  color: #8b7bff;
+}
+
 .balance-mini-icon.is-emerald {
   background: rgba(45, 208, 125, 0.18);
 }
