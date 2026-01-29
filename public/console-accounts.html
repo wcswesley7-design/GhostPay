@@ -241,22 +241,64 @@
                 </div>
               </div>
 
-              <div class="stats-grid stats-grid--compact">
-                <div class="stat-card">
-                  <span class="stat-label">Saldo dispon&iacute;vel</span>
-                  <strong id="balanceAvailable">--</strong>
+              <div class="balance-overview">
+                <div class="balance-main-card">
+                  <div class="balance-main-header">
+                    <h3>Saldo total</h3>
+                    <button class="btn btn-ghost btn-icon-only" type="button" aria-label="Mais op&ccedil;&otilde;es">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="/assets/icons.svg#icon-more"></use>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="balance-main-value">
+                    <strong id="balanceTotal">--</strong>
+                  </div>
+                  <div class="balance-main-row">
+                    <div class="balance-account">
+                      <div class="balance-account-icon"></div>
+                      <div>
+                        <span class="muted">Conta principal</span>
+                        <strong id="balanceAvailable">--</strong>
+                      </div>
+                    </div>
+                    <button class="btn btn-ghost btn-sm balance-link" type="button">Detalhes</button>
+                  </div>
+                  <div class="balance-main-actions">
+                    <button class="btn btn-primary" type="button">Transferir</button>
+                    <a class="btn btn-ghost" href="#withdrawalForm">Solicitar</a>
+                  </div>
                 </div>
-                <div class="stat-card">
-                  <span class="stat-label">Reserva financeira</span>
-                  <strong id="balanceReserve">--</strong>
-                </div>
-                <div class="stat-card">
-                  <span class="stat-label">Saque pendente</span>
-                  <strong id="balancePending">--</strong>
-                </div>
-                <div class="stat-card">
-                  <span class="stat-label">Saldo bloqueado</span>
-                  <strong id="balanceBlocked">--</strong>
+
+                <div class="balance-mini-grid">
+                  <div class="balance-mini-card">
+                    <span class="balance-mini-icon is-emerald"></span>
+                    <strong id="balanceReserve">--</strong>
+                    <span class="muted">Reserva financeira</span>
+                    <span class="balance-mini-chip is-up">+8,72%</span>
+                    <div class="balance-mini-spark"></div>
+                  </div>
+                  <div class="balance-mini-card">
+                    <span class="balance-mini-icon is-amber"></span>
+                    <strong id="balancePending">--</strong>
+                    <span class="muted">Saque pendente</span>
+                    <span class="balance-mini-chip is-down">-3,28%</span>
+                    <div class="balance-mini-spark"></div>
+                  </div>
+                  <div class="balance-mini-card">
+                    <span class="balance-mini-icon is-blue"></span>
+                    <strong id="balanceWithdrawToday">--</strong>
+                    <span class="muted">Saques de hoje</span>
+                    <span class="balance-mini-chip is-down">-5,69%</span>
+                    <div class="balance-mini-spark"></div>
+                  </div>
+                  <div class="balance-mini-card">
+                    <span class="balance-mini-icon is-violet"></span>
+                    <strong id="balanceBlocked">--</strong>
+                    <span class="muted">Saldo bloqueado</span>
+                    <span class="balance-mini-chip is-up">+10,58%</span>
+                    <div class="balance-mini-spark"></div>
+                  </div>
                 </div>
               </div>
 

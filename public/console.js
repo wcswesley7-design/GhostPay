@@ -18,6 +18,7 @@
     financialChart: null,
     financialZoomRegistered: false,
     financialSeriesMode: 'all',
+    balance: null,
     filters: {
       transactions: {
         query: '',
@@ -94,7 +95,9 @@
     balanceAvailable: document.getElementById('balanceAvailable'),
     balanceReserve: document.getElementById('balanceReserve'),
     balancePending: document.getElementById('balancePending'),
+    balanceWithdrawToday: document.getElementById('balanceWithdrawToday'),
     balanceBlocked: document.getElementById('balanceBlocked'),
+    balanceTotal: document.getElementById('balanceTotal'),
     sidebarName: document.getElementById('sidebarName'),
     sidebarAvatar: document.getElementById('sidebarAvatar'),
     accountChips: document.getElementById('accountChips'),
@@ -1604,7 +1607,20 @@
           }, 0)
         : holdCents;
     const reserveCents = Math.max(0, holdCents - pendingOutCents);
+    const today = new Date();
+    const withdrawTodayCents =
+      Array.isArray(withdrawals) && withdrawals.length
+        ? withdrawals.reduce((sum, item) => {
+            if (item.requested_at && isSameDay(new Date(item.requested_at), today)) {
+              return sum + Number(item.amount_cents || 0);
+            }
+            return sum;
+          }, 0)
+        : 0;
 
+    if (elements.balanceTotal) {
+      elements.balanceTotal.textContent = formatCents(totalCents, 'BRL');
+    }
     if (elements.balanceAvailable) {
       elements.balanceAvailable.textContent = formatCents(availableCents, 'BRL');
     }
@@ -1613,6 +1629,9 @@
     }
     if (elements.balancePending) {
       elements.balancePending.textContent = formatCents(pendingOutCents, 'BRL');
+    }
+    if (elements.balanceWithdrawToday) {
+      elements.balanceWithdrawToday.textContent = formatCents(withdrawTodayCents, 'BRL');
     }
     if (elements.balanceBlocked) {
       elements.balanceBlocked.textContent = formatCents(pendingInCents, 'BRL');
@@ -2293,6 +2312,9 @@ function renderCards(cards) {
       const data = await apiRequest('/v1/withdrawals');
       state.withdrawals = data.withdrawals || [];
       renderWithdrawals(state.withdrawals);
+      if (state.balance) {
+        renderBalanceSummary(state.balance, state.withdrawals);
+      }
     } catch (err) {
       if (err && err.status === 401) {
         return;
@@ -2371,6 +2393,7 @@ function renderCards(cards) {
       }
 
       if (balanceData && balanceData.balance) {
+        state.balance = balanceData.balance;
         renderBalanceSummary(balanceData.balance, state.withdrawals);
       }
 
