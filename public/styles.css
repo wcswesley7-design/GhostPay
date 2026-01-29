@@ -1766,6 +1766,13 @@ html[data-theme='light'] .topbar.is-scrolled {
   color: #8b7bff;
 }
 
+.balance-mini-icon-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+}
+
 .balance-mini-icon.is-emerald svg {
   color: #8b7bff;
 }
