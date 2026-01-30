@@ -8,7 +8,8 @@
     "start": "node server/index.js",
     "dev": "nodemon server/index.js",
     "seed": "node server/seed.js",
-    "gateway:smoke": "node scripts/gateway-smoke.js"
+    "gateway:smoke": "node scripts/gateway-smoke.js",
+    "commit:auto": "git add -A && git commit -m \"chore: atualização automática\" && git push"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
