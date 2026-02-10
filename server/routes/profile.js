@@ -77,8 +77,74 @@ router.patch('/', validateBody(updateSchema), async (req, res) => {
   const profileMetaUpdate = req.body.profileMeta || null;
 
   try {
-    const current = await pool.query('SELECT profile_meta FROM users WHERE id = $1', [req.user.id]);
-    const existingMeta = current.rows[0]?.profile_meta || {};
+    const current = await pool.query(
+      `SELECT name, phone, birth_date, mcc,
+              address_cep, address_street, address_number, address_neighborhood,
+              address_complement, address_city, address_state, profile_meta
+       FROM users WHERE id = $1`,
+      [req.user.id]
+    );
+    const currentUser = current.rows[0];
+    if (!currentUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const existingMeta = currentUser.profile_meta || {};
+    const lockedFields = [];
+    const currentBirth = currentUser.birth_date
+      ? new Date(currentUser.birth_date).toISOString().slice(0, 10)
+      : '';
+
+    if (name && currentUser.name && name !== currentUser.name) {
+      lockedFields.push('name');
+    }
+    if (phone && currentUser.phone && phone !== currentUser.phone) {
+      lockedFields.push('phone');
+    }
+    if (birthDate && currentBirth && birthDate !== currentBirth) {
+      lockedFields.push('birthDate');
+    }
+    if (mcc && currentUser.mcc && mcc !== currentUser.mcc) {
+      lockedFields.push('mcc');
+    }
+    if (address.cep && currentUser.address_cep && address.cep !== currentUser.address_cep) {
+      lockedFields.push('address.cep');
+    }
+    if (address.street && currentUser.address_street && address.street !== currentUser.address_street) {
+      lockedFields.push('address.street');
+    }
+    if (address.number && currentUser.address_number && address.number !== currentUser.address_number) {
+      lockedFields.push('address.number');
+    }
+    if (
+      address.neighborhood &&
+      currentUser.address_neighborhood &&
+      address.neighborhood !== currentUser.address_neighborhood
+    ) {
+      lockedFields.push('address.neighborhood');
+    }
+    if (
+      address.complement &&
+      currentUser.address_complement &&
+      address.complement !== currentUser.address_complement
+    ) {
+      lockedFields.push('address.complement');
+    }
+    if (address.city && currentUser.address_city && address.city !== currentUser.address_city) {
+      lockedFields.push('address.city');
+    }
+    if (address.state && currentUser.address_state && address.state !== currentUser.address_state) {
+      lockedFields.push('address.state');
+    }
+
+    const currentDoc = existingMeta?.documents?.number;
+    const nextDoc = profileMetaUpdate?.documents?.number;
+    if (nextDoc && currentDoc && nextDoc !== currentDoc) {
+      lockedFields.push('documents');
+    }
+
+    if (lockedFields.length) {
+      return res.status(403).json({ error: 'profile_locked' });
+    }
     const mergedMeta = profileMetaUpdate ? { ...existingMeta, ...profileMetaUpdate } : existingMeta;
 
     const result = await pool.query(

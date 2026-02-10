@@ -1751,13 +1751,14 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .balance-mini-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 6px;
+  background: transparent;
 }
 
 .balance-mini-icon svg {
@@ -1767,8 +1768,8 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .balance-mini-icon-img {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
   display: block;
 }
@@ -1778,19 +1779,19 @@ html[data-theme='light'] .topbar.is-scrolled {
 }
 
 .balance-mini-icon.is-emerald {
-  background: rgba(45, 208, 125, 0.18);
+  background: transparent;
 }
 
 .balance-mini-icon.is-amber {
-  background: rgba(255, 176, 32, 0.2);
+  background: transparent;
 }
 
 .balance-mini-icon.is-blue {
-  background: rgba(79, 140, 255, 0.18);
+  background: transparent;
 }
 
 .balance-mini-icon.is-violet {
-  background: rgba(132, 114, 255, 0.2);
+  background: transparent;
 }
 
 .balance-mini-chip {

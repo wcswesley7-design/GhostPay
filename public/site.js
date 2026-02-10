@@ -206,8 +206,8 @@
         pixTicket.href = payload.ticketUrl;
         pixTicket.classList.remove('hidden');
       }
-      if (pixContinue && sessionId) {
-        pixContinue.href = `/console?tab=register&plan=infinity&session=${sessionId}`;
+      if (pixContinue) {
+        pixContinue.href = `/console?tab=register`;
       }
     }
 
@@ -237,7 +237,7 @@
           }
           setContinueEnabled(true);
           setTimeout(() => {
-            window.location.href = `/console?tab=register&plan=infinity&session=${sessionId}`;
+            window.location.href = `/console?tab=register`;
           }, 900);
           return;
         }
@@ -302,7 +302,7 @@
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok || !data.qrCode) {
-          throw new Error(data.error || 'N\u00E3o foi poss\u00EDvel iniciar a assinatura.');
+          throw new Error(data.error || 'N\u00E3o foi poss\u00EDvel iniciar o acesso.');
         }
 
         updatePixPayload(
@@ -320,7 +320,7 @@
           }
           setContinueEnabled(true);
           setTimeout(() => {
-            window.location.href = `/console?tab=register&plan=infinity&session=${data.sessionId}`;
+            window.location.href = `/console?tab=register`;
           }, 900);
           return;
         }
@@ -330,7 +330,7 @@
         pollStatus(data.sessionId);
       } catch (err) {
         if (status) {
-          status.textContent = err.message || 'Falha ao iniciar assinatura.';
+          status.textContent = err.message || 'Falha ao iniciar o acesso.';
         }
       } finally {
         if (submit) {

@@ -246,10 +246,6 @@
     payment: 'Pagamento'
   };
 
-  const planLabels = {
-    infinity: 'Infinity - R$ 59,90'
-  };
-
   const trashIcon = `
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none">
       <path d="M4.5 6.5h15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
@@ -523,6 +519,20 @@
     const createdAt = account && account.createdAt ? formatDate(account.createdAt) : '--';
     const cpfKey = state.pixKeys.find((key) => key.type === 'cpf') || state.pixKeys[0];
     const pixKeyValue = cpfKey ? cpfKey.value : '--';
+    const profileLocked = Boolean(
+      user.cpf &&
+        birthDate &&
+        user.phone &&
+        mcc &&
+        address.cep &&
+        address.street &&
+        address.number &&
+        address.neighborhood &&
+        address.city &&
+        address.state
+    );
+    const docNumberValue = (profileMeta.documents && profileMeta.documents.number) || user.cpf || '';
+    const docTypeValue = (profileMeta.documents && profileMeta.documents.type) || 'cpf';
 
     if (elements.profileName) {
       elements.profileName.textContent = name;
@@ -599,11 +609,40 @@
     if (elements.profileState) {
       elements.profileState.value = address.state || '';
     }
-    if (elements.profileDocType && profileMeta.documents) {
-      elements.profileDocType.value = profileMeta.documents.type || '';
+    if (elements.profileDocType) {
+      elements.profileDocType.value = docTypeValue;
     }
-    if (elements.profileDocNumber && profileMeta.documents) {
-      elements.profileDocNumber.value = profileMeta.documents.number || '';
+    if (elements.profileDocNumber) {
+      elements.profileDocNumber.value = docNumberValue;
+    }
+    if (profileLocked) {
+      const lockInputs = [
+        elements.profileDisplayName,
+        elements.profilePhoneInput,
+        elements.profileBirthDateInput,
+        elements.profileMccInput,
+        elements.profileCep,
+        elements.profileStreet,
+        elements.profileNumber,
+        elements.profileNeighborhood,
+        elements.profileComplement,
+        elements.profileCity,
+        elements.profileState,
+        elements.profileDocType,
+        elements.profileDocNumber
+      ].filter(Boolean);
+      lockInputs.forEach((input) => {
+        input.setAttribute('disabled', 'disabled');
+        input.setAttribute('readonly', 'readonly');
+      });
+      if (elements.profileSaveBasic) {
+        elements.profileSaveBasic.textContent = 'Dados bloqueados';
+        elements.profileSaveBasic.disabled = true;
+      }
+      if (elements.profileDocSave) {
+        elements.profileDocSave.textContent = 'Dados bloqueados';
+        elements.profileDocSave.disabled = true;
+      }
     }
     if (elements.profileNotifyEmail) {
       elements.profileNotifyEmail.checked = !!profileMeta.notifications?.email;
@@ -675,60 +714,7 @@
     }
     elements.salesChartLine.setAttribute('d', path);
     elements.salesChartFill.setAttribute('d', `${path} L 100 100 L 0 100 Z`);
-  }
-
-  function setPlanSelection(plan) {
-    if (!elements.planField) {
-      return;
-    }
-    const normalized = plan ? plan.toLowerCase() : '';
-    const label = planLabels[normalized] || '';
-    elements.planField.value = label ? normalized : '';
-    if (elements.planSummaryLabel) {
-      elements.planSummaryLabel.textContent = label || 'Selecione um plano';
-    }
-    if (elements.planSummary) {
-      elements.planSummary.classList.toggle('is-empty', !label);
-    }
-    if (!label && elements.subscriptionSession) {
-      elements.subscriptionSession.value = '';
-    }
-  }
-
-  function setRegisterAllowed(allowed, message) {
-    if (!elements.registerForm) {
-      return;
-    }
-    const submit = elements.registerForm.querySelector('button[type="submit"]');
-    if (submit) {
-      submit.disabled = !allowed;
-    }
-    if (message) {
-      setError(message);
-    } else if (allowed) {
-      setError('');
-    }
-  }
-
-  async function checkSubscriptionSession(sessionId) {
-    try {
-      const response = await apiRequest(`/api/subscriptions/status?session=${encodeURIComponent(sessionId)}`);
-      if (response.approved) {
-        if (elements.subscriptionSession) {
-          elements.subscriptionSession.value = sessionId;
-        }
-        setPlanSelection('infinity');
-        setRegisterAllowed(true);
-        showToast('Assinatura aprovada. Finalize seu cadastro.');
-        return;
-      }
-      setRegisterAllowed(false, 'Pagamento pendente. Conclua a assinatura para continuar.');
-    } catch (err) {
-      setRegisterAllowed(false, 'Assinatura não encontrada. Inicie pelo plano Infinity.');
-    }
-  }
-
-  function getAccountLabel(accountId, fallback = 'Conta não vinculada') {
+  }\n  function getAccountLabel(accountId, fallback = 'Conta não vinculada') {
     if (!accountId) {
       return fallback;
     }
@@ -2913,17 +2899,29 @@ async function loadPix() {
     }
   }
 
-  async function handleRegister(event) {
+    async function handleRegister(event) {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(elements.registerForm).entries());
     payload.cpf = String(payload.cpf || '').replace(/\D/g, '');
 
-    if (!payload.plan) {
-      payload.plan = 'infinity';
-    }
-    if (!payload.subscriptionSession) {
-      delete payload.subscriptionSession;
-    }
+    payload.address = {
+      cep: payload.cep || '',
+      street: payload.street || '',
+      number: payload.number || '',
+      neighborhood: payload.neighborhood || '',
+      complement: payload.complement || '',
+      city: payload.city || '',
+      state: payload.state || ''
+    };
+
+    delete payload.cep;
+    delete payload.street;
+    delete payload.number;
+    delete payload.neighborhood;
+    delete payload.complement;
+    delete payload.city;
+    delete payload.state;
+
     if (payload.cpf.length !== 11) {
       showToast('Informe um CPF válido.', 'error');
       return;
@@ -2940,14 +2938,7 @@ async function loadPix() {
       await loadPageData();
       showToast('Conta criada');
     } catch (err) {
-      const messages = {
-        subscription_required: 'Finalize a assinatura Infinity antes de criar a conta.',
-        subscription_not_approved: 'Pagamento ainda não aprovado. Aguarde a confirmação.',
-        subscription_plan_mismatch: 'Plano inválido para esta assinatura.',
-        subscription_already_used: 'Assinatura já utilizada.',
-        invalid_cpf: 'Informe um CPF válido.',
-        cpf_in_use: 'CPF já cadastrado.'
-      };
+      const messages = {\n        invalid_cpf: 'Informe um CPF válido.',\n        cpf_in_use: 'CPF já cadastrado.'\n      };
       showToast(messages[err.message] || err.message, 'error');
     }
   }
@@ -3009,6 +3000,10 @@ async function loadPix() {
     if (!elements.profileDisplayName) {
       return;
     }
+    if (elements.profileSaveBasic && elements.profileSaveBasic.disabled) {
+      showToast('Dados bloqueados.', 'error');
+      return;
+    }
     const name = elements.profileDisplayName.value.trim();
     if (name.length < 2) {
       showToast('Informe um nome válido.', 'error');
@@ -3039,7 +3034,11 @@ async function loadPix() {
       }
       showToast('Informações atualizadas');
     } catch (err) {
-      showToast(err.message, 'error');
+      if (err.message === 'profile_locked') {
+        showToast('Dados cadastrais bloqueados.', 'error');
+      } else {
+        showToast(err.message, 'error');
+      }
     } finally {
       if (elements.profileSaveBasic) {
         elements.profileSaveBasic.disabled = false;
@@ -3049,6 +3048,10 @@ async function loadPix() {
   }
 
   async function handleProfileMetaSave(scope) {
+    if (scope === 'documents' && elements.profileDocSave && elements.profileDocSave.disabled) {
+      showToast('Dados bloqueados.', 'error');
+      return;
+    }
     const meta = {};
     if (scope === 'documents') {
       meta.documents = {
@@ -3088,7 +3091,11 @@ async function loadPix() {
       renderProfile();
       showToast('Preferências salvas');
     } catch (err) {
-      showToast(err.message, 'error');
+      if (err.message === 'profile_locked') {
+        showToast('Dados cadastrais bloqueados.', 'error');
+      } else {
+        showToast(err.message, 'error');
+      }
     }
   }
 
@@ -4040,31 +4047,12 @@ async function loadPix() {
     }
 
     const searchParams = new URLSearchParams(window.location.search);
-    const preferredTab = (() => {
+        const preferredTab = (() => {
       const param = searchParams.get('tab');
       return param === 'register' ? 'register' : param === 'login' ? 'login' : null;
     })();
-    const planParam = searchParams.get('plan');
-    const sessionParam = searchParams.get('session');
-    if (elements.registerForm) {
-      setRegisterAllowed(true);
-    }
-    if (planParam && elements.registerForm) {
-      setPlanSelection(planParam);
-      setRegisterAllowed(false);
-      if (elements.tabs.length) {
-        setActiveTab('register');
-      }
-      if (sessionParam) {
-        await checkSubscriptionSession(sessionParam);
-      } else {
-        setRegisterAllowed(false, 'Finalize a assinatura Infinity antes de criar a conta.');
-      }
-    } else {
-      setPlanSelection(elements.planField ? elements.planField.value : '');
-      if (preferredTab && elements.tabs.length) {
-        setActiveTab(preferredTab);
-      }
+    if (preferredTab && elements.tabs.length) {
+      setActiveTab(preferredTab);
     }
 
     updateTransactionFields();
@@ -4106,4 +4094,9 @@ async function loadPix() {
 
   initialize();
 })();
+
+
+
+
+
 

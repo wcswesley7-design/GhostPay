@@ -50,9 +50,7 @@
           <a class="nav-link" href="/">In&iacute;cio</a>
           <a class="nav-link" href="/platform">Plataforma</a>
           <a class="nav-link" href="/security">Seguran&ccedil;a</a>
-          <a class="nav-link" href="/empresa">Empresa</a>
-          <a class="nav-link" href="/pricing">Planos</a>
-          <a class="nav-link" href="/support">Suporte</a>
+          <a class="nav-link" href="/empresa">Empresa</a>\n<a class="nav-link" href="/support">Suporte</a>
         </nav>
 
         <div class="topbar-actions">
@@ -70,7 +68,7 @@
             <h1 id="welcomeTitle">Tudo para cobrar, conciliar e sacar Pix em um s&oacute; lugar.</h1>
             <p class="lead">Crie cobran&ccedil;as Pix, acompanhe vendas e opere seus saques com controle total.</p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="/pricing">Ver plano</a>
+              <a class="btn btn-primary" href="/console?tab=login">Abrir conta</a>
               <a class="btn btn-ghost" href="/support">Falar com suporte</a>
             </div>
             <div class="hero-metrics">
@@ -126,7 +124,7 @@
               <button class="tab active" data-tab="login" type="button">Entrar</button>
               <button class="tab" data-tab="register" type="button">Criar conta</button>
             </div>
-            <form class="form" id="loginForm">
+                        <form class="form" id="loginForm">
               <label>
                 Email
                 <input type="email" name="email" placeholder="seu@email.com" required />
@@ -154,21 +152,52 @@
                 Senha
                 <input type="password" name="password" placeholder="M&iacute;nimo 8 caracteres" required />
               </label>
-
-              <div class="plan-summary" id="planSummary">
-                <span class="muted">Plano selecionado</span>
-                <strong id="planSummaryLabel">Selecione um plano</strong>
-                <a class="muted" href="/pricing#planos">Alterar plano</a>
-              </div>
-              <input type="hidden" name="plan" id="planField" />
-              <input type="hidden" name="subscriptionSession" id="subscriptionSession" />
-              <button class="btn btn-primary" type="submit">Criar conta</button>
+              <label>
+                Telefone
+                <input type="tel" name="phone" placeholder="(11) 90000-0000" required />
+              </label>
+              <label>
+                Data de nascimento
+                <input type="date" name="birthDate" required />
+              </label>
+              <label>
+                Categoria do Neg3cio (MCC)
+                <input type="text" name="mcc" placeholder="Ex: 5734" required />
+              </label>
+              <label>
+                CEP
+                <input type="text" name="cep" placeholder="00000-000" required />
+              </label>
+              <label>
+                Logradouro
+                <input type="text" name="street" placeholder="Rua, avenida, etc" required />
+              </label>
+              <label>
+                Namero
+                <input type="text" name="number" placeholder="000" required />
+              </label>
+              <label>
+                Bairro
+                <input type="text" name="neighborhood" placeholder="Seu bairro" required />
+              </label>
+              <label>
+                Complemento
+                <input type="text" name="complement" placeholder="Opcional" />
+              </label>
+              <label>
+                Cidade
+                <input type="text" name="city" placeholder="Sua cidade" required />
+              </label>
+              <label>
+                Estado
+                <input type="text" name="state" placeholder="UF" maxlength="2" required />
+              </label>\n\n\n<button class="btn btn-primary" type="submit">Criar conta</button>
             </form>
           </div>
           <div class="card">
             <div class="card-head">
               <h3>Recursos da conta</h3>
-              <span class="tag">Infinity</span>
+              <span class="tag">Gratuito</span>
             </div>
             <div class="list">
               <div class="list-item">
@@ -190,7 +219,7 @@
                 </div>
               </div>
             </div>
-            <a class="btn btn-ghost" href="/pricing">Ver plano</a>
+            <a class="btn btn-ghost" href="/console?tab=login">Abrir conta</a>
           </div>
         </div>
       </section>
@@ -365,20 +394,14 @@
         <div class="footer-col">
           <strong>Produto</strong>
           <a href="/platform">Plataforma</a>
-          <a href="/security">Seguran&ccedil;a</a>
-          <a href="/pricing">Planos</a>
-        </div>
+          <a href="/security">Seguran&ccedil;a</a>\n</div>
         <div class="footer-col">
           <strong>Empresa</strong>
           <a href="/empresa">Empresa</a>
-          <a href="/support">Suporte</a>
-          <a href="/pricing">Planos</a>
-        </div>
+          <a href="/support">Suporte</a>\n</div>
         <div class="footer-col">
           <strong>Conta</strong>
-          <a href="/console">Acessar painel</a>
-          <a href="/pricing#planos">Abrir conta</a>
-          <a href="/support">Atendimento</a>
+          <a href="/console">Acessar painel</a>\n<a href="/support">Atendimento</a>
         </div>
         <div class="footer-col">
           <strong>Legal</strong>
@@ -397,6 +420,11 @@
     <script src="/console.js?v=20260126-28"></script>
   </body>
 </html>
+
+
+
+
+
 
 
 

@@ -20,7 +20,7 @@ async function initDb() {
         email TEXT NOT NULL UNIQUE,
         cpf TEXT,
         password_hash TEXT NOT NULL,
-        plan TEXT NOT NULL DEFAULT 'infinity',
+        plan TEXT NOT NULL DEFAULT 'free',
         created_at TIMESTAMPTZ NOT NULL
       );
     `);
@@ -29,9 +29,9 @@ async function initDb() {
       'ALTER TABLE users ADD COLUMN IF NOT EXISTS cpf TEXT;'
     );
     await client.query(
-      "ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'infinity';"
+      "ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'free';"
     );
-    await client.query("ALTER TABLE users ALTER COLUMN plan SET DEFAULT 'infinity';");
+    await client.query("ALTER TABLE users ALTER COLUMN plan SET DEFAULT 'free';");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT;");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS birth_date DATE;");
     await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS mcc TEXT;");

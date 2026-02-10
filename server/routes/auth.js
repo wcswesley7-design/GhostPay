@@ -15,14 +15,22 @@ const registerSchema = z.object({
   email: z.string().email().max(120),
   cpf: z.string().min(11).max(20),
   password: z.string().min(8).max(128),
+  phone: z.string().min(6).max(30),
+  birthDate: z.string().min(4).max(20),
+  mcc: z.string().min(2).max(10),
   plan: z.preprocess(
     (value) => (value === '' || value === null || value === undefined ? undefined : value),
-    z.enum(['infinity']).default('infinity')
+    z.enum(['free']).default('free')
   ),
-  subscriptionSession: z.preprocess(
-    (value) => (value === '' ? undefined : value),
-    z.string().min(1).optional()
-  )
+  address: z.object({
+    cep: z.string().min(5).max(12),
+    street: z.string().min(2).max(120),
+    number: z.string().min(1).max(20),
+    neighborhood: z.string().min(2).max(80),
+    complement: z.string().min(0).max(80).optional().or(z.literal('')),
+    city: z.string().min(2).max(80),
+    state: z.string().min(2).max(2)
+  })
 });
 
 const loginSchema = z.object({
@@ -61,10 +69,11 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
   const email = req.body.email.trim().toLowerCase();
   const cpf = String(req.body.cpf || '').replace(/\D/g, '');
   const password = req.body.password;
-  const plan = req.body.plan || 'infinity';
-  const subscriptionSession = req.body.subscriptionSession;
-  const ownerEmail = (process.env.OWNER_EMAIL || '').trim().toLowerCase();
-  const isOwner = ownerEmail && email === ownerEmail;
+  const plan = req.body.plan || 'free';
+  const phone = req.body.phone ? req.body.phone.trim() : '';
+  const birthDate = req.body.birthDate ? req.body.birthDate.trim() : '';
+  const mcc = req.body.mcc ? req.body.mcc.trim() : '';
+  const address = req.body.address || {};
 
   try {
     if (cpf.length !== 11) {
@@ -88,49 +97,51 @@ router.post('/register', validateBody(registerSchema), async (req, res) => {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      if (!isOwner) {
-        if (!subscriptionSession) {
-          await client.query('ROLLBACK');
-          return res.status(402).json({ error: 'subscription_required' });
+      const profileMeta = {
+        documents: {
+          type: 'cpf',
+          number: cpf
         }
-        const sessionResult = await client.query(
-          'SELECT id, plan, status, user_id FROM subscription_sessions WHERE id = $1 FOR UPDATE',
-          [subscriptionSession]
-        );
-        const session = sessionResult.rows[0];
-        if (!session) {
-          await client.query('ROLLBACK');
-          return res.status(402).json({ error: 'subscription_required' });
-        }
-        if (session.plan !== plan) {
-          await client.query('ROLLBACK');
-          return res.status(400).json({ error: 'subscription_plan_mismatch' });
-        }
-        if (session.status !== 'approved') {
-          await client.query('ROLLBACK');
-          return res.status(402).json({ error: 'subscription_not_approved' });
-        }
-        if (session.user_id) {
-          await client.query('ROLLBACK');
-          return res.status(409).json({ error: 'subscription_already_used' });
-        }
-      }
-
+      };
       await client.query(
-        'INSERT INTO users (id, name, email, cpf, password_hash, plan, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        [userId, name, email, cpf, passwordHash, plan, now]
+        `INSERT INTO users (
+          id, name, email, cpf, password_hash, plan, created_at,
+          phone, birth_date, mcc,
+          address_cep, address_street, address_number, address_neighborhood,
+          address_complement, address_city, address_state,
+          profile_meta
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7,
+          $8, $9, $10,
+          $11, $12, $13, $14,
+          $15, $16, $17,
+          $18
+        )`,
+        [
+          userId,
+          name,
+          email,
+          cpf,
+          passwordHash,
+          plan,
+          now,
+          phone || null,
+          birthDate || null,
+          mcc || null,
+          address.cep || null,
+          address.street || null,
+          address.number || null,
+          address.neighborhood || null,
+          address.complement || null,
+          address.city || null,
+          address.state || null,
+          profileMeta
+        ]
       );
       await client.query(
         'INSERT INTO accounts (id, user_id, name, currency, balance_cents, account_number, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
         [accountId, userId, 'Primary Wallet', 'BRL', 0, accountNum, now]
       );
-      if (!isOwner && subscriptionSession) {
-        await client.query('UPDATE subscription_sessions SET user_id = $1 WHERE id = $2', [
-          userId,
-          subscriptionSession
-        ]);
-      }
-
       await client.query('COMMIT');
     } catch (err) {
       await client.query('ROLLBACK');
@@ -207,7 +218,7 @@ router.post('/demo', async (req, res) => {
   const demoEmail = 'demo@ghostpay.local';
   const demoName = 'Demo User';
   const demoPassword = 'ghostpay-demo';
-  const demoPlan = 'infinity';
+  const demoPlan = 'free';
   const demoCpf = '11122233344';
 
   try {
